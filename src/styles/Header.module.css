@@ -261,17 +261,23 @@
 .sideMenuList li a:hover {
   color: teal;
 }
+.navList {
+  gap: 1.5rem;
+  list-style: none;
+}
+
+.navList.flex-row {
+  display: flex;
+  flex-direction: row;
+}
 
 
 
 
 /* Responsive adjustments */
 @media (max-width: 991px) {
-  .navList {
+   .navList.flex-row {
     flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    padding-top: 1rem;
   }
   .mobileIcons {
     display: none;
@@ -282,5 +288,21 @@
     height: 22px;
     color: #000;
     cursor: pointer;
+  }
+  .d-lg-flex {
+    display: flex !important;
+  }
+  .mobileIcons {
+    display: flex !important;
+  }
+}
+
+/* Show desktop menu only on large screens */
+@media (min-width: 992px) {
+  .d-lg-flex {
+    display: flex !important;
+  }
+  .mobileIcons {
+    display: none !important;
   }
 }
