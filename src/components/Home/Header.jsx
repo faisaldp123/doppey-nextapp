@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { ShoppingBag, Search } from "lucide-react";
+import { ShoppingBag, Search, X } from "lucide-react";
 import styles from "../../styles/Header.module.css";
 
 export default function Header() {
@@ -11,14 +11,14 @@ export default function Header() {
 
   return (
     <>
-      <header className={`navbar navbar-expand-lg py-2 shadow-sm ${styles.header}`}>
+      <header className={`navbar py-2 shadow-sm ${styles.header}`}>
         <div className="container d-flex align-items-center justify-content-between">
           {/* Logo */}
           <Link href="/" className={`navbar-brand ${styles.logo}`}>
             Doppey<span className={styles.purple}>✿</span>
           </Link>
 
-          {/* Right icons (Visible on mobile) */}
+          {/* Mobile Icons */}
           <div className={`d-flex align-items-center ${styles.mobileIcons}`}>
             <Search
               className={`${styles.searchIcon} me-3`}
@@ -28,22 +28,14 @@ export default function Header() {
             <button
               className="navbar-toggler border-0"
               type="button"
-              onClick={() => setMenuOpen(!menuOpen)}
-              aria-controls="navbarNav"
-              aria-expanded={menuOpen}
-              aria-label="Toggle navigation"
+              onClick={() => setMenuOpen(true)}
             >
               <span className="navbar-toggler-icon"></span>
             </button>
           </div>
 
-          {/* Menu */}
-          <div
-            className={`collapse navbar-collapse justify-content-end ${
-              menuOpen ? "show" : ""
-            }`}
-            id="navbarNav"
-          >
+          {/* Desktop Menu */}
+          <div className="d-none d-lg-flex align-items-center">
             <ul className={`navbar-nav align-items-lg-center ${styles.navList}`}>
               {[
                 { name: "Home", href: "/", active: true },
@@ -63,33 +55,39 @@ export default function Header() {
                   </Link>
                 </li>
               ))}
-
-              {/* Search Icon (hidden on small screens) */}
-              <li className={`nav-item ms-lg-3 d-none d-lg-block`}>
-                <Search
-                  className={styles.searchIcon}
-                  onClick={() => setShowSearch(true)}
-                />
-              </li>
-
-              {/* Cart (hidden on small screens) */}
-              <li className={`nav-item ms-lg-3 d-none d-lg-block`}>
-                <ShoppingBag className={styles.cartIcon} />
-              </li>
-
-              {/* Sign In */}
-              <li className="nav-item ms-lg-3">
-                <button
-                  className={styles.sign_button}
-                  onClick={() => setShowLogin(true)}
-                >
-                  Sign In
-                </button>
-              </li>
             </ul>
           </div>
         </div>
       </header>
+
+      {/* Side Drawer for mobile */}
+      <div
+        className={`${styles.sideMenu} ${menuOpen ? styles.open : ""}`}
+      >
+        <div className={styles.sideMenuHeader}>
+          <button
+            className={styles.closeBtn}
+            onClick={() => setMenuOpen(false)}
+          >
+            <X size={24} />
+          </button>
+        </div>
+        <ul className={styles.sideMenuList}>
+          {[
+            { name: "Home", href: "/" },
+            { name: "Mens", href: "/mens" },
+            { name: "Womens", href: "/womens" },
+            { name: "Kids", href: "/kids" },
+            { name: "Contact", href: "/contact" },
+          ].map((link) => (
+            <li key={link.name}>
+              <Link href={link.href} onClick={() => setMenuOpen(false)}>
+                {link.name}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
 
       {/* Search Overlay */}
       {showSearch && (

@@ -28,7 +28,7 @@
   transition: transform 0.3s ease;
   padding: 15px;
   width: 100%;
-  max-width: 250px; /* Keep uniform width */
+  max-width: 100%; /* Keep uniform width */
 }
 
 .pro:hover {

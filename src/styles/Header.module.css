@@ -219,6 +219,49 @@
   padding: 0;
   background: none;
 }
+.sideMenu {
+  position: fixed;
+  top: 0;
+  left: -250px; /* hidden initially */
+  width: 250px;
+  height: 100%;
+  background: #fff;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.3);
+  transition: left 0.3s ease;
+  z-index: 99999;
+  padding-top: 60px;
+}
+
+.sideMenu.open {
+  left: 0;
+}
+
+.sideMenuHeader {
+  display: flex;
+  justify-content: flex-end;
+  padding: 10px;
+}
+
+.sideMenuList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sideMenuList li {
+  padding: 15px 20px;
+}
+
+.sideMenuList li a {
+  text-decoration: none;
+  font-size: 1.2rem;
+  color: #000;
+}
+
+.sideMenuList li a:hover {
+  color: teal;
+}
+
 
 
 
