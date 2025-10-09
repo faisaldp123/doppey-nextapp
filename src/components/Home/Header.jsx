@@ -9,6 +9,14 @@ export default function Header() {
   const [showSearch, setShowSearch] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
 
+  const navLinks = [
+    { name: "Home", href: "/", active: true },
+    { name: "Mens", href: "/mens" },
+    { name: "Womens", href: "/womens" },
+    { name: "Kids", href: "/kids" },
+    { name: "Contact", href: "/contact" },
+  ];
+
   return (
     <>
       <header className={`navbar py-2 shadow-sm ${styles.header}`}>
@@ -18,8 +26,41 @@ export default function Header() {
             Doppey<span className={styles.purple}>✿</span>
           </Link>
 
+          {/* Desktop Menu */}
+          <div className="d-none d-lg-flex align-items-center">
+            <ul className={`navbar-nav align-items-center ${styles.navList} flex-row`}>
+              {navLinks.map((link) => (
+                <li key={link.name} className="nav-item">
+                  <Link
+                    href={link.href}
+                    className={`${styles.navLink} ${link.active ? styles.active : ""}`}
+                  >
+                    {link.name}
+                  </Link>
+                </li>
+              ))}
+              <li className="nav-item ms-3">
+                <Search
+                  className={styles.searchIcon}
+                  onClick={() => setShowSearch(true)}
+                />
+              </li>
+              <li className="nav-item ms-3">
+                <ShoppingBag className={styles.cartIcon} />
+              </li>
+              <li className="nav-item ms-3">
+                <button
+                  className={styles.sign_button}
+                  onClick={() => setShowLogin(true)}
+                >
+                  Sign In
+                </button>
+              </li>
+            </ul>
+          </div>
+
           {/* Mobile Icons */}
-          <div className={`d-flex align-items-center ${styles.mobileIcons}`}>
+          <div className={`d-flex align-items-center d-lg-none ${styles.mobileIcons}`}>
             <Search
               className={`${styles.searchIcon} me-3`}
               onClick={() => setShowSearch(true)}
@@ -33,37 +74,11 @@ export default function Header() {
               <span className="navbar-toggler-icon"></span>
             </button>
           </div>
-
-          {/* Desktop Menu */}
-          <div className="d-none d-lg-flex align-items-center">
-            <ul className={`navbar-nav align-items-lg-center ${styles.navList}`}>
-              {[
-                { name: "Home", href: "/", active: true },
-                { name: "Mens", href: "/mens" },
-                { name: "Womens", href: "/womens" },
-                { name: "Kids", href: "/kids" },
-                { name: "Contact", href: "/contact" },
-              ].map((link) => (
-                <li key={link.name} className="nav-item">
-                  <Link
-                    href={link.href}
-                    className={`${styles.navLink} ${
-                      link.active ? styles.active : ""
-                    }`}
-                  >
-                    {link.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
         </div>
       </header>
 
       {/* Side Drawer for mobile */}
-      <div
-        className={`${styles.sideMenu} ${menuOpen ? styles.open : ""}`}
-      >
+      <div className={`${styles.sideMenu} ${menuOpen ? styles.open : ""}`}>
         <div className={styles.sideMenuHeader}>
           <button
             className={styles.closeBtn}
@@ -73,13 +88,7 @@ export default function Header() {
           </button>
         </div>
         <ul className={styles.sideMenuList}>
-          {[
-            { name: "Home", href: "/" },
-            { name: "Mens", href: "/mens" },
-            { name: "Womens", href: "/womens" },
-            { name: "Kids", href: "/kids" },
-            { name: "Contact", href: "/contact" },
-          ].map((link) => (
+          {navLinks.map((link) => (
             <li key={link.name}>
               <Link href={link.href} onClick={() => setMenuOpen(false)}>
                 {link.name}
