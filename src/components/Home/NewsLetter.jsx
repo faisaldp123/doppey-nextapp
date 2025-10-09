@@ -1,5 +1,5 @@
 "use client";
-import styles from "../../styles/NewsletterSection.module.css";
+import styles from "../../styles/NewsLetterSection.module.css";
 
 export default function NewsletterSection() {
   return (
