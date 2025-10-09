@@ -1,0 +1,57 @@
+.newsletter {
+  background-color: #041e42;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 40px 60px;
+}
+
+.text h4 {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.text p {
+  font-size: 14px;
+}
+
+.text p span {
+  color: #ffbd27;
+}
+
+.form {
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+.form input {
+  padding: 10px 15px;
+  border-radius: 5px 0 0 5px;
+  border: none;
+  outline: none;
+  width: 250px;
+}
+
+.form button {
+  background-color: teal;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 0 5px 5px 0;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .newsletter {
+    flex-direction: column;
+    gap: 15px;
+    text-align: center;
+  }
+
+  .form input {
+    width: 200px;
+  }
+}

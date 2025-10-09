@@ -1,0 +1,94 @@
+.section {
+  text-align: center;
+  padding: 35px 28px;
+}
+
+.section h2 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.section p {
+  color: gray;
+  margin-bottom: 30px;
+}
+
+/* ✅ Product Grid - 4 columns with better spacing */
+.proContainer {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 35px; /* Increased gap between boxes */
+  justify-items: center;
+}
+
+.pro {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  padding: 15px;
+  width: 100%;
+  max-width: 250px; /* Keep uniform width */
+}
+
+.pro:hover {
+  transform: translateY(-5px);
+}
+
+.proImg {
+  border-radius: 10px;
+  width: 100%;
+  height: auto;
+}
+
+.des {
+  text-align: left;
+  margin-top: 10px;
+}
+
+.des span {
+  color: gray;
+  font-size: 12px;
+}
+
+.des h5 {
+  font-size: 14px;
+  margin: 5px 0;
+}
+
+.star {
+  color: gold;
+  font-size: 14px;
+}
+
+.des h4 {
+  color: teal;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* ✅ Responsive Layouts */
+@media (max-width: 1024px) {
+  .proContainer {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+  }
+}
+
+@media (max-width: 768px) {
+  .proContainer {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .section {
+    padding: 40px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .proContainer {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+}

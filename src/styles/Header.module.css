@@ -1,0 +1,243 @@
+/* Header background */
+.header {
+  background-color: #797979 !important;
+  position: fixed; /* makes header fixed */
+  top: 0; /* stick to top */
+  left: 0;
+  width: 100%;
+  z-index: 9999; /* keep it above other elements */
+}
+
+/* Logo */
+.logo {
+  font-size: 1.8rem;
+  font-style: italic;
+  font-weight: 700;
+  color: #000;
+  text-decoration: none;
+}
+
+.purple {
+  color: #b299e8;
+}
+
+/* Navigation List */
+.navList {
+  gap: 1.5rem;
+}
+
+/* Links */
+.navLink {
+  position: relative;
+  font-weight: 600;
+  color: #000 !important;
+  text-decoration: none;
+  transition: color 0.3s ease;
+  padding-bottom: 4px;
+}
+
+/* Underline animation */
+.navLink::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -2px;
+  width: 0;
+  height: 2px;
+  background-color: teal;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.sign_button{
+        background: none;
+    border: 1px solid;
+    border-radius: 3px;
+    padding: 2px 17px;
+}
+
+.sign_button:hover{
+        background-color: teal !important;
+        color: white;
+    padding: 2px 17px;
+    border: none;
+}
+.sign_button::after {
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.navLink:hover::after {
+  width: 100%;
+}
+
+.navLink:hover {
+  color: teal !important;
+}
+
+/* Active link (Home) */
+.active {
+  color: teal !important;
+}
+
+.active::after {
+  width: 100%;
+}
+
+/* Cart Icon */
+.cartIcon {
+  width: 22px;
+  height: 22px;
+  color: #000;
+  cursor: pointer;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.cartIcon:hover {
+  transform: scale(1.15);
+  color: teal;
+}
+
+/* ===== Search Overlay ===== */
+.searchOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+
+.searchBox {
+  background: white;
+  display: flex;
+  gap: 10px;
+  padding: 15px 20px;
+  border-radius: 50px;
+  width: 90%;
+  max-width: 500px;
+}
+
+.searchBox input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+}
+
+.searchBox button {
+  background: teal;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* ===== Modal Login ===== */
+.modalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 99999;
+}
+
+.modalBox {
+  background: #fff;
+  padding: 30px 40px;
+  border-radius: 10px;
+  position: relative;
+  width: 90%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.closeBtn {
+  position: absolute;
+  top: 10px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+}
+
+.loginForm input {
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+.loginForm button {
+  width: 100%;
+  background: teal;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.loginForm button:hover {
+  background: #007d7d;
+}
+
+.link {
+  color: teal;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* Search Icon */
+.searchIcon {
+  width: 22px;
+  height: 22px;
+  color: #000;
+  cursor: pointer;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.searchIcon:hover {
+  transform: scale(1.15);
+  color: teal;
+}
+.mobileIcons {
+  display: flex;
+  align-items: center;
+}
+.navbar-toggler {
+  padding: 0;
+  background: none;
+}
+
+
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+  .navList {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 1rem;
+  }
+  .mobileIcons {
+    display: none;
+  }
+  .searchIcon,
+  .cartIcon {
+    width: 22px;
+    height: 22px;
+    color: #000;
+    cursor: pointer;
+  }
+}

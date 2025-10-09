@@ -1,0 +1,102 @@
+.footer {
+  background: #797979;
+  padding: 50px 20px 20px;
+  font-family: Arial, sans-serif;
+  color: white;
+}
+
+.footerContainer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.footerColumn {
+  flex: 1;
+  min-width: 200px;
+  margin: 15px;
+}
+
+.footerColumn h3 {
+  font-size: 20px;
+  margin-bottom: 15px;
+}
+
+.footerColumn h4 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.footerColumn p, .footerColumn ul, .footerColumn li, .footerColumn a {
+  font-size: 14px;
+  line-height: 1.6;
+  color: white;
+}
+
+.footerColumn ul {
+  list-style: none;
+  padding: 0;
+}
+
+.footerColumn li {
+  margin-bottom: 8px;
+}
+.footerColumn li a {
+  position: relative; /* important for ::after positioning */
+  text-decoration: none;
+  color: white;
+  display: inline-block;
+}
+
+.footerColumn li a::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -2px;
+  width: 0;
+  height: 2px;
+  background-color: teal;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.footerColumn li a:hover::after {
+  width: 100%;
+}
+
+
+.footerColumn a {
+  text-decoration: none;
+  color: white;
+}
+
+.footerColumn a:hover {
+  color: teal !important;
+}
+
+.socialIcons a {
+  margin-right: 10px;
+  font-size: 18px;
+  color: white;
+}
+
+.socialIcons a:hover {
+  color: teal !important;
+}
+
+.appLinks img {
+  margin-right: 10px;
+}
+
+.paymentIcons img {
+  margin-right: 10px;
+  margin-top: 10px;
+}
+
+.footerBottom {
+  text-align: center;
+  padding-top: 20px;
+  border-top: 1px solid #ddd;
+  font-size: 13px;
+  color: white;
+}
