@@ -1,13 +1,13 @@
 .heroSection {
-  margin-top: 90px; /* Example: TopHeader 35px + Header 55px = 90px */
+  margin-top: 90px;
   position: relative;
   width: 100%;
-  height: 100vh; /* full viewport height */
+  /* height: calc(100vh - 90px); */
 }
 
-.carouselItem {
-  height: 90vh;
+.carousel-item {
   position: relative;
+  height: 100%;
 }
 
 .imageWrapper {
@@ -18,9 +18,11 @@
 
 .heroImage {
   object-fit: cover;
+  width: 100%;
+  height: 100%;
   filter: brightness(70%);
-  transition: transform 1s ease-in-out;
 }
+
 
 .carousel-item.active .heroImage {
   transform: scale(1.05);

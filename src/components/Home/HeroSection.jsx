@@ -6,28 +6,34 @@ import styles from "../../styles/HeroSection.module.css";
 export default function HeroSection() {
   // ✅ Bootstrap JS should load only on client
   useEffect(() => {
-    import("bootstrap/dist/js/bootstrap.bundle.min.js");
-  }, []);
+  import("bootstrap/dist/js/bootstrap.bundle.min.js").then(() => {
+    // Force a reflow
+    const carousel = document.getElementById("heroCarousel");
+    if (carousel) {
+      carousel.offsetHeight; // read to trigger reflow
+    }
+  });
+}, []);
 
   const slides = [
     {
-      img: "/home/hero4.png",
-      title: "Empower Your Future",
-      desc: "Join top online programs designed for career success",
-      btn: "Explore Now",
+      img: "/hero/first.jpg",
+      // title: "Empower Your Future",
+      // desc: "Join top online programs designed for career success",
+      // btn: "Explore Now",
     },
     {
-      img: "/home/hero4.png",
-      title: "Learn Anytime, Anywhere",
-      desc: "Flexible courses tailored to your schedule",
-      btn: "Get Started",
+      img: "/hero/second.jpg",
+      // title: "Learn Anytime, Anywhere",
+      // desc: "Flexible courses tailored to your schedule",
+      // btn: "Get Started",
     },
     {
-      img: "/home/hero4.png",
-      title: "Trusted by Thousands",
-      desc: "Take the next step in your education journey",
-      btn: "Enroll Today",
-    },
+      img: "/hero/third.jpg",
+      // title: "Trusted by Thousands",
+      // desc: "Take the next step in your education journey",
+      // btn: "Enroll Today",
+    }
   ];
 
   return (
@@ -47,18 +53,18 @@ export default function HeroSection() {
           >
             <div className={styles.imageWrapper}>
               <Image
-                src={slide.img}
-                alt={slide.title}
-                fill
-                priority
-                className={styles.heroImage}
-              />
+  src={slide.img}
+  alt={slide.title || ""}
+  width={1920}  // actual image width
+  height={1080} // actual image height
+  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+/>
             </div>
-            <div className={`carousel-caption ${styles.caption}`}>
+            {/* <div className={`carousel-caption ${styles.caption}`}>
               <h2>{slide.title}</h2>
               <p>{slide.desc}</p>
               <button className="btn btn-primary">{slide.btn}</button>
-            </div>
+            </div> */}
           </div>
         ))}
       </div>

@@ -60,7 +60,7 @@ export default function Home() {
         <div className="container-fluid px-0">
           <HeroSection/>
           <div className="container">
-            <InfoSection/>
+            {/* <InfoSection/> */}
             <ProductSection/>
             
           </div>
