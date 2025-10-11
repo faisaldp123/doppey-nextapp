@@ -17,6 +17,7 @@ import InfoSection from '@/components/Home/InfoSection'
 import NewArrivals from '@/components/Home/NewArrivals'
 import NewsletterSection from '@/components/Home/NewsLetter'
 import ProductSection from '@/components/Home/ProductSection'
+import RareSection from '@/components/Home/RareSection'
 import Head from 'next/head'
 
 // const inter = Inter({ subsets: ['latin'] })
@@ -67,6 +68,7 @@ export default function Home() {
           <div className='container'>
             <NewArrivals/>
             <ImageInfoSection/>
+            <RareSection/>
           </div>
           <NewsletterSection/>
           {/* <InstantCounselling /> */}
