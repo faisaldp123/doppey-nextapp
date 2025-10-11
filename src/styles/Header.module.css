@@ -2,7 +2,7 @@
 .header {
   background-color: #fff;
   position: fixed;
-  top: 0;
+  top: 35px; /* height of topHeader */
   left: 0;
   width: 100%;
   z-index: 9999;

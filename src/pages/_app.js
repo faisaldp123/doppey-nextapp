@@ -18,6 +18,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 // import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import Header from '@/components/Home/Header';
 import Footer from '@/components/Home/Footer';
+import TopHeader from '@/components/Home/TopHeader';
 
 const redhat = Red_Hat_Display({
   subsets: ['latin'],
@@ -42,6 +43,7 @@ export default function App({ Component, pageProps }) {
         <meta name="description" content="Doppey shopping app"/>
       </Head>
       {/* <Provider store={store}> */}
+      <TopHeader/>
         <Header />
         <Component {...pageProps} />
         {/* <MobileBottomNav /> */}

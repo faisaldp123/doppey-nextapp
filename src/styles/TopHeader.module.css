@@ -1,0 +1,53 @@
+.topHeader {
+  width: 100%;
+  background-color: #797979;
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* vertically center content */
+  padding: 0 20px; /* remove top/bottom padding */
+  height: 35px; /* fixed height */
+  font-size: 0.9rem;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+}
+
+.scrollText {
+  overflow: hidden;
+  white-space: nowrap;
+  flex: 1;
+  margin-right: 20px;
+}
+
+.scrollText p {
+  display: inline-block;
+  padding-left: 100%;
+  animation: scroll 15s linear infinite;
+  margin: 0; /* remove default p margin */
+  line-height: 35px; /* match header height to center text */
+}
+
+@keyframes scroll {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-100%); }
+}
+
+.staticEmail {
+  flex-shrink: 0;
+  font-weight: 500;
+  color: white;
+}
+.staticEmail a {
+  flex-shrink: 0;
+  font-weight: 500;
+  color: white;
+  text-decoration: none;
+}
+.staticEmail a:hover {
+  /* color: teal; */
+  text-decoration: underline;
+}
+
