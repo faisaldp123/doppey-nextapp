@@ -80,11 +80,27 @@
   cursor: pointer;
   transition: 0.3s;
 }
-
-.cartIcon:hover, .searchIcon:hover {
-  transform: scale(1.15);
-  color: teal;
+/* Wishlist Icon */
+.wishlistIcon {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  transition: color 0.3s;
+  color: #333; /* default color */
 }
+
+/* On hover */
+.wishlistIcon:hover {
+  color: red;
+  fill: red; /* ensures Heart icon fills */
+}
+
+/* Active page (e.g., when on /wishlist page) */
+.wishlistIcon.active {
+  color: red;
+  fill: red;
+}
+
 
 /* Mega Menu */
 .megaMenu {

@@ -2,10 +2,12 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ShoppingBag, Search, X, ChevronDown } from "lucide-react";
+import { ShoppingBag, Search, X, ChevronDown, Heart } from "lucide-react";
 import styles from "../../styles/Header.module.css";
+import { usePathname } from "next/navigation";
 
 export default function Header() {
+  const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
@@ -125,6 +127,11 @@ export default function Header() {
                   className={styles.searchIcon}
                   onClick={() => setShowSearch(true)}
                 />
+              </li>
+              <li className="nav-item ms-3">
+                <Link href='/wishlist'>
+                <Heart className={`${styles.wishlistIcon} ${pathname === '/wishlist' ? styles.active : ''}`} />
+                </Link>
               </li>
               <li className="nav-item ms-3">
                 <Link href='/cart'>
