@@ -1,21 +1,59 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
-import { ShoppingBag, Search, X } from "lucide-react";
+import Image from "next/image";
+import { ShoppingBag, Search, X, ChevronDown } from "lucide-react";
 import styles from "../../styles/Header.module.css";
 
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const [activeMenu, setActiveMenu] = useState(null);
 
   const navLinks = [
-    { name: "Home", href: "/", active: true },
+    { name: "Home", href: "/" },
     { name: "Mens", href: "/mens" },
     { name: "Womens", href: "/womens" },
     { name: "Kids", href: "/kids" },
-    { name: "Contact", href: "/contact" },
+    { name: "Contact", href: "/contact-us" },
   ];
+
+  const megaMenuData = {
+    Mens: {
+      left: [
+        "Latest",
+        "T-Shirts",
+        "Clothing",
+        "Gift Card",
+        "Sale",
+      ],
+      right: [
+        "/products/product-one.jpg",
+        "/images/men2.jpg",
+        "/images/men3.jpg",
+        "/images/men4.jpg",
+      ],
+    },
+    Womens: {
+      left: ["New Arrivals", "Dresses", "Tops", "Sale"],
+      right: [
+        "/products/product-eight.jpg",
+        "/products/product-eight.jpg",
+        "/products/product-eight.jpg",
+        "/products/product-eight.jpg",
+      ],
+    },
+    Kids: {
+      left: ["New", "T-Shirts", "Shorts", "Sale"],
+      right: [
+        "/images/kids1.jpg",
+        "/images/kids2.jpg",
+        "/images/kids3.jpg",
+        "/images/kids4.jpg",
+      ],
+    },
+  };
 
   return (
     <>
@@ -27,18 +65,61 @@ export default function Header() {
           </Link>
 
           {/* Desktop Menu */}
-          <div className="d-none d-lg-flex align-items-center">
-            <ul className={`navbar-nav align-items-center ${styles.navList} flex-row`}>
+          <div className="d-none d-lg-flex align-items-center position-relative">
+            <ul
+              className={`navbar-nav align-items-center ${styles.navList} flex-row`}
+              onMouseLeave={() => setActiveMenu(null)}
+            >
               {navLinks.map((link) => (
-                <li key={link.name} className="nav-item">
-                  <Link
-                    href={link.href}
-                    className={`${styles.navLink} ${link.active ? styles.active : ""}`}
-                  >
-                    {link.name}
-                  </Link>
+                <li
+                  key={link.name}
+                  className={`nav-item ${styles.navItem}`}
+                  onMouseEnter={() =>
+                    megaMenuData[link.name] ? setActiveMenu(link.name) : setActiveMenu(null)
+                  }
+                >
+                  <Link href={link.href} className={`${styles.navLink} d-flex align-items-center`}>
+      {link.name}
+      {megaMenuData[link.name] && ( // show arrow only if dropdown exists
+        <ChevronDown size={16} className="ms-1" />
+      )}
+    </Link>
+
+                  {/* Mega Menu */}
+                  {activeMenu === link.name && megaMenuData[link.name] && (
+                    <div
+                      className={styles.megaMenu}
+                      onMouseEnter={() => setActiveMenu(link.name)}
+                      onMouseLeave={() => setActiveMenu(null)}
+                    >
+                      {/* Left Column */}
+                      <div className={styles.megaMenuLeft}>
+                        <ul>
+                          {megaMenuData[link.name].left.map((item, idx) => (
+                            <li key={idx}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+
+                      {/* Right Column */}
+                      {/* <div className={styles.megaMenuRight}>
+                        {megaMenuData[link.name].right.map((img, idx) => (
+                          <div key={idx} className={styles.imageCard}>
+                            <Image
+                              src={img}
+                              alt={link.name}
+                              width={400}
+                              height={550}
+                              className={styles.menuImage}
+                            />
+                          </div>
+                        ))}
+                      </div> */}
+                    </div>
+                  )}
                 </li>
               ))}
+
               <li className="nav-item ms-3">
                 <Search
                   className={styles.searchIcon}
@@ -46,7 +127,9 @@ export default function Header() {
                 />
               </li>
               <li className="nav-item ms-3">
+                <Link href='/cart'>
                 <ShoppingBag className={styles.cartIcon} />
+                </Link>
               </li>
               <li className="nav-item ms-3">
                 <button
@@ -68,7 +151,6 @@ export default function Header() {
             <ShoppingBag className={`${styles.cartIcon} me-2`} />
             <button
               className="navbar-toggler border-0"
-              type="button"
               onClick={() => setMenuOpen(true)}
             >
               <span className="navbar-toggler-icon"></span>
@@ -77,13 +159,10 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Side Drawer for mobile */}
+      {/* Mobile Side Menu */}
       <div className={`${styles.sideMenu} ${menuOpen ? styles.open : ""}`}>
         <div className={styles.sideMenuHeader}>
-          <button
-            className={styles.closeBtn}
-            onClick={() => setMenuOpen(false)}
-          >
+          <button className={styles.closeBtn} onClick={() => setMenuOpen(false)}>
             <X size={24} />
           </button>
         </div>

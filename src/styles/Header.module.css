@@ -1,14 +1,14 @@
-/* Header background */
+/* Header & Logo */
 .header {
-  background-color: #797979 !important;
-  position: fixed; /* makes header fixed */
-  top: 0; /* stick to top */
+  background-color: #fff;
+  position: fixed;
+  top: 0;
   left: 0;
   width: 100%;
-  z-index: 9999; /* keep it above other elements */
+  z-index: 9999;
+  padding: 10px 0;
 }
 
-/* Logo */
 .logo {
   font-size: 1.8rem;
   font-style: italic;
@@ -21,49 +21,31 @@
   color: #b299e8;
 }
 
-/* Navigation List */
+/* Nav List */
 .navList {
-  gap: 1.5rem;
+  display: flex;
+  gap: 2rem;
+  list-style: none;
 }
 
-/* Links */
 .navLink {
   position: relative;
   font-weight: 600;
   color: #000 !important;
   text-decoration: none;
-  transition: color 0.3s ease;
   padding-bottom: 4px;
+  transition: color 0.3s;
 }
 
-/* Underline animation */
 .navLink::after {
   content: "";
   position: absolute;
+  bottom: 0;
   left: 50%;
-  bottom: -2px;
   width: 0;
   height: 2px;
   background-color: teal;
-  transition: all 0.3s ease;
-  transform: translateX(-50%);
-}
-
-.sign_button{
-        background: none;
-    border: 1px solid;
-    border-radius: 3px;
-    padding: 2px 17px;
-}
-
-.sign_button:hover{
-        background-color: teal !important;
-        color: white;
-    padding: 2px 17px;
-    border: none;
-}
-.sign_button::after {
-  transition: all 0.3s ease;
+  transition: all 0.3s;
   transform: translateX(-50%);
 }
 
@@ -75,57 +57,138 @@
   color: teal !important;
 }
 
-/* Active link (Home) */
-.active {
-  color: teal !important;
+/* Sign Button */
+.sign_button {
+  background: none;
+  border: 1px solid;
+  border-radius: 3px;
+  padding: 2px 17px;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
-.active::after {
-  width: 100%;
+.sign_button:hover {
+  background-color: teal;
+  color: white;
+  border: none;
 }
 
-/* Cart Icon */
-.cartIcon {
+/* Icons */
+.cartIcon, .searchIcon {
   width: 22px;
   height: 22px;
-  color: #000;
   cursor: pointer;
-  transition: transform 0.3s ease, color 0.3s ease;
+  transition: 0.3s;
 }
 
-.cartIcon:hover {
+.cartIcon:hover, .searchIcon:hover {
   transform: scale(1.15);
   color: teal;
 }
 
-/* ===== Search Overlay ===== */
+/* Mega Menu */
+.megaMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  display: flex;
+  background: #fff;
+  padding: 20px 50px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  z-index: 999;
+}
+
+.megaMenuLeft {
+  width: 25%;
+  border-right: 1px solid #eee;
+  padding-right: 20px;
+}
+
+.megaMenuLeft ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.megaMenuLeft li {
+  margin-bottom: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.megaMenuLeft li:hover {
+  color: teal;
+}
+
+.megaMenuRight {
+  width: 75%;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding-left: 20px;
+}
+
+.imageCard {
+  flex: 1 1 calc(25% - 20px);
+  width: 100%;
+  height: auto;
+}
+
+.menuImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+/* Search Overlay */
+/* Search Overlay */
 .searchOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(5px);
+  background: rgba(0,0,0,0.6);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 99999;
+  transition: all 0.3s ease;
+  padding-top: 0; /* start from center */
 }
 
+/* Search Box */
 .searchBox {
-  background: white;
+  background: #fff;
   display: flex;
   gap: 10px;
   padding: 15px 20px;
   border-radius: 50px;
   width: 90%;
   max-width: 500px;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  align-items: center; /* keep input vertically centered */
+  transform: translateY(0); /* initial position */
 }
 
+/* Search input */
 .searchBox input {
   flex: 1;
   border: none;
   outline: none;
   font-size: 1rem;
+  padding: 0;
+  margin: 0;
+  line-height: 1.2;
+  transition: all 0.3s ease;
 }
+
+/* Move search box to top when input is focused */
+.searchOverlay:focus-within .searchBox,
+.searchOverlay.active .searchBox {
+  transform: translateY(-40vh); /* moves up smoothly */
+}
+
 
 .searchBox button {
   background: teal;
@@ -138,58 +201,77 @@
   cursor: pointer;
 }
 
-/* ===== Modal Login ===== */
+/* Sign In Modal */
 .modalOverlay {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 99999;
+  z-index: 9999;
 }
 
+/* Modal Box */
 .modalBox {
+  position: relative; /* important for close button positioning */
   background: #fff;
-  padding: 30px 40px;
-  border-radius: 10px;
-  position: relative;
-  width: 90%;
-  max-width: 400px;
-  text-align: center;
+  padding: 40px 30px 30px 30px;
+  border-radius: 12px;
+  width: 400px;
+  max-width: 90%;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  animation: fadeIn 0.3s ease-in-out;
 }
 
-.closeBtn {
+/* Close Button - Top Right */
+.modalBox .closeBtn {
   position: absolute;
-  top: 10px;
+  top: 15px;
   right: 15px;
-  background: none;
+  background: #f0f0f0;
   border: none;
-  font-size: 1.4rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 18px;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.2s;
 }
 
+.modalBox .closeBtn:hover {
+  background: #ddd;
+}
+
+/* Modal Form */
 .loginForm input {
   width: 100%;
+  padding: 10px 12px;
   margin-bottom: 15px;
-  padding: 10px;
-  border-radius: 6px;
   border: 1px solid #ccc;
+  border-radius: 6px;
 }
 
 .loginForm button {
   width: 100%;
-  background: teal;
-  color: white;
   padding: 10px;
   border: none;
+  background: teal;
+  color: #fff;
   border-radius: 6px;
   cursor: pointer;
-  transition: background 0.3s;
+  font-weight: 600;
+  transition: background 0.2s;
 }
 
 .loginForm button:hover {
-  background: #007d7d;
+  background: #006666;
 }
 
 .link {
@@ -198,36 +280,16 @@
   font-weight: 600;
 }
 
-/* Search Icon */
-.searchIcon {
-  width: 22px;
-  height: 22px;
-  color: #000;
-  cursor: pointer;
-  transition: transform 0.3s ease, color 0.3s ease;
-}
-
-.searchIcon:hover {
-  transform: scale(1.15);
-  color: teal;
-}
-.mobileIcons {
-  display: flex;
-  align-items: center;
-}
-.navbar-toggler {
-  padding: 0;
-  background: none;
-}
+/* Side Menu (Mobile) */
 .sideMenu {
   position: fixed;
   top: 0;
-  left: -250px; /* hidden initially */
+  left: -250px;
   width: 250px;
   height: 100%;
   background: #fff;
   box-shadow: 2px 0 5px rgba(0,0,0,0.3);
-  transition: left 0.3s ease;
+  transition: 0.3s;
   z-index: 99999;
   padding-top: 60px;
 }
@@ -245,7 +307,6 @@
 .sideMenuList {
   list-style: none;
   padding: 0;
-  margin: 0;
 }
 
 .sideMenuList li {
@@ -253,56 +314,24 @@
 }
 
 .sideMenuList li a {
+  color: #000;
   text-decoration: none;
   font-size: 1.2rem;
-  color: #000;
 }
 
 .sideMenuList li a:hover {
   color: teal;
 }
-.navList {
-  gap: 1.5rem;
-  list-style: none;
-}
 
-.navList.flex-row {
-  display: flex;
-  flex-direction: row;
-}
-
-
-
-
-/* Responsive adjustments */
+/* Responsive */
 @media (max-width: 991px) {
-   .navList.flex-row {
-    flex-direction: column;
-  }
-  .mobileIcons {
+  .navList {
     display: none;
   }
-  .searchIcon,
-  .cartIcon {
-    width: 22px;
-    height: 22px;
-    color: #000;
-    cursor: pointer;
-  }
-  .d-lg-flex {
-    display: flex !important;
-  }
   .mobileIcons {
     display: flex !important;
   }
-}
-
-/* Show desktop menu only on large screens */
-@media (min-width: 992px) {
-  .d-lg-flex {
-    display: flex !important;
-  }
-  .mobileIcons {
+  .megaMenu {
     display: none !important;
   }
 }
