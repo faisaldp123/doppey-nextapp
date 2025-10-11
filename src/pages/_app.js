@@ -38,8 +38,8 @@ export default function App({ Component, pageProps }) {
         <link rel="icon" href="/final-new-fevicon.png" />
         {/* Optionally, you can use a PNG or other file type */}
         {/* <link rel="icon" href="/favicon.png" /> */}
-        <title>Admission Panel: Your Ticket to Adaptable Online Education</title> {/* Optional title change */}
-        <meta name="description" content="Admission Panel offers top online education in the form of courses that are both relevant for you and beneficial to the global community at large Whether you're ready to advance your career, engage a new field, or explore a personal pursuit, with 2UOS you can pursue this excellence anytime, anywhere."/>
+        <title>Doppey shopping app</title> {/* Optional title change */}
+        <meta name="description" content="Doppey shopping app"/>
       </Head>
       {/* <Provider store={store}> */}
         <Header />
