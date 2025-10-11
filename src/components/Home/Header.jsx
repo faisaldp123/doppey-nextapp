@@ -155,7 +155,16 @@ export default function Header() {
               className={`${styles.searchIcon} me-3`}
               onClick={() => setShowSearch(true)}
             />
-            <ShoppingBag className={`${styles.cartIcon} me-2`} />
+            <Link href='/wishlist'>
+                <Heart className={`${styles.wishlistIcon} ${pathname === '/wishlist' ? styles.active : ''}`} />
+                </Link>
+            <button
+              className="navbar-toggler border-0"
+              onClick={() => setMenuOpen(true)}
+            ></button>
+            <Link href='/cart'>
+                <ShoppingBag className={styles.cartIcon} />
+                </Link>
             <button
               className="navbar-toggler border-0"
               onClick={() => setMenuOpen(true)}
