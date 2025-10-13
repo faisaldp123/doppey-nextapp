@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "aos": "^2.3.4",
     "bootstrap": "^5.3.8",
     "init": "^0.1.2",
     "lucide-react": "^0.545.0",
@@ -15,6 +16,8 @@
     "next-intl": "^4.3.12",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-slick": "^0.31.0",
+    "slick-carousel": "^1.8.1",
     "tailwindcss": "^4.1.14"
   }
 }

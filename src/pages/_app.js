@@ -11,6 +11,8 @@ import { Red_Hat_Display } from 'next/font/google';
 // import { toastData } from '@/constant/toastData.js';
 // import "@fortawesome/fontawesome-svg-core/styles.css";
 import { useRouter } from 'next/router';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 // import MobileBottomNav from '@/components/Layout/MobileBottomNav';
 // import dynamic from 'next/dynamic';
 import Head from 'next/head';
@@ -19,6 +21,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Header from '@/components/Home/Header';
 import Footer from '@/components/Home/Footer';
 import TopHeader from '@/components/Home/TopHeader';
+import Preloader from '@/components/Preloader';
 
 const redhat = Red_Hat_Display({
   subsets: ['latin'],
@@ -44,6 +47,7 @@ export default function App({ Component, pageProps }) {
       </Head>
       {/* <Provider store={store}> */}
       <TopHeader/>
+      <Preloader />
         <Header />
         <Component {...pageProps} />
         {/* <MobileBottomNav /> */}
