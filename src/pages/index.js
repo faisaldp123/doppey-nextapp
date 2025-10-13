@@ -19,10 +19,16 @@ import NewsletterSection from '@/components/Home/NewsLetter'
 import ProductSection from '@/components/Home/ProductSection'
 import RareSection from '@/components/Home/RareSection'
 import Head from 'next/head'
+import AOS from "aos";
+import "aos/dist/aos.css";
+import { useEffect } from 'react'
 
 // const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
+  useEffect(() => {
+    AOS.init({ duration: 800, once: true });
+  }, []);
   return (
     <>
       <Head>
@@ -57,6 +63,7 @@ export default function Home() {
     
       </Head>
       <main>
+        <section data-aos="fade-up">
         <div className="container-fluid px-0">
           <HeroSection/>
           <div className="container">
@@ -77,6 +84,7 @@ export default function Home() {
             <QuestionSection /> */}
           {/* </div> */}
         </div>
+        </section>
       </main>
     </>
   )

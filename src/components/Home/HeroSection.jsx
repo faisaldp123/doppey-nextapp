@@ -1,39 +1,17 @@
 "use client";
 import { useEffect } from "react";
-import Image from "next/image";
 import styles from "../../styles/HeroSection.module.css";
+import Image from "next/image";
 
 export default function HeroSection() {
-  // ✅ Bootstrap JS should load only on client
   useEffect(() => {
-  import("bootstrap/dist/js/bootstrap.bundle.min.js").then(() => {
-    // Force a reflow
-    const carousel = document.getElementById("heroCarousel");
-    if (carousel) {
-      carousel.offsetHeight; // read to trigger reflow
-    }
-  });
-}, []);
+    import("bootstrap/dist/js/bootstrap.bundle.min.js");
+  }, []);
 
   const slides = [
-    {
-      img: "/hero/first.jpg",
-      // title: "Empower Your Future",
-      // desc: "Join top online programs designed for career success",
-      // btn: "Explore Now",
-    },
-    {
-      img: "/hero/second.jpg",
-      // title: "Learn Anytime, Anywhere",
-      // desc: "Flexible courses tailored to your schedule",
-      // btn: "Get Started",
-    },
-    {
-      img: "/hero/third.jpg",
-      // title: "Trusted by Thousands",
-      // desc: "Take the next step in your education journey",
-      // btn: "Enroll Today",
-    }
+    { img: "/hero/first.jpg" },
+    { img: "/hero/second.jpg" },
+    { img: "/hero/third.jpg" },
   ];
 
   return (
@@ -47,24 +25,15 @@ export default function HeroSection() {
         {slides.map((slide, index) => (
           <div
             key={index}
-            className={`carousel-item ${index === 0 ? "active" : ""} ${
-              styles.carouselItem
-            }`}
+            className={`carousel-item ${index === 0 ? "active" : ""}`}
           >
-            <div className={styles.imageWrapper}>
-              <Image
-  src={slide.img}
-  alt={slide.title || ""}
-  width={1920}  // actual image width
-  height={1080} // actual image height
-  style={{ width: "100%", height: "100%", objectFit: "cover" }}
-/>
-            </div>
-            {/* <div className={`carousel-caption ${styles.caption}`}>
-              <h2>{slide.title}</h2>
-              <p>{slide.desc}</p>
-              <button className="btn btn-primary">{slide.btn}</button>
-            </div> */}
+            <Image
+            width={1600}
+            height={500}
+              src={slide.img}
+              alt=""
+              className={`${styles.heroImage} h-auto w-100`}
+            />
           </div>
         ))}
       </div>
