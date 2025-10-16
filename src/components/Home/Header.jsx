@@ -22,40 +22,51 @@ export default function Header() {
   ];
 
   const megaMenuData = {
-    Mens: {
-      left: [
-        "Latest",
-        "T-Shirts",
-        "Clothing",
-        "Gift Card",
-        "Sale",
-      ],
-      right: [
-        "/products/product-one.jpg",
-        "/images/men2.jpg",
-        "/images/men3.jpg",
-        "/images/men4.jpg",
-      ],
-    },
-    Womens: {
-      left: ["New Arrivals", "Dresses", "Tops", "Sale"],
-      right: [
-        "/products/product-eight.jpg",
-        "/products/product-eight.jpg",
-        "/products/product-eight.jpg",
-        "/products/product-eight.jpg",
-      ],
-    },
-    Kids: {
-      left: ["New", "T-Shirts", "Shorts", "Sale"],
-      right: [
-        "/images/kids1.jpg",
-        "/images/kids2.jpg",
-        "/images/kids3.jpg",
-        "/images/kids4.jpg",
-      ],
-    },
-  };
+  Mens: {
+    left: [
+      "Mens Winter Collection",
+      "Mens T-Shirts",
+      "Mens Hoodies",
+      "Mens Jackets",
+      "Mens Accessories",
+    ],
+    right: [
+      "/products/men1.jpg",
+      "/products/men2.jpg",
+      "/products/men3.jpg",
+      "/products/men4.jpg",
+    ],
+  },
+  Womens: {
+    left: [
+      "Womens Dresses",
+      "Womens Tops",
+      "Womens Winter Collection",
+      "Womens Accessories",
+    ],
+    right: [
+      "/products/women1.jpg",
+      "/products/women2.jpg",
+      "/products/women3.jpg",
+      "/products/women4.jpg",
+    ],
+  },
+  Kids: {
+    left: [
+      "Kids New Arrivals",
+      "Kids T-Shirts",
+      "Kids Shorts",
+      "Kids Winter Collection",
+    ],
+    right: [
+      "/products/kids1.jpg",
+      "/products/kids2.jpg",
+      "/products/kids3.jpg",
+      "/products/kids4.jpg",
+    ],
+  },
+};
+
 
   return (
     <>
@@ -89,36 +100,47 @@ export default function Header() {
 
                   {/* Mega Menu */}
                   {activeMenu === link.name && megaMenuData[link.name] && (
-                    <div
-                      className={styles.megaMenu}
-                      onMouseEnter={() => setActiveMenu(link.name)}
-                      onMouseLeave={() => setActiveMenu(null)}
-                    >
-                      {/* Left Column */}
-                      <div className={styles.megaMenuLeft}>
-                        <ul>
-                          {megaMenuData[link.name].left.map((item, idx) => (
-                            <li key={idx}>{item}</li>
-                          ))}
-                        </ul>
-                      </div>
+  <div
+    className={styles.megaMenu}
+    onMouseEnter={() => setActiveMenu(link.name)}
+    onMouseLeave={() => setActiveMenu(null)}
+  >
+    {/* Left Column */}
+    <div className={styles.megaMenuLeft}>
+      <ul>
+        {megaMenuData[link.name].left.map((item, idx) => (
+          <li key={idx}>
+            <Link
+              href={`/category/${item
+                .toLowerCase()
+                .replace(/ /g, "-")
+                .replace(/’/g, "")}`}
+              className={styles.megaLink}
+            >
+              {item}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
 
-                      {/* Right Column */}
-                      {/* <div className={styles.megaMenuRight}>
-                        {megaMenuData[link.name].right.map((img, idx) => (
-                          <div key={idx} className={styles.imageCard}>
-                            <Image
-                              src={img}
-                              alt={link.name}
-                              width={400}
-                              height={550}
-                              className={styles.menuImage}
-                            />
-                          </div>
-                        ))}
-                      </div> */}
-                    </div>
-                  )}
+    {/* Right Column (optional) */}
+    {/* <div className={styles.megaMenuRight}>
+      {megaMenuData[link.name].right.map((img, idx) => (
+        <div key={idx} className={styles.imageCard}>
+          <Image
+            src={img}
+            alt={link.name}
+            width={400}
+            height={550}
+            className={styles.menuImage}
+          />
+        </div>
+      ))}
+    </div> */}
+  </div>
+)}
+
                 </li>
               ))}
 

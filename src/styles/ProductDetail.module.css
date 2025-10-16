@@ -1,0 +1,372 @@
+/* ===== BASE CONTAINER ===== */
+.container {
+  padding: 120px 80px 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
+/* ===== PRODUCT SECTION ===== */
+.productSection {
+  display: flex;
+  gap: 60px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* ==== Left Side (Images) ==== */
+.imageContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+.mainImageWrapper {
+  overflow: hidden;
+  width: 500px;
+  height: 500px;
+  border-radius: 10px;
+}
+
+.mainImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.mainImage:hover {
+  transform: scale(1.15);
+}
+
+.thumbnailRow {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.thumbnail {
+  border-radius: 10px;
+  border: 2px solid transparent;
+  transition: border 0.2s ease;
+  cursor: pointer;
+}
+
+.thumbnail:hover {
+  border: 2px solid #088178;
+}
+
+.activeThumb {
+  border: 2px solid #088178;
+}
+
+/* ==== Right Side (Details) ==== */
+.details {
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: left;
+  margin-top: 7%;
+}
+
+.details h4 {
+  color: #555;
+  font-weight: 500;
+}
+
+.details h2 {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.details h3 {
+  color: #088178;
+  font-size: 24px;
+}
+
+.sizeSelect {
+  padding: 10px 14px;
+  width: 220px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.addBtn {
+  width: 220px;
+  padding: 12px 16px;
+  background-color: #088178;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.addBtn:hover {
+  background-color: #066b63;
+}
+
+.details p {
+  color: #555;
+  line-height: 1.6;
+  font-size: 15px;
+}
+
+/* ===== RELATED PRODUCTS SECTION ===== */
+.relatedSection {
+  text-align: center;
+  width: 100%;
+}
+
+.relatedSection h2 {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.relatedSection p {
+  color: #666;
+  margin-bottom: 30px;
+}
+
+.namePriceRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.namePriceRow h2 {
+  font-size: 26px;
+  font-weight: 600;
+  color: #222;
+}
+
+.namePriceRow h3 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #088178;
+}
+
+
+/* ===== FLEX ROW FOR SIZE + BUTTON ===== */
+.actionRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.actionRow select {
+  flex: 1;
+  max-width: 220px;
+}
+.actionRow button {
+  flex: 1;
+  max-width: 220px;
+}
+
+/* ✅ FIXED GRID LAYOUT */
+.relatedGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 30px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  justify-items: center;
+}
+
+.relatedItem {
+  background: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: 12px;
+  padding: 16px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+  width: 100%;
+  max-width: 260px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.relatedItem:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.relatedImg {
+  border-radius: 10px;
+  object-fit: cover;
+  width: 100%;
+  height: 230px;
+  margin-bottom: 10px;
+}
+
+.relatedItem h5 {
+  font-size: 16px;
+  font-weight: 500;
+  color: #222;
+  margin-top: 6px;
+  margin-bottom: 6px;
+}
+
+.star {
+  color: #f0c040;
+  margin: 6px 0;
+  font-size: 14px;
+}
+
+.relatedItem h4 {
+  color: #088178;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* ====== RESPONSIVE BREAKPOINTS ====== */
+
+/* 🖥️ Large Tablets (<1200px) */
+@media (max-width: 1200px) {
+  .container {
+    padding: 100px 60px 50px;
+  }
+
+  .mainImageWrapper {
+    width: 420px;
+    height: 420px;
+  }
+}
+
+/* 📱 Tablets (<992px) */
+@media (max-width: 992px) {
+  .container {
+    padding: 90px 40px 40px;
+  }
+
+  .productSection {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .mainImageWrapper {
+    width: 90%;
+    height: auto;
+  }
+
+  .details {
+    text-align: center;
+    align-items: center;
+  }
+
+  .addBtn,
+  .sizeSelect {
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .relatedGrid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 25px;
+  }
+
+  .relatedItem {
+    max-width: 240px;
+  }
+}
+
+/* 📱 Mobiles (<600px) */
+@media (max-width: 600px) {
+  .container {
+    padding: 80px 20px 40px;
+  }
+
+  .mainImageWrapper {
+    width: 100%;
+    height: auto;
+  }
+
+  .thumbnailRow {
+    gap: 8px;
+  }
+
+  .thumbnail {
+    width: 70px !important;
+    height: 70px !important;
+  }
+
+  .details h2 {
+    font-size: 22px;
+  }
+
+  .details h3 {
+    font-size: 18px;
+  }
+  .namePriceRow {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .actionRow {
+    /* flex-direction: column; */
+    align-items: stretch;
+  }
+
+  .actionRow select,
+  .actionRow button {
+    max-width: 100%;
+  }
+
+  .details p {
+    font-size: 14px;
+  }
+
+  .relatedGrid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .relatedItem {
+    max-width: 100%;
+    padding: 10px;
+  }
+
+  .relatedImg {
+    height: 180px;
+  }
+
+  .relatedItem h5 {
+    font-size: 14px;
+  }
+
+  .relatedItem h4 {
+    font-size: 14px;
+  }
+}
+
+/* 📱 Extra Small Phones (<400px) */
+@media (max-width: 400px) {
+  .relatedGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .relatedImg {
+    height: 200px;
+  }
+
+  .thumbnail {
+    width: 60px !important;
+    height: 60px !important;
+  }
+  .container {
+  padding-top: 120px;
+}
+}

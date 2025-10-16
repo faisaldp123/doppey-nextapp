@@ -172,6 +172,18 @@
   padding-top: 0; /* start from center */
 }
 
+.megaLink {
+  color: #222;
+  text-decoration: none;
+  display: block;
+  padding: 6px 0;
+  transition: color 0.2s ease;
+}
+
+.megaLink:hover {
+  color: #7b4bff;
+}
+
 /* Search Box */
 .searchBox {
   background: #fff;
