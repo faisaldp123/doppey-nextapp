@@ -1,0 +1,137 @@
+.trackPage {
+  font-family: "Poppins", sans-serif;
+  color: #222;
+  overflow-x: hidden;
+}
+
+/* HERO SECTION */
+.hero {
+  position: relative;
+  height: 50vh;
+  background: url("/about/ba.jpg") center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: #fff;
+  padding: 0 20px;
+}
+
+.heroContent h1 {
+  font-size: 2.8rem;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.heroContent p {
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin: 0 auto;
+  opacity: 0.9;
+}
+
+/* TRACK SECTION */
+.trackSection {
+  max-width: 900px;
+  margin: -50px auto 80px;
+  background: #fdfdfd;
+  border-radius: 12px;
+  padding: 50px 30px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.trackForm {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.trackForm input {
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  width: 250px;
+  font-size: 1rem;
+}
+
+.trackForm button {
+  padding: 12px 25px;
+  border: none;
+  background: teal;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.trackForm button:hover {
+  background: #006666;
+}
+
+/* ORDER STATUS CARD */
+.statusCard {
+  background: #fff;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  text-align: left;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.statusCard h2 {
+  font-size: 1.8rem;
+  color: teal;
+  margin-bottom: 15px;
+}
+
+.statusCard p {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+/* RESPONSIVE */
+@media (max-width: 991px) {
+  .trackForm {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .trackForm input {
+    width: 100%;
+  }
+
+  .statusCard {
+    width: 100%;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 600px) {
+  .heroContent h1 {
+    font-size: 2rem;
+  }
+
+  .heroContent p {
+    font-size: 1rem;
+  }
+
+  .trackSection {
+    padding: 30px 20px;
+  }
+}

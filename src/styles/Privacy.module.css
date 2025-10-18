@@ -1,0 +1,120 @@
+.privacy {
+  font-family: "Poppins", sans-serif;
+  color: #222;
+  overflow-x: hidden;
+}
+
+/* HERO SECTION */
+.hero {
+  position: relative;
+  margin-top: 80px;
+  height: 50vh;
+  width: 100%;
+  background: url("/about/ba.jpg") center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.heroContent h1 {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.heroContent p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* CONTAINER */
+.container {
+  max-width: 1000px;
+  margin: 60px auto;
+  padding: 0 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* SECTION STYLES */
+.section {
+  margin-bottom: 50px;
+  text-align: left;
+}
+
+.section h2 {
+  font-size: 2rem;
+  color: teal;
+  margin-bottom: 15px;
+}
+
+.section p {
+  font-size: 1rem;
+  line-height: 1.7;
+  margin-bottom: 10px;
+}
+
+/* MEDIA QUERIES */
+@media (max-width: 991px) {
+  .hero {
+    height: 40vh;
+    background-size: cover;
+    background-position: center center;
+  }
+
+  .heroContent h1 {
+    font-size: 2.4rem;
+  }
+
+  .heroContent p {
+    font-size: 1rem;
+  }
+
+  .section h2 {
+    font-size: 1.7rem;
+  }
+
+  .section p {
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .hero {
+    height: 35vh;
+    background-size: cover;
+    background-position: top center;
+  }
+
+  .heroContent h1 {
+    font-size: 1.8rem;
+  }
+
+  .heroContent p {
+    font-size: 0.9rem;
+  }
+
+  .section h2 {
+    font-size: 1.5rem;
+  }
+
+  .section p {
+    font-size: 0.9rem;
+  }
+}

@@ -1,0 +1,228 @@
+.about {
+  font-family: "Poppins", sans-serif;
+  color: #222;
+  overflow-x: hidden;
+}
+
+/* HERO SECTION */
+.hero {
+  position: relative;
+  margin-top: 80px;
+  height: 65vh;
+  width: 100%;
+  background: url("/about/ba.jpg") center/cover no-repeat;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  color: #fff;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.heroContent h1 {
+  font-size: 3rem;
+  margin-bottom: 12px;
+  letter-spacing: 1px;
+}
+
+.heroContent p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* CONTAINER */
+.container {
+  max-width: 1200px;
+  margin: 80px auto;
+  padding: 0 20px;
+  width: 100%;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+/* STORY & MISSION SECTIONS */
+.storySection,
+.missionSection {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-bottom: 70px;
+}
+
+.text h2 {
+  font-size: 2rem;
+  color: teal;
+  margin-bottom: 20px;
+}
+
+.text p {
+  margin-bottom: 15px;
+  line-height: 1.7;
+  color: #444;
+  font-size: 1rem;
+}
+
+/* VALUES SECTION */
+.values {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.values h2 {
+  font-size: 2rem;
+  color: teal;
+  margin-bottom: 40px;
+}
+
+.valuesGrid {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.valueCard {
+  background: #f8f8f8;
+  border-radius: 10px;
+  padding: 25px;
+  width: 300px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+}
+
+.valueCard:hover {
+  background: teal;
+  color: #fff;
+  transform: translateY(-5px);
+}
+
+.valueCard h3 {
+  margin-bottom: 10px;
+  font-size: 1.3rem;
+}
+
+/* CTA SECTION */
+.cta {
+  text-align: center;
+  padding: 60px 20px;
+  background: #f1fdfd;
+  border-radius: 12px;
+  max-width: 1000px;
+  margin: 0 auto 60px;
+}
+
+.cta h2 {
+  font-size: 2rem;
+  color: teal;
+  margin-bottom: 15px;
+}
+
+.cta p {
+  color: #444;
+  margin-bottom: 20px;
+}
+
+.shopBtn {
+  background: teal;
+  color: white;
+  padding: 10px 25px;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background 0.3s;
+  display: inline-block;
+}
+
+.shopBtn:hover {
+  background: #006666;
+}
+
+/* MEDIA QUERIES */
+@media (max-width: 991px) {
+  .container {
+    margin: 60px auto;
+  }
+
+  .heroContent h1 {
+    font-size: 2.4rem;
+  }
+
+  .heroContent p {
+    font-size: 1rem;
+  }
+  .hero {
+    height: 55vh;
+    background-size: cover; /* ensures image covers container */
+    background-position: center center; /* centers image */
+  }
+
+}
+
+@media (max-width: 600px) {
+ .hero {
+    height: 45vh; /* smaller height for mobile */
+    background-size: cover; /* ensure full coverage */
+    background-position: top center; /* crop from top for better view */
+  }
+
+  .heroContent h1 {
+    font-size: 1.8rem;
+  }
+
+  .heroContent p {
+    font-size: 0.95rem;
+  }
+
+  .storySection,
+  .missionSection {
+    gap: 15px;
+    margin-bottom: 40px;
+    text-align: center;
+  }
+
+  .text h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+  }
+
+  .text p {
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+  }
+
+  .values h2 {
+    font-size: 1.5rem;
+  }
+
+  .valueCard {
+    width: 100%;
+    max-width: 350px;
+    margin-bottom: 15px;
+  }
+
+  .cta {
+    padding: 40px 15px;
+    margin-bottom: 40px;
+  }
+
+  .cta h2 {
+    font-size: 1.6rem;
+  }
+
+  .container {
+    margin: 40px auto;
+  }
+}

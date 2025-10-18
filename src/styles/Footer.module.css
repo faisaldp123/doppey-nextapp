@@ -16,6 +16,27 @@
   min-width: 200px;
   margin: 15px;
 }
+.social_link{
+    border: 1px solid white;
+    border-radius: 50%;
+    height: 35px;
+    width: 35px;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    color: white;
+    transition: 0.1s ease-in-out all;
+}
+.social_link_i {
+    width: 16px;
+}
+.social_link:hover{
+    color: var(--ocean);
+    border-color: var(--ocean);
+}
+.play{
+  border-radius: 3px;
+}
 
 .footerColumn h3 {
   font-size: 20px;

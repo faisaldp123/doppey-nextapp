@@ -25,7 +25,7 @@ export default function Contact() {
     <div className={styles.contactPage}>
       {/* Top Content */}
       <section className={styles.topContent}>
-        <h1>Contact Us</h1>
+        <h1 className="mt-4">Contact Us</h1>
         <p>
           We would love to hear from you! Fill out the form below or reach us
           through our contact information. Our team will get back to you as
