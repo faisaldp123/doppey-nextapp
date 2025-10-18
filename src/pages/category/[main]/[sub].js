@@ -24,7 +24,7 @@ export default function CategorySubPage() {
       <h2>{title}</h2>
       <p>New Modern Collection</p>
 
-      <div className={styles.proContainer}>
+      <div className={`${styles.proContainer} mt-5`}>
         {filteredProducts.length > 0 ? (
           filteredProducts.map((p) => (
             <Link href={`/product/${p.id}`} key={p.id}>

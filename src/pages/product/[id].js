@@ -11,6 +11,7 @@ export default function ProductDetail() {
   const { id } = router.query;
 
   const [mainImg, setMainImg] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
 
   const product = productsData.find((p) => p.id === parseInt(id));
 
@@ -34,10 +35,26 @@ export default function ProductDetail() {
     "/products/product-one.jpg",
   ];
 
+  // ✅ Add to Cart function
+  const handleAddToCart = () => {
+    const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
+    const isAlreadyInCart = existingCart.some((item) => item.id === product.id);
+
+    if (!isAlreadyInCart) {
+      existingCart.push(product);
+      localStorage.setItem("cart", JSON.stringify(existingCart));
+    }
+
+    // ✅ Show popup message
+    setShowPopup(true);
+    setTimeout(() => setShowPopup(false), 2000);
+  };
+
   return (
     <div className={styles.container}>
+      {/* ==== PRODUCT DETAILS ==== */}
       <div className={styles.productSection}>
-        {/* ==== LEFT: IMAGES ==== */}
+        {/* LEFT: IMAGES */}
         <div className={styles.imageContainer}>
           <div className={styles.mainImageWrapper}>
             <Image
@@ -67,11 +84,12 @@ export default function ProductDetail() {
           </div>
         </div>
 
-        {/* ==== RIGHT: DETAILS ==== */}
+        {/* RIGHT: DETAILS */}
         <div className={styles.details}>
-          {/* Name and Price in one line */}
+          <div className={styles.namePriceRow}>
             <h2>{product.name}</h2>
             <h3>${product.price}</h3>
+          </div>
 
           <h4>Product Details</h4>
           <p>
@@ -81,7 +99,6 @@ export default function ProductDetail() {
             that makes you stand out.
           </p>
 
-          {/* Size + Button in one line */}
           <div className={styles.actionRow}>
             <select className={styles.sizeSelect}>
               <option>Select Size</option>
@@ -91,7 +108,9 @@ export default function ProductDetail() {
               <option>XL</option>
               <option>XXL</option>
             </select>
-            <button className={styles.addBtn}>Add to Cart</button>
+            <button className={styles.addBtn} onClick={handleAddToCart}>
+              Add to Cart
+            </button>
           </div>
         </div>
       </div>
@@ -124,6 +143,13 @@ export default function ProductDetail() {
           )}
         </div>
       </div>
+
+      {/* ✅ Popup Notification */}
+      {showPopup && (
+        <div className={styles.popup}>
+          ✅ Product added to cart!
+        </div>
+      )}
     </div>
   );
 }
