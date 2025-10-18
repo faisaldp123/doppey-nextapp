@@ -73,8 +73,13 @@ export default function Header() {
       <header className={`navbar py-2 shadow-sm ${styles.header}`}>
         <div className="container d-flex align-items-center justify-content-between">
           {/* Logo */}
-          <Link href="/" className={`navbar-brand ${styles.logo}`}>
-            Doppey<span className={styles.purple}>✿</span>
+          <Link href="/" className={`navbar-brand`}>
+            <Image
+            src='/logo-new.bmp'
+            width={400}
+            height={450}
+            className={styles.logo}
+          />
           </Link>
 
           {/* Desktop Menu */}

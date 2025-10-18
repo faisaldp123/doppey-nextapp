@@ -10,11 +10,10 @@
 }
 
 .logo {
-  font-size: 1.8rem;
-  font-style: italic;
-  font-weight: 700;
-  color: #000;
-  text-decoration: none;
+      width: 54%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 5px;
 }
 
 .purple {
@@ -361,5 +360,14 @@
   }
   .megaMenu {
     display: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .logo{
+     width: 54%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 5px;
   }
 }

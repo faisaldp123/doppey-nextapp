@@ -12,7 +12,7 @@ export default function TopHeader() {
       </div>
       <div className={styles.staticEmail}>
         <Mail size={16} style={{ marginRight: "5px" }} />
-        <a href="mailto:support@doppey.com">support@doppey.com</a>
+        <a href="mailto:support@doppey.com">ContactUs@doppey.com</a>
       </div>
     </div>
   );
