@@ -9,11 +9,11 @@ import { Red_Hat_Display } from 'next/font/google';
 // import { Modal, ModalBody, ModalHeader } from 'react-bootstrap';
 // import PopupForm from '@/components/Layout/PopupForm';
 // import { toastData } from '@/constant/toastData.js';
-// import "@fortawesome/fontawesome-svg-core/styles.css";
+import "@fortawesome/fontawesome-svg-core/styles.css";
 import { useRouter } from 'next/router';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-// import MobileBottomNav from '@/components/Layout/MobileBottomNav';
+import MobileBottomNav from '../components/Layout/MobileBottomNav';
 // import dynamic from 'next/dynamic';
 import Head from 'next/head';
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -50,7 +50,7 @@ export default function App({ Component, pageProps }) {
       <Preloader />
         <Header />
         <Component {...pageProps} />
-        {/* <MobileBottomNav /> */}
+        <MobileBottomNav />
         {/* <WhatsApp /> */}
         {/* <div className="chatbot-container">
           <SimpleForm />

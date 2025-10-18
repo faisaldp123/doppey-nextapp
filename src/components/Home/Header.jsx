@@ -70,11 +70,12 @@ export default function Header() {
 
   return (
     <>
-      <header className={`navbar py-2 shadow-sm ${styles.header}`}>
+      <header className={`navbar py-3 shadow-sm ${styles.header}`}>
         <div className="container d-flex align-items-center justify-content-between">
           {/* Logo */}
-          <Link href="/" className={`navbar-brand`}>
+          <Link href="/" className="d-inline-block" style={{ lineHeight: 0 }}>
             <Image
+            alt="Doppey Logo"
             src='/logo-new.bmp'
             width={400}
             height={450}

@@ -9,11 +9,28 @@
   padding: 10px 0;
 }
 
-.logo {
+/* .logo {
       width: 54%;
     height: 100%;
     object-fit: cover;
     border-radius: 5px;
+} */
+
+.logo {
+  display: block;          /* removes inline baseline gap */
+  width: 160px;            /* adjust to fit your layout */
+  height: auto;
+  object-fit: contain;
+  line-height: 0;
+  margin: 0;
+  padding: 0;
+  vertical-align: middle;  /* keeps it centered */
+}
+
+.header a {
+  line-height: 0 !important; /* ensure link doesn’t add text baseline space */
+  display: inline-block;
+  text-decoration: none;
 }
 
 .purple {
@@ -35,6 +52,7 @@
   padding-bottom: 4px;
   transition: color 0.3s;
 }
+
 
 .navLink::after {
   content: "";
@@ -364,10 +382,24 @@
 }
 
 @media (max-width: 480px) {
-  .logo{
-     width: 54%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 5px;
+  .logo {
+    display: block;
+    width: 130px; /* smaller logo size for mobile */
+    height: auto;
+    object-fit: contain;
+    line-height: 0;
+    margin: 0;
+    padding: 0;
+    vertical-align: middle;
+  }
+
+  .header a {
+    line-height: 0 !important;
+    display: inline-block;
+    text-decoration: none;
+  }
+
+  .header {
+    padding: 8px 0; /* slightly tighter on mobile */
   }
 }
