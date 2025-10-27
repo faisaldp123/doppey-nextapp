@@ -1,0 +1,90 @@
+.dropdown_box {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background: #fff;
+  width: 250px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 6px;
+  padding: 0.8rem 0;
+  z-index: 999;
+  transition: all 0.2s ease-in-out;
+}
+
+.header {
+  padding: 0 1rem 0.8rem 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.header h5 {
+  font-size: 15px;
+  margin: 0;
+  font-weight: 600;
+}
+
+.header p {
+  font-size: 12px;
+  color: #777;
+  margin: 3px 0 10px 0;
+}
+
+.login_btn {
+  display: inline-block;
+  font-size: 13px;
+  color: #ff3f6c;
+  border: 1px solid #ff3f6c;
+  border-radius: 4px;
+  padding: 4px 10px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.3s ease;
+}
+
+.login_btn:hover {
+  background: #ff3f6c;
+  color: #fff;
+}
+
+.menu {
+  list-style: none;
+  margin: 0;
+  padding: 0.5rem 1rem;
+}
+
+.menu li {
+  padding: 6px 0;
+  font-size: 13px;
+}
+
+.menu li a {
+  color: #333;
+  text-decoration: none;
+  transition: 0.2s;
+}
+
+.menu li a:hover {
+  color: #ff3f6c;
+}
+
+.new_tag {
+  background: #ff3f6c;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 1px 6px;
+  margin-left: 5px;
+  text-transform: uppercase;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid #f0f0f0;
+  margin: 8px 0;
+}
+
+@media (max-width: 992px) {
+  .dropdown_box {
+    display: none;
+  }
+}

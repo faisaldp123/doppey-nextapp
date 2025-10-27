@@ -368,10 +368,143 @@
   color: teal;
 }
 
+.profileWrapper {
+  position: relative;
+}
+
+.profileArea {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profileIcon {
+  width: 24px;
+  height: 24px;
+  color: #333;
+  cursor: pointer;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.profileIcon:hover {
+  color: #ff3f6c;
+  transform: scale(1.05);
+}
+
+/* ✅ Dropdown styling — fixed alignment */
+.profileDropdown {
+  position: absolute;
+  top: 130%; /* ensures gap under the icon */
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  width: 200px;
+  padding: 10px 0;
+  z-index: 1000;
+  opacity: 1;
+  animation: fadeIn 0.2s ease-in-out;
+  pointer-events: auto;
+}
+
+/* keep dropdown visible when hovering */
+.profileArea:hover .profileDropdown {
+  display: block;
+  opacity: 1;
+}
+
+.profileDropdown ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.profileDropdown ul li {
+  padding: 10px 15px;
+  transition: background 0.2s ease;
+}
+
+.profileDropdown ul li:hover {
+  background: #f8f8f8;
+}
+
+.profileDropdown ul li a {
+  text-decoration: none;
+  color: #333;
+  font-size: 14px;
+  display: block;
+}
+
+.profileDropdown ul li a:hover {
+  color: #ff3f6c;
+}
+
+.logoutBtn {
+  background: none;
+  border: none;
+  color: #333;
+  font-size: 14px;
+  width: 100%;
+  text-align: left;
+  padding: 10px 15px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.logoutBtn:hover {
+  color: #ff3f6c;
+  background: #f8f8f8;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -5px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+/* Mobile header right section */
+.mobileHeaderRight {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* Hamburger icon style */
+.hamburgerIcon {
+  width: 26px;
+  height: 26px;
+  cursor: pointer;
+  color: #333;
+  transition: color 0.3s ease;
+}
+
+.hamburgerIcon:hover {
+  color: teal;
+}
+
+
+
 /* Responsive */
 @media (max-width: 991px) {
   .navList {
-    display: none;
+    display: none !important;
+  }
+
+  .mobileHeaderRight {
+    display: flex !important;
+  }
+
+  .wishlistIcon,
+  .cartIcon,
+  .profileIcon {
+    display: none !important;
   }
   .mobileIcons {
     display: flex !important;
