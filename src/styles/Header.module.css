@@ -46,18 +46,23 @@
 
 .navLink {
   position: relative;
-  font-weight: 600;
-  color: #000 !important;
   text-decoration: none;
-  padding-bottom: 4px;
+  color: #000;
   transition: color 0.3s;
+  display: inline-block;
+  padding-bottom: 4px; /* adds space below text */
 }
 
+
+
+.navLink:hover {
+  color: teal !important;
+}
 
 .navLink::after {
   content: "";
   position: absolute;
-  bottom: 0;
+  bottom: -2px; /* push underline a bit lower to avoid overlap */
   left: 50%;
   width: 0;
   height: 2px;
@@ -70,9 +75,11 @@
   width: 100%;
 }
 
-.navLink:hover {
-  color: teal !important;
+/* Prevent underline from showing for parent mega menu links */
+.navItem:hover .navLink::after {
+  width: 0;
 }
+
 
 /* Sign Button */
 .sign_button {
@@ -126,10 +133,12 @@
   left: 0;
   width: 100%;
   display: flex;
+  flex-wrap: wrap; /* ensures wrapping if too many items */
   background: #fff;
   padding: 20px 50px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   z-index: 999;
+  border-top: 1px solid #eee; /* clean separation line */
 }
 
 .megaMenuLeft {
@@ -145,9 +154,11 @@
 }
 
 .megaMenuLeft li {
-  margin-bottom: 12px;
+  margin-bottom: 10px; /* reduce spacing to avoid overlap */
   font-weight: 500;
+  line-height: 1.6; /* ensures no text overlap */
   cursor: pointer;
+  white-space: nowrap; /* keeps text on one line */
 }
 
 .megaMenuLeft li:hover {
