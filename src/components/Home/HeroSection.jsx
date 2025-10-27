@@ -10,7 +10,7 @@ export default function HeroSection() {
 
   const slides = [
     { img: "/hero/first.jpg" },
-    { img: "/hero/second.jpg" },
+    { img: "/hero/poster-one.png" },
     { img: "/hero/third.jpg" },
   ];
 
@@ -28,8 +28,8 @@ export default function HeroSection() {
             className={`carousel-item ${index === 0 ? "active" : ""}`}
           >
             <Image
-            width={1600}
-            height={500}
+            width={2200}
+            height={1000}
               src={slide.img}
               alt=""
               className={`${styles.heroImage} h-auto w-100`}
