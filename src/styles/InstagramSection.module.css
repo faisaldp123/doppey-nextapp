@@ -1,0 +1,118 @@
+.section {
+  padding: 40px 0;
+}
+
+.heading {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.heading span {
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: #888;
+}
+
+.heading h2 {
+  margin-top: 10px;
+  font-size: 42px;
+  font-weight: 700;
+}
+
+.heading p {
+  max-width: 650px;
+  margin: 15px auto 0;
+  color: #666;
+  line-height: 1.8;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+}
+
+.card {
+  position: relative;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.image {
+  object-fit: cover;
+  transition: 0.5s ease;
+}
+
+.card:hover .image {
+  transform: scale(1.08);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+
+  background: rgba(0, 0, 0, 0.35);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  opacity: 0;
+  transition: 0.3s ease;
+
+  color: white;
+}
+
+.card:hover .overlay {
+  opacity: 1;
+}
+
+.buttonWrapper {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.followBtn {
+  display: inline-block;
+  padding: 15px 32px;
+  background: black;
+  color: white;
+  text-decoration: none;
+  font-weight: 600;
+  transition: 0.3s ease;
+}
+
+.followBtn:hover {
+  opacity: 0.85;
+}
+
+@media (max-width: 992px) {
+  .heading h2 {
+    font-size: 34px;
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 30px 0;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .heading h2 {
+    font-size: 28px;
+  }
+
+  .heading p {
+    font-size: 14px;
+  }
+
+  .followBtn {
+    width: 100%;
+    text-align: center;
+  }
+}

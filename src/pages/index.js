@@ -1,91 +1,135 @@
-// import Approvals from '@/components/Home/Approvals'
-// import Compare from '@/components/Home/Compare'
-// import HeroSlider from '@/components/Home/HeroSection'
-// import InfoImage from '@/components/Home/InfoImage'
-// import InstantCounselling from '@/components/Home/InstantCounselling'
-// import MobileApp from '@/components/Home/MobileApp'
-// import Process from '@/components/Home/Process'
-// import QuestionSection from '@/components/Home/QuestionSection'
-// import Rating from '@/components/Home/Rating'
-// import TalkToExperts from '@/components/Home/TalkToExperts'
-// import { Inter } from 'next/font/google'
-// import WhoWeAre from '@/components/Home/WhoWeAre'
-import BannerSection from '@/components/Home/BannerSection'
-import HeroSection from '@/components/Home/HeroSection'
-import ImageInfoSection from '@/components/Home/ImageInfoSection'
-import InfoSection from '@/components/Home/InfoSection'
-import NewArrivals from '@/components/Home/NewArrivals'
-import NewsletterSection from '@/components/Home/NewsLetter'
-import ProductSection from '@/components/Home/ProductSection'
-import RareSection from '@/components/Home/RareSection'
-import Head from 'next/head'
+import BannerSection from "@/components/Home/BannerSection";
+import HeroSection from "@/components/Home/HeroSection";
+import NewArrivals from "@/components/Home/NewArrivals";
+import NewsletterSection from "@/components/Home/NewsLetter";
+import ProductSection from "@/components/Home/ProductSection";
+import ShopCategories from "@/components/Home/ShopCategories";
+
+import Head from "next/head";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { useEffect } from 'react'
-
-// const inter = Inter({ subsets: ['latin'] })
+import { useEffect } from "react";
+import TrendingCategories from "@/components/Home/TrendingCategories";
+import LifestyleSection from "@/components/Home/LifestyleSection";
+import BrandStorySection from "@/components/Home/BrandStorySection";
+import InstagramSection from "@/components/Home/InstagramSection";
+import ReviewSection from "@/components/Home/ReviewSection";
 
 export default function Home() {
-  useEffect(() => {
-    AOS.init({ duration: 800, once: true });
-  }, []);
-  return (
-    <>
-      <Head>
-        {/* SEO Meta Tags */}
-        <title>Doppey shopping app</title>
-        <meta
-          name="description"
-          content="Admission Panel helps students choose right college, course & career with expert counseling, university selection & admission guidance. Build your future today!"
-        />
-        <meta name="keywords" content="Online education, career counseling, admission panel, best colleges in India, distance learning, online universities" />
-        <meta name="author" content="Admission Panel" />
-        <link rel="canonical" href="https://www.admissionpanel.com/" />
+useEffect(() => {
+AOS.init({
+duration: 800,
+once: true,
+});
+}, []);
 
-        {/* Open Graph Meta Tags */}
-        <meta property="og:title" content="Admission Panel - Your Gateway to Online Education" />
-        <meta property="og:description" content="Admission Panel helps students choose right college, course & career with expert counseling, university selection & admission guidance. Build your future today!" />
-        <meta property="og:site_name" content="Admission Panel" />
-        <meta property="og:url" content="https://www.admissionpanel.com/" />
-        <meta property="og:image" content="https://www.admissionpanel.com/_next/image?url=%2Fimages%2Flogo%2Fadmission-logo-new.png&w=256&q=75" />
-        <meta property="og:image:alt" content="Admission Panel - Your Gateway to Online Education" />
-        <meta property="og:type" content="website" />
+return (
+<> <Head> <title>Doppey | Premium Fashion & Streetwear</title>
 
-        {/* Twitter Meta Tags */}
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content="Admission Panel - Your Gateway to Online Education" />
-        <meta name="twitter:description" content="Admission Panel helps students choose right college, course & career with expert counseling, university selection & admission guidance. Build your future today!" />
-        <meta name="twitter:image" content="https://www.admissionpanel.com/_next/image?url=%2Fimages%2Flogo%2Fadmission-logo-new.png&w=256&q=75" />
-        <meta name="twitter:image:alt" content="Admission Panel - Your Gateway to Online Education" />
+```
+    <meta
+      name="description"
+      content="Discover premium streetwear, oversized t-shirts, hoodies and fashion essentials at Doppey."
+    />
 
-        {/* Organization Schema */}
+    <meta
+      name="keywords"
+      content="streetwear, oversized t-shirts, hoodies, fashion, doppey"
+    />
 
-    
-      </Head>
-      <main>
-        <section data-aos="fade-up">
-        <div className="container-fluid px-0">
-          <HeroSection/>
-          <div className="container">
-            {/* <InfoSection/> */}
-            <ProductSection/>
-            
-          </div>
-          <BannerSection/>
-          <div className='container'>
-            <NewArrivals/>
-            <ImageInfoSection/>
-            <RareSection/>
-          </div>
-          <NewsletterSection/>
-          {/* <InstantCounselling /> */}
-          {/* <TalkToExperts /> */}
-          {/* <div className="container">
-            <QuestionSection /> */}
-          {/* </div> */}
+    <meta name="author" content="Doppey" />
+
+    <link
+      rel="canonical"
+      href="https://www.doppey.com/"
+    />
+
+    <meta
+      property="og:title"
+      content="Doppey | Premium Fashion & Streetwear"
+    />
+
+    <meta
+      property="og:description"
+      content="Discover premium streetwear, oversized t-shirts, hoodies and fashion essentials at Doppey."
+    />
+
+    <meta
+      property="og:type"
+      content="website"
+    />
+
+    <meta
+      property="og:url"
+      content="https://www.doppey.com/"
+    />
+
+    <meta
+      name="twitter:card"
+      content="summary_large_image"
+    />
+  </Head>
+
+  <main>
+    <section data-aos="fade-up">
+      <div className="container-fluid px-0">
+
+       <HeroSection />
+
+<div className="container">
+  <ShopCategories />
+</div>
+
+        {/* Features */}
+        {/* <div className="container">
+          <InfoSection />
+        </div> */}
+
+        {/* New Arrivals */}
+        <div className="container">
+          <NewArrivals />
         </div>
-        </section>
-      </main>
-    </>
-  )
+
+        {/* Fashion Banner */}
+        <BannerSection />
+
+        {/* Best Sellers */}
+        <div className="container">
+          <ProductSection />
+        </div>
+
+        {/* TrendingCategories */}
+        <div className="container">
+          <TrendingCategories />
+        </div>
+
+          {/* LifestyleSection */}
+        <div className="container">
+          <LifestyleSection />
+        </div>
+
+          {/* BrandStorySection */}
+        <div className="container">
+          <BrandStorySection />
+        </div>
+
+        {/* Instagram section */}
+        <div className="container">
+          <InstagramSection />
+        </div>
+
+          {/* Review Section */}
+        <div className="container">
+          <ReviewSection />
+        </div>
+
+        {/* Newsletter */}
+        <NewsletterSection />
+
+      </div>
+    </section>
+  </main>
+</>
+
+);
 }

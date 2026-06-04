@@ -1,43 +1,158 @@
 "use client";
+
 import Image from "next/image";
+import { useState } from "react";
+
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Navigation, Autoplay } from "swiper/modules";
+
+import "swiper/css";
+import "swiper/css/navigation";
+
 import styles from "../../styles/ProductSection.module.css";
 
 export default function ProductSection() {
-  const products = [
-    { img: "/products/product-one.jpg", name: "Cartoon Astronaut T-Shirt", price: "$78" },
-    { img: "/products/product-two.jpg", name: "Space Graphic Tee", price: "$85" },
-    { img: "/products/product-three.jpg", name: "Galaxy Printed Hoodie", price: "$95" },
-    { img: "/products/product-four.jpg", name: "Cosmic Oversized Tee", price: "$70" },
-    { img: "/products/product-five.jpg", name: "Astronaut Crewneck", price: "$90" },
-    { img: "/products/product-six.jpg", name: "Nebula Sweatshirt", price: "$75" },
-    { img: "/products/product-seven.jpg", name: "Planet Design Shirt", price: "$80" },
-    { img: "/products/product-eight.jpg", name: "Moonwalk Cotton Tee", price: "$88" },
-  ];
+const products = [
+{
+img1: "/products/product-one.jpg",
+img2: "/products/product-two.jpg",
+name: "Cartoon Astronaut T-Shirt",
+rating: 4.8,
+reviews: 245,
+salePrice: "₹899",
+originalPrice: "₹1499",
+discount: "40% OFF",
+badge: "BESTSELLER",
+},
+{
+img1: "/products/product-three.jpg",
+img2: "/products/product-four.jpg",
+name: "Premium Hoodie",
+rating: 4.7,
+reviews: 183,
+salePrice: "₹1499",
+originalPrice: "₹2299",
+discount: "35% OFF",
+badge: "NEW",
+},
+{
+img1: "/products/product-five.jpg",
+img2: "/products/product-six.jpg",
+name: "Streetwear Sweatshirt",
+rating: 4.9,
+reviews: 312,
+salePrice: "₹1199",
+originalPrice: "₹1899",
+discount: "37% OFF",
+badge: "TRENDING",
+},
+{
+img1: "/products/product-seven.jpg",
+img2: "/products/product-eight.jpg",
+name: "Urban Fit Tee",
+rating: 4.6,
+reviews: 165,
+salePrice: "₹799",
+originalPrice: "₹1299",
+discount: "38% OFF",
+badge: "SALE",
+},
+{
+img1: "/products/product-one.jpg",
+img2: "/products/product-two.jpg",
+name: "Classic Hoodie",
+rating: 4.8,
+reviews: 220,
+salePrice: "₹1399",
+originalPrice: "₹1999",
+discount: "30% OFF",
+badge: "NEW",
+},
+];
 
-  return (
-    <section id="product1" className={styles.section}>
-      <h2>Featured Products</h2>
-      <p>Winter Collection New Modern Design</p>
+return ( <section className={styles.section}> <h2>BEST SELLERS</h2> <p>Most Loved Products</p>
 
-      <div className={styles.proContainer}>
-        {products.map((p, i) => (
-          <div className={styles.pro} key={i}>
-            <Image
-              src={p.img}
-              alt={p.name}
-              width={280}
-              height={260}
-              className={styles.proImg}
-            />
-            <div className={styles.des}>
-              <span>adidas</span>
-              <h5><strong>{p.name}</strong></h5>
-              <div className={styles.star}>★★★★★</div>
-              <h4>{p.price}</h4>
-            </div>
-          </div>
-        ))}
-      </div>
-    </section>
-  );
+  <Swiper
+    modules={[Navigation, Autoplay]}
+    navigation
+    autoplay={{
+      delay: 4000,
+      disableOnInteraction: false,
+    }}
+    spaceBetween={20}
+    breakpoints={{
+      0: {
+        slidesPerView: 2,
+      },
+      768: {
+        slidesPerView: 3,
+      },
+      1200: {
+        slidesPerView: 4.2,
+      },
+    }}
+  >
+    {products.map((product, index) => (
+      <SwiperSlide key={index}>
+        <ProductCard product={product} />
+      </SwiperSlide>
+    ))}
+  </Swiper>
+</section>
+
+);
+}
+
+function ProductCard({ product }) {
+const [hover, setHover] = useState(false);
+
+return (
+<div
+className={styles.pro}
+onMouseEnter={() => setHover(true)}
+onMouseLeave={() => setHover(false)}
+> <div className={styles.imageWrapper}> <span className={styles.badge}>
+{product.badge} </span>
+
+    <Image
+      src={hover ? product.img2 : product.img1}
+      alt={product.name}
+      width={600}
+      height={700}
+      quality={100}
+      className={styles.proImg}
+    />
+
+    <button className={styles.quickBtn}>
+      QUICK VIEW
+    </button>
+  </div>
+
+  <div className={styles.des}>
+    <h5>{product.name}</h5>
+
+    <div className={styles.rating}>
+      ⭐ {product.rating}
+      <span>
+        ({product.reviews} Reviews)
+      </span>
+    </div>
+
+    <div className={styles.priceRow}>
+      <span className={styles.salePrice}>
+        {product.salePrice}
+      </span>
+
+      <span className={styles.originalPrice}>
+        {product.originalPrice}
+      </span>
+
+      <span className={styles.discount}>
+        {product.discount}
+      </span>
+    </div>
+  </div>
+</div>
+
+);
 }

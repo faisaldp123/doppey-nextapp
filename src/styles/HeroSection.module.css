@@ -1,4 +1,108 @@
-/* Already have */
 .heroSection {
-  margin-top: 105px;
+  margin-top: 90px;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 90px);
+  overflow: hidden;
+}
+
+.heroImage {
+  object-fit: cover;
+  object-position: center;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.heroContent {
+  position: absolute;
+  left: 8%;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  color: white;
+  max-width: 650px;
+}
+
+.badge {
+  display: inline-block;
+  background: rgba(255,255,255,.15);
+  backdrop-filter: blur(10px);
+  padding: 8px 16px;
+  font-size: 12px;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+}
+
+.heroContent h1 {
+  font-size: 5rem;
+  font-weight: 800;
+  line-height: 1;
+  margin-bottom: 20px;
+}
+
+.heroContent p {
+  font-size: 1.2rem;
+  max-width: 500px;
+  margin-bottom: 30px;
+}
+
+.heroBtn {
+  border: none;
+  background: white;
+  color: black;
+  padding: 14px 34px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  transition: 0.3s;
+}
+
+.heroBtn:hover {
+  background: black;
+  color: white;
+}
+
+@media (max-width: 992px) {
+  .heroContent h1 {
+    font-size: 3.8rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroSection {
+    margin-top: 75px;
+  }
+
+  .imageWrapper {
+    height: calc(85vh - 75px);
+  }
+
+  .heroImage {
+    object-fit: cover;
+    object-position: center top;
+  }
+
+  .heroContent {
+    left: 20px;
+    right: 20px;
+    max-width: 100%;
+  }
+
+  .heroContent h1 {
+    font-size: 2.5rem;
+  }
+
+  .heroContent p {
+    font-size: 1rem;
+  }
+
+  .heroBtn {
+    width: 100%;
+  }
 }

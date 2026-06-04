@@ -1,94 +1,162 @@
 .section {
-  text-align: center;
-  padding: 0px 28px 40px 28px;
+text-align: center;
+padding: 70px 0;
 }
 
 .section h2 {
-  font-size: 2rem;
-  font-weight: 700;
+font-size: 34px;
+font-weight: 700;
+letter-spacing: 1px;
 }
 
 .section p {
-  color: gray;
-  margin-bottom: 30px;
-}
-
-/* ✅ Product Grid - 4 columns with better spacing */
-.proContainer {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 35px; /* Increased gap between boxes */
-  justify-items: center;
+color: #777;
+margin-bottom: 35px;
 }
 
 .pro {
-  background: #fff;
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-  padding: 15px;
-  width: 100%;
-  max-width: 100%; /* Keep uniform width */
+cursor: pointer;
 }
 
-.pro:hover {
-  transform: translateY(-5px);
+.imageWrapper {
+position: relative;
+overflow: hidden;
 }
 
 .proImg {
-  border-radius: 10px;
-  width: 100%;
-  height: auto;
+width: 100%;
+height: auto;
+display: block;
+transition: all 0.4s ease;
+}
+
+.pro:hover .proImg {
+transform: scale(1.05);
+}
+
+.badge {
+position: absolute;
+top: 12px;
+left: 12px;
+background: #000;
+color: #fff;
+font-size: 11px;
+font-weight: 600;
+padding: 6px 10px;
+z-index: 2;
+letter-spacing: 0.5px;
+}
+
+.quickBtn {
+position: absolute;
+bottom: -50px;
+left: 0;
+width: 100%;
+border: none;
+background: rgba(255, 255, 255, 0.95);
+padding: 12px;
+font-weight: 600;
+transition: all 0.3s ease;
+}
+
+.pro:hover .quickBtn {
+bottom: 0;
 }
 
 .des {
-  text-align: left;
-  margin-top: 10px;
-}
-
-.des span {
-  color: gray;
-  font-size: 12px;
+text-align: left;
+padding-top: 14px;
 }
 
 .des h5 {
-  font-size: 14px;
-  margin: 5px 0;
+font-size: 15px;
+font-weight: 600;
+margin-bottom: 8px;
+line-height: 1.4;
 }
 
-.star {
-  color: gold;
-  font-size: 14px;
+.rating {
+font-size: 14px;
+color: #222;
+margin-bottom: 8px;
 }
 
-.des h4 {
-  color: teal;
-  font-size: 16px;
-  font-weight: 600;
+.rating span {
+color: #777;
+margin-left: 5px;
 }
 
-/* ✅ Responsive Layouts */
-@media (max-width: 1024px) {
-  .proContainer {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 25px;
-  }
+.priceRow {
+display: flex;
+align-items: center;
+gap: 8px;
+flex-wrap: wrap;
+}
+
+.salePrice {
+font-size: 18px;
+font-weight: 700;
+color: #111;
+}
+
+.originalPrice {
+font-size: 14px;
+color: #888;
+text-decoration: line-through;
+}
+
+.discount {
+color: #198754;
+font-size: 13px;
+font-weight: 700;
+}
+
+/* Swiper Styling */
+
+.section :global(.swiper) {
+padding: 10px 5px 50px;
+}
+
+.section :global(.swiper-slide) {
+height: auto;
+}
+
+.section :global(.swiper-button-prev),
+.section :global(.swiper-button-next) {
+color: #000;
+width: 45px;
+height: 45px;
+}
+
+.section :global(.swiper-button-prev::after),
+.section :global(.swiper-button-next::after) {
+font-size: 18px;
+font-weight: 700;
+}
+
+.section :global(.swiper-pagination-bullet) {
+background: #000;
 }
 
 @media (max-width: 768px) {
-  .proContainer {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
-
-  .section {
-    padding: 40px 20px;
-  }
+.section {
+padding: 30px 0;
 }
 
-@media (max-width: 480px) {
-  .proContainer {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
+.quickBtn {
+display: none;
+}
+
+.des h5 {
+font-size: 14px;
+}
+
+.salePrice {
+font-size: 16px;
+}
+
+.section :global(.swiper-button-prev),
+.section :global(.swiper-button-next) {
+display: none;
+}
 }

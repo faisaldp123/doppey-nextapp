@@ -1,0 +1,146 @@
+.section {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 20px;
+  padding: 80px 0;
+}
+
+.left {
+  position: relative;
+  height: 700px;
+  overflow: hidden;
+}
+
+.right {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.smallCard {
+  position: relative;
+  flex: 1;
+  overflow: hidden;
+}
+
+.image {
+  object-fit: cover;
+  transition: 0.5s ease;
+}
+
+.left:hover .image,
+.smallCard:hover .image {
+  transform: scale(1.08);
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.7),
+    rgba(0,0,0,0.2)
+  );
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+
+  padding: 50px;
+  color: white;
+}
+
+.overlay span {
+  font-size: 13px;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+
+.overlay h2 {
+  font-size: 48px;
+  font-weight: 700;
+  max-width: 500px;
+  margin-bottom: 20px;
+}
+
+.overlay p {
+  max-width: 500px;
+  line-height: 1.8;
+  margin-bottom: 25px;
+}
+
+.overlay button {
+  width: fit-content;
+  border: none;
+  background: white;
+  color: black;
+  padding: 14px 28px;
+  font-weight: 600;
+}
+
+.smallOverlay {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  color: white;
+}
+
+.smallOverlay h3 {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+@media (max-width: 992px) {
+  .section {
+    grid-template-columns: 1fr;
+  }
+
+  .left {
+    height: 600px;
+  }
+
+  .right {
+    display: grid;
+    grid-template-columns: repeat(2,1fr);
+  }
+
+  .smallCard {
+    height: 300px;
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 30px 0;
+    gap: 15px;
+  }
+
+  .left {
+    height: 500px;
+  }
+
+  .overlay {
+    padding: 25px;
+  }
+
+  .overlay h2 {
+    font-size: 30px;
+  }
+
+  .overlay p {
+    font-size: 14px;
+  }
+
+  .right {
+    grid-template-columns: 1fr;
+  }
+
+  .smallCard {
+    height: 250px;
+  }
+
+  .smallOverlay h3 {
+    font-size: 20px;
+  }
+}

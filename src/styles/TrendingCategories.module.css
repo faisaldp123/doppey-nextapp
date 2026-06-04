@@ -1,0 +1,170 @@
+.section {
+  padding: 30px 0;
+}
+
+.section h2 {
+  text-align: center;
+  font-size: 34px;
+  font-weight: 700;
+  margin-bottom: 35px;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 40px;
+}
+
+.tabs button {
+  border: none;
+  background: #f3f3f3;
+  padding: 10px 18px;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.active {
+  background: black !important;
+  color: white;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 25px;
+}
+
+.card {
+  cursor: pointer;
+}
+
+.imageWrap {
+  position: relative;
+  overflow: hidden;
+}
+
+.image {
+  width: 100%;
+  height: auto;
+  transition: 0.4s ease;
+}
+
+.card:hover .image {
+  transform: scale(1.05);
+}
+
+.wishlist {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 50%;
+  background: white;
+}
+
+.quickBtn {
+  position: absolute;
+  bottom: -50px;
+  left: 0;
+  width: 100%;
+  border: none;
+  background: rgba(255,255,255,.95);
+  padding: 12px;
+  font-weight: 600;
+  transition: .3s;
+}
+
+.card:hover .quickBtn {
+  bottom: 0;
+}
+
+.content {
+  text-align: left;
+  padding-top: 14px;
+}
+
+.content h5 {
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+
+.price span {
+  font-weight: 700;
+  margin-right: 10px;
+}
+
+.price del {
+  color: #888;
+}
+
+.cartBtn {
+  width: 100%;
+  border: none;
+  background: black;
+  color: white;
+  padding: 12px;
+  margin-top: 12px;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.viewAllWrapper {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.viewAllBtn {
+  border: 2px solid black;
+  background: transparent;
+  padding: 14px 32px;
+  font-weight: 700;
+  transition: 0.3s;
+}
+
+.viewAllBtn:hover {
+  background: black;
+  color: white;
+}
+
+@media (max-width: 992px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .section {
+    padding: 30px 0;
+  }
+
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .quickBtn {
+    display: none;
+  }
+
+  .tabs {
+    justify-content: flex-start;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 10px;
+  }
+
+  .tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tabs button {
+    white-space: nowrap;
+  }
+}

@@ -1,60 +1,45 @@
 "use client";
-import { useEffect } from "react";
-import styles from "../../styles/HeroSection.module.css";
+
 import Image from "next/image";
+import styles from "../../styles/HeroSection.module.css";
 
 export default function HeroSection() {
-  useEffect(() => {
-    import("bootstrap/dist/js/bootstrap.bundle.min.js");
-  }, []);
-
-  const slides = [
-    { img: "/hero/first.jpg" },
-    { img: "/hero/poster-one.png" },
-    { img: "/hero/third.jpg" },
-  ];
-
   return (
-    <div
-      id="heroCarousel"
-      className={`carousel slide ${styles.heroSection}`}
-      data-bs-ride="carousel"
-      data-bs-interval="4000"
-    >
-      <div className="carousel-inner">
-        {slides.map((slide, index) => (
-          <div
-            key={index}
-            className={`carousel-item ${index === 0 ? "active" : ""}`}
-          >
-            <Image
-            width={2200}
-            height={1000}
-              src={slide.img}
-              alt=""
-              className={`${styles.heroImage} h-auto w-100`}
-            />
-          </div>
-        ))}
-      </div>
+    <section className={styles.heroSection}>
+      <div className={styles.imageWrapper}>
+        <Image
+          src="/hero/newww.webp"
+          alt="Doppey Fashion"
+          fill
+          priority
+          quality={100}
+          sizes="100vw"
+          className={styles.heroImage}
+        />
 
-      {/* Controls */}
-      <button
-        className={`carousel-control-prev ${styles.arrowBtn}`}
-        type="button"
-        data-bs-target="#heroCarousel"
-        data-bs-slide="prev"
-      >
-        <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-      </button>
-      <button
-        className={`carousel-control-next ${styles.arrowBtn}`}
-        type="button"
-        data-bs-target="#heroCarousel"
-        data-bs-slide="next"
-      >
-        <span className="carousel-control-next-icon" aria-hidden="true"></span>
-      </button>
-    </div>
+        <div className={styles.overlay}></div>
+
+        <div className={styles.heroContent}>
+          <span className={styles.badge}>
+            NEW COLLECTION
+          </span>
+
+          <h1>
+            STREETWEAR
+            <br />
+            REDEFINED
+          </h1>
+
+          <p>
+            Premium oversized fits designed
+            for everyday comfort.
+          </p>
+
+          <button className={styles.heroBtn}>
+            SHOP NOW
+          </button>
+        </div>
+      </div>
+    </section>
   );
 }

@@ -551,6 +551,11 @@ styled-jsx@5.1.6:
   dependencies:
     client-only "0.0.1"
 
+swiper@^12.2.0:
+  version "12.2.0"
+  resolved "https://registry.npmjs.org/swiper/-/swiper-12.2.0.tgz#f6daa886465abd1bbc42be2f2ce1827cd03c91ea"
+  integrity sha512-K8uXsBZU6ME97Ia3xbBge8IRCnR1lOmIILzvY/jGVic7dSTQ530s3uO8RvXbPUtkkXLWIwmZLRPbtDxRWVAFdg==
+
 tailwindcss@^4.1.14:
   version "4.1.14"
   resolved "https://registry.yarnpkg.com/tailwindcss/-/tailwindcss-4.1.14.tgz#a5907cc2202a2a1f5f15bac6f2031e53117e43a8"
