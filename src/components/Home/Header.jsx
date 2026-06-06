@@ -23,6 +23,7 @@ export default function Header() {
 
   const [mobileNumber, setMobileNumber] = useState("");
   const [otp, setOtp] = useState("");
+  const [step, setStep] = useState(1);
 
   const [activeMegaMenu, setActiveMegaMenu] = useState(null);
 
@@ -378,62 +379,82 @@ export default function Header() {
       {/* OTP LOGIN MODAL */}
 
       {showLogin && (
-        <div className={styles.loginOverlay}>
-          <div className={styles.loginModal}>
+  <div className={styles.loginOverlay}>
+    <div className={styles.loginModal}>
+      <button
+        className={styles.closeBtn}
+        onClick={() => {
+          setShowLogin(false);
+          setStep(1);
+          setOtp("");
+        }}
+      >
+        <X size={22} />
+      </button>
 
-            <button
-              className={styles.closeBtn}
-              onClick={() =>
-                setShowLogin(false)
+      <h3>Login / Signup</h3>
+
+      {step === 1 ? (
+        <>
+          <p>Enter your mobile number</p>
+
+          <input
+            type="tel"
+            placeholder="Mobile Number"
+            value={mobileNumber}
+            onChange={(e) =>
+              setMobileNumber(e.target.value)
+            }
+            className={styles.loginInput}
+          />
+
+          <button
+            className={styles.primaryBtn}
+            onClick={() => {
+              if (mobileNumber.length < 10) {
+                alert("Please enter valid mobile number");
+                return;
               }
-            >
-              <X size={22} />
-            </button>
 
-            <h3>Login / Signup</h3>
+              setStep(2);
+            }}
+          >
+            SEND OTP
+          </button>
+        </>
+      ) : (
+        <>
+          <p>
+            OTP sent to +91 {mobileNumber}
+          </p>
 
-            <p>
-              Enter mobile number to
-              continue
-            </p>
+          <input
+            type="text"
+            placeholder="Enter OTP"
+            value={otp}
+            onChange={(e) =>
+              setOtp(e.target.value)
+            }
+            className={styles.loginInput}
+          />
 
-            <input
-              type="tel"
-              placeholder="Mobile Number"
-              value={mobileNumber}
-              onChange={(e) =>
-                setMobileNumber(
-                  e.target.value
-                )
-              }
-              className={styles.loginInput}
-            />
+          <button
+            className={styles.primaryBtn}
+          >
+            VERIFY OTP
+          </button>
 
-            <button
-              className={styles.primaryBtn}
-            >
-              SEND OTP
-            </button>
-
-            <input
-              type="text"
-              placeholder="Enter OTP"
-              value={otp}
-              onChange={(e) =>
-                setOtp(e.target.value)
-              }
-              className={styles.loginInput}
-            />
-
-            <button
-              className={styles.primaryBtn}
-            >
-              VERIFY OTP
-            </button>
-
-          </div>
-        </div>
+          <button
+            className={styles.secondaryBtn}
+            onClick={() => setStep(1)}
+          >
+            Change Number
+          </button>
+        </>
       )}
+    </div>
+  </div>
+)}
 
       {/* MOBILE MENU */}
 
