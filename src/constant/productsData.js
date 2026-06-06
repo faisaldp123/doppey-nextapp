@@ -1,145 +1,96 @@
 export const productsData = [
-  {
-    id: 1,
-    name: "Cartoon Astronaut T-Shirt",
-    price: 78,
-    image: "/products/product-one.jpg",
-    brand: "adidas",
-    rating: 5,
-    mainCategory: "mens",
-    subCategory: "t-shirts"
-  },
-  {
-    id: 2,
-    name: "Space Graphic Tee",
-    price: 85,
-    image: "/products/product-two.jpg",
-    brand: "adidas",
-    rating: 5,
-    mainCategory: "mens",
-    subCategory: "t-shirts"
-  },
-  {
-    id: 3,
-    name: "Space Graphic Tee",
-    price: 85,
-    image: "/products/product-two.jpg",
-    brand: "adidas",
-    rating: 5,
-    mainCategory: "mens",
-    subCategory: "t-shirts"
-  },
-  {
-    id: 4,
-    name: "Space Graphic Tee",
-    price: 85,
-    image: "/products/product-two.jpg",
-    brand: "adidas",
-    rating: 5,
-    mainCategory: "mens",
-    subCategory: "t-shirts"
-  },
-  {
-    id: 5,
-    name: "Space Graphic Tee",
-    price: 85,
-    image: "/products/product-two.jpg",
-    brand: "adidas",
-    rating: 5,
-    mainCategory: "mens",
-    subCategory: "t-shirts"
-  },
-  {
-    id: 6,
-    name: "Space Graphic Tee",
-    price: 85,
-    image: "/products/product-two.jpg",
-    brand: "adidas",
-    rating: 5,
-    mainCategory: "mens",
-    subCategory: "t-shirts"
-  },
+{
+id: 1,
+name: "Cartoon Astronaut T-Shirt",
+price: 78,
 
+image: "/products/product-one.jpg",
 
-  {
-    id: 7,
-    name: "Galaxy Printed Hoodie",
-    price: 95,
-    image: "/products/product-three.jpg",
-    brand: "adidas",
-    rating: 5,
-    mainCategory: "mens",
-    subCategory: "winter"
-  },
-  {
-    id: 8,
-    name: "Galaxy Printed Hoodie",
-    price: 95,
-    image: "/products/product-three.jpg",
-    brand: "adidas",
-    rating: 5,
-    mainCategory: "mens",
-    subCategory: "winter"
-  },
-  {
-    id: 9,
-    name: "Galaxy Printed Hoodie",
-    price: 95,
-    image: "/products/product-three.jpg",
-    brand: "adidas",
-    rating: 5,
-    mainCategory: "mens",
-    subCategory: "winter"
-  },
-  {
-    id: 10,
-    name: "Galaxy Printed Hoodie",
-    price: 95,
-    image: "/products/product-three.jpg",
-    brand: "adidas",
-    rating: 5,
-    mainCategory: "mens",
-    subCategory: "winter"
-  },
-  {
-    id: 11,
-    name: "Cosmic Oversized Tee",
-    price: 70,
-    image: "/products/product-four.jpg",
-    brand: "adidas",
-    rating: 5,
-    mainCategory: "mens",
-    subCategory: "summer"
-  },
-  {
-    id: 12,
-    name: "Cosmic Oversized Tee",
-    price: 70,
-    image: "/products/product-four.jpg",
-    brand: "adidas",
-    rating: 5,
-    mainCategory: "mens",
-    subCategory: "summer"
-  },
-  {
-    id: 13,
-    name: "Cosmic Oversized Tee",
-    price: 70,
-    image: "/products/product-four.jpg",
-    brand: "adidas",
-    rating: 5,
-    mainCategory: "mens",
-    subCategory: "summer"
-  },
-  {
-    id: 14,
-    name: "Cosmic Oversized Tee",
-    price: 70,
-    image: "/products/product-four.jpg",
-    brand: "adidas",
-    rating: 5,
-    mainCategory: "mens",
-    subCategory: "summer"
-  },
-  // Add more for women, kids...
+images: [
+  "/products/product-one.jpg",
+  "/products/product-two.jpg",
+  "/products/product-three.jpg",
+  "/products/product-four.jpg",
+],
+
+brand: "Adidas",
+
+rating: 5,
+
+stock: 25,
+
+sku: "TSHIRT-001",
+
+description:
+  "Premium oversized t-shirt crafted from high quality cotton fabric for maximum comfort and style. Designed for everyday wear with a modern streetwear aesthetic.",
+
+shipping:
+  "Free shipping across India. Orders are delivered within 3-7 business days.",
+
+care:
+  "Machine wash cold. Do not bleach. Tumble dry low. Iron on low heat.",
+
+material: "100% Cotton",
+
+fit: "Oversized Fit",
+
+sizes: ["S", "M", "L", "XL"],
+
+colors: [
+  "Black",
+  "White",
+  "Blue"
+],
+
+mainCategory: "mens",
+subCategory: "t-shirts",
+
+},
+
+{
+id: 2,
+name: "Space Graphic Tee",
+price: 85,
+
+image: "/products/product-two.jpg",
+
+images: [
+  "/products/product-two.jpg",
+  "/products/product-one.jpg",
+  "/products/product-three.jpg",
+  "/products/product-four.jpg",
+],
+
+brand: "Adidas",
+
+rating: 5,
+
+stock: 15,
+
+sku: "TSHIRT-002",
+
+description:
+  "Comfort fit graphic t-shirt made from premium cotton with soft breathable fabric.",
+
+shipping:
+  "Free shipping across India. Orders are delivered within 3-7 business days.",
+
+care:
+  "Machine wash cold. Do not bleach. Iron at low temperature.",
+
+material: "100% Cotton",
+
+fit: "Regular Fit",
+
+sizes: ["S", "M", "L", "XL"],
+
+colors: [
+  "Black",
+  "Grey"
+],
+
+mainCategory: "mens",
+subCategory: "t-shirts",
+
+}
 ];

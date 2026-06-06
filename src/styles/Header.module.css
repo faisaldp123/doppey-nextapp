@@ -76,6 +76,16 @@
   color: #666;
 }
 
+.secondaryBtn {
+  width: 100%;
+  margin-top: 12px;
+  padding: 14px;
+  background: #f5f5f5;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+}
+
 .navLink::after {
   content: "";
   position: absolute;
@@ -135,6 +145,7 @@
 ========================= */
 
 .genderNav {
+  position: relative;
   height: 50px;
   border-top: 1px solid #eee;
   display: flex;
@@ -144,7 +155,7 @@
 }
 
 .genderItem {
-  position: relative;
+  position: static;
 }
 
 .genderBtn {
@@ -163,18 +174,22 @@
    MEGA MENU
 ========================= */
 
+
 .megaMenu {
-  position: absolute;
+  position: fixed;
+  top: 157px;
   left: 50%;
   transform: translateX(-50%);
-  top: 100%;
-  width: 1200px;
+
   background: #fff;
-  display: flex;
-  padding: 35px;
-  box-shadow: 0 10px 40px rgba(0,0,0,.08);
   border-top: 1px solid #eee;
-  z-index: 999;
+  box-shadow: 0 20px 50px rgba(0,0,0,.08);
+
+  display: flex;
+  gap: 40px;
+
+  padding: 35px;
+  z-index: 9999;
 }
 
 .megaLeft {
@@ -448,5 +463,8 @@
   .iconBtn svg {
     width: 20px;
     height: 20px;
+  }
+   .headerIcons a[href="/wishlist"]{
+    display:none;
   }
 }
