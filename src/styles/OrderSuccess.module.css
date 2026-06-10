@@ -1,0 +1,182 @@
+.successPage {
+  min-height: 100vh;
+  background: #f8f8f8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 120px 20px 40px;
+}
+
+.successCard {
+  width: 100%;
+  max-width: 700px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 50px 40px;
+  text-align: center;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.08);
+  margin-top: 70px;
+}
+
+.orderNumber {
+  margin-bottom: 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #666;
+  letter-spacing: 1px;
+}
+
+.trackBtn {
+  background: #111;
+  color: white;
+}
+
+.successIcon {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  background: #111;
+  color: #fff;
+  font-size: 42px;
+  font-weight: 700;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 25px;
+}
+
+.successCard h1 {
+  font-size: 38px;
+  color: #111;
+  margin-bottom: 15px;
+}
+
+.successCard p {
+  color: #666;
+  line-height: 1.7;
+  margin-bottom: 30px;
+}
+
+.orderInfo {
+  border: 1px solid #ececec;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 30px;
+}
+
+.orderInfo div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.orderInfo div:last-child {
+  margin-bottom: 0;
+}
+
+.orderInfo span {
+  color: #777;
+}
+
+.orderInfo strong {
+  color: #111;
+}
+
+.btnGroup {
+  display: flex;
+  gap: 15px;
+}
+
+.btnGroup button {
+  flex: 1;
+  height: 55px;
+  border: none;
+  border-radius: 10px;
+  background: #111;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btnGroup button:hover {
+  transform: translateY(-2px);
+}
+
+.secondary {
+  background: #efefef !important;
+  color: #111 !important;
+}
+
+.checkoutSteps {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.completedStep {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+  color: #111;
+}
+
+.completedStep span {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  background: #111;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stepLine {
+  width: 80px;
+  height: 2px;
+  background: #111;
+  margin: 0 15px;
+}
+
+
+@media (max-width: 768px) {
+  .successCard {
+    padding: 35px 20px;
+  }
+
+  .successCard h1 {
+    font-size: 28px;
+  }
+
+  .btnGroup {
+    flex-direction: column;
+  }
+  .checkoutSteps {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .stepLine {
+    width: 40px;
+  }
+}
+
+@media (max-width: 480px) {
+  .successPage {
+    padding: 100px 15px 30px;
+  }
+
+  .successCard h1 {
+    font-size: 24px;
+  }
+
+  .successIcon {
+    width: 75px;
+    height: 75px;
+    font-size: 34px;
+  }
+}

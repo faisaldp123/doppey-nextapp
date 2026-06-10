@@ -1,14 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Heart, ShoppingBag } from "lucide-react";
+
+import { useRouter } from "next/navigation";
 
 import styles from "../../styles/TrendingCategories.module.css";
 
 export default function TrendingCategories() {
   const [active, setActive] = useState("ALL");
   const [wishlist, setWishlist] = useState([]);
+  const router = useRouter();
 
   const categories = [
     "ALL",
@@ -96,6 +99,19 @@ export default function TrendingCategories() {
     },
   ];
 
+  useEffect(() => {
+  const wishlistItems =
+    JSON.parse(
+      localStorage.getItem("wishlist")
+    ) || [];
+
+  setWishlist(
+    wishlistItems.map(
+      (item) => item.id
+    )
+  );
+}, []);
+
   const filtered =
     active === "ALL"
       ? products
@@ -103,15 +119,47 @@ export default function TrendingCategories() {
           (item) => item.category === active
         );
 
-  const toggleWishlist = (id) => {
-    if (wishlist.includes(id)) {
-      setWishlist(
-        wishlist.filter((item) => item !== id)
+  const toggleWishlist = (product) => {
+  const existingWishlist =
+    JSON.parse(
+      localStorage.getItem("wishlist")
+    ) || [];
+
+  const alreadyExists =
+    existingWishlist.find(
+      (item) => item.id === product.id
+    );
+
+  let updatedWishlist;
+
+  if (alreadyExists) {
+    updatedWishlist =
+      existingWishlist.filter(
+        (item) =>
+          item.id !== product.id
       );
-    } else {
-      setWishlist([...wishlist, id]);
-    }
-  };
+  } else {
+    updatedWishlist = [
+      ...existingWishlist,
+      product,
+    ];
+  }
+
+  localStorage.setItem(
+    "wishlist",
+    JSON.stringify(updatedWishlist)
+  );
+
+  setWishlist(
+    updatedWishlist.map(
+      (item) => item.id
+    )
+  );
+
+  window.dispatchEvent(
+    new Event("storage")
+  );
+};
 
   return (
     <section className={styles.section}>
@@ -159,13 +207,67 @@ function ProductCard({
   toggleWishlist,
 }) {
   const [hover, setHover] = useState(false);
+  const [added, setAdded] = useState(false);
+  const router = useRouter();
+
+useEffect(() => {
+  const cart =
+    JSON.parse(
+      localStorage.getItem("cart")
+    ) || [];
+
+  const exists = cart.find(
+    (product) =>
+      product.id === item.id
+  );
+
+  setAdded(!!exists);
+}, [item.id]);
+
+  const handleAddToCart = () => {
+    const existingCart =
+      JSON.parse(localStorage.getItem("cart")) || [];
+
+    const alreadyExists = existingCart.find(
+      (product) => product.id === item.id
+    );
+
+    if (alreadyExists) {
+      alert("This product is already in your cart.");
+      setAdded(true);
+      return;
+    }
+
+    const updatedCart = [...existingCart, item];
+
+    localStorage.setItem(
+  "cart",
+  JSON.stringify(updatedCart)
+);
+
+// Update header cart count instantly
+window.dispatchEvent(
+  new Event("storage")
+);
+
+setAdded(true);
+
+alert(
+  `${item.name} has been added to your cart successfully!`
+);
+  };
 
   return (
     <div
-      className={styles.card}
-      onMouseEnter={() => setHover(true)}
-      onMouseLeave={() => setHover(false)}
-    >
+  className={styles.card}
+  onMouseEnter={() => setHover(true)}
+  onMouseLeave={() => setHover(false)}
+  onClick={() => {
+    if (window.innerWidth <= 768) {
+      router.push(`/product/${item.id}`);
+    }
+  }}
+>
       <div className={styles.imageWrap}>
         <Image
           src={hover ? item.img2 : item.img1}
@@ -176,11 +278,12 @@ function ProductCard({
         />
 
         <button
-          className={styles.wishlist}
-          onClick={() =>
-            toggleWishlist(item.id)
-          }
-        >
+  className={styles.wishlist}
+  onClick={(e) => {
+    e.stopPropagation();
+    toggleWishlist(item);
+  }}
+> 
           <Heart
             size={18}
             fill={
@@ -191,9 +294,15 @@ function ProductCard({
           />
         </button>
 
-        <button className={styles.quickBtn}>
-          QUICK VIEW
-        </button>
+        <button
+  className={styles.quickBtn}
+  onClick={(e) => {
+    e.stopPropagation();
+    router.push(`/product/${item.id}`);
+  }}
+>
+  QUICK VIEW
+</button>
       </div>
 
       <div className={styles.content}>
@@ -204,9 +313,20 @@ function ProductCard({
           <del>{item.oldPrice}</del>
         </div>
 
-        <button className={styles.cartBtn}>
+        <button
+          className={`${styles.cartBtn} ${
+            added ? styles.addedBtn : ""
+          }`}
+          onClick={(e) => {
+  e.stopPropagation();
+  handleAddToCart();
+}}
+          disabled={added}
+        >
           <ShoppingBag size={16} />
-          Add To Cart
+          {added
+            ? "Added To Cart ✓"
+            : "Add To Cart"}
         </button>
       </div>
     </div>

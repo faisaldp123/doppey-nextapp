@@ -19,6 +19,12 @@ rating: 5,
 
 stock: 25,
 
+isBestSeller: true,
+
+isNewArrival: true,
+
+discount: 20,
+
 sku: "TSHIRT-001",
 
 description:
@@ -66,6 +72,12 @@ brand: "Adidas",
 rating: 5,
 
 stock: 15,
+
+isBestSeller: true,
+
+isNewArrival: true,
+
+discount: 20,
 
 sku: "TSHIRT-002",
 

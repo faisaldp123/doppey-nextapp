@@ -133,6 +133,13 @@
   color: white;
 }
 
+.addedBtn {
+  background: #111;
+  color: #fff;
+  cursor: not-allowed;
+  opacity: 0.9;
+}
+
 @media (max-width: 992px) {
   .grid {
     grid-template-columns: repeat(3, 1fr);
