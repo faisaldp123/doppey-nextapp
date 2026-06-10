@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -24,6 +24,11 @@ export default function Header() {
   const [mobileNumber, setMobileNumber] = useState("");
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState(1);
+  const [cartCount, setCartCount] =
+  useState(0);
+
+const [wishlistCount, setWishlistCount] =
+  useState(0);
 
   const [activeMegaMenu, setActiveMegaMenu] = useState(null);
 
@@ -162,6 +167,48 @@ export default function Header() {
     },
   };
 
+  useEffect(() => {
+  const updateCounts = () => {
+    const cart =
+      JSON.parse(
+        localStorage.getItem("cart")
+      ) || [];
+
+    const wishlist =
+      JSON.parse(
+        localStorage.getItem("wishlist")
+      ) || [];
+
+    const totalQuantity =
+  cart.reduce(
+    (total, item) =>
+      total +
+      (item.quantity || 1),
+    0
+  );
+
+setCartCount(totalQuantity);
+
+    setWishlistCount(
+      wishlist.length
+    );
+  };
+
+  updateCounts();
+
+  window.addEventListener(
+    "storage",
+    updateCounts
+  );
+
+  return () => {
+    window.removeEventListener(
+      "storage",
+      updateCounts
+    );
+  };
+}, []);
+
   return (
     <>
       {/* Announcement Bar */}
@@ -226,11 +273,19 @@ export default function Header() {
               </button>
 
               <Link
-                href="/wishlist"
-                className={styles.iconBtn}
-              >
-                <Heart size={20} />
-              </Link>
+  href="/wishlist"
+  className={styles.iconBtn}
+>
+  <Heart size={20} />
+
+  {wishlistCount > 0 && (
+    <span
+      className={styles.wishlistCount}
+    >
+      {wishlistCount}
+    </span>
+  )}
+</Link>
 
               <button
                 className={styles.iconBtn}
@@ -240,14 +295,19 @@ export default function Header() {
               </button>
 
               <Link
-                href="/cart"
-                className={styles.iconBtn}
-              >
-                <ShoppingBag size={20} />
-                <span className={styles.cartCount}>
-                  0
-                </span>
-              </Link>
+  href="/cart"
+  className={styles.iconBtn}
+>
+  <ShoppingBag size={20} />
+
+  {cartCount > 0 && (
+    <span
+      className={styles.cartCount}
+    >
+      {cartCount}
+    </span>
+  )}
+</Link>
 
             </div>
           </div>
