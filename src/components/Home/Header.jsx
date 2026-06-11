@@ -131,7 +131,7 @@ export default function Header() {
             {/* Logo */}
             <Link href="/" className={styles.logoWrap}>
               <Image
-                src="/logo-new.bmp"
+                src="/logo-new.webp"
                 alt="Doppey"
                 width={180}
                 height={60}
