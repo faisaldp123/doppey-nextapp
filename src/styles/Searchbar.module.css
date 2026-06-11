@@ -1,0 +1,361 @@
+/* ══════════════════════════════════════════
+   SearchBar.module.css
+   Desktop : slides down as a panel below the fixed header
+   Mobile  : fullscreen takeover (starts from top: 0, covers everything)
+   
+   Header stack heights (from Header.module.css):
+     topBar  = 35px  (z-index 10000)
+     header  = 72px (row1) + 50px (row2) + 1px border = ~123px  (z-index 9999)
+     Total   = 35 + 123 = 158px
+   ══════════════════════════════════════════ */
+
+/* ── Overlay wrapper ── */
+.overlay {
+  position: fixed;
+  /* sit exactly below the full header stack on desktop */
+  top: 158px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 19000;   /* above header (9999) but below mobile drawer (25000) */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── Blurred backdrop fills the remaining viewport below header ── */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.38);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  animation: fadeIn 0.18s ease;
+}
+
+/* ── The white panel drops straight down from header bottom ── */
+.panel {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 680px;
+  background: #fff;
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 14px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.13);
+  animation: slideDown 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+/* ── Input row ── */
+.inputRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 22px;
+  border-bottom: 1px solid #f0f0f0;
+  background: #fff;
+}
+
+.inputIcon {
+  color: #aaa;
+  flex-shrink: 0;
+}
+
+.input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 15px;
+  font-family: inherit;
+  color: #111;
+  background: transparent;
+  letter-spacing: 0.01em;
+  min-width: 0; /* prevents overflow in flex */
+}
+
+.input::placeholder {
+  color: #bbb;
+  font-weight: 400;
+}
+
+/* Hide WebKit default clear button */
+.input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.clearBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f0;
+  border: none;
+  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
+  color: #555;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+.clearBtn:hover {
+  background: #e0e0e0;
+}
+
+.cancelBtn {
+  background: none;
+  border: none;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #111;
+  cursor: pointer;
+  padding: 4px 2px;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  transition: color 0.15s;
+  white-space: nowrap;
+}
+
+.cancelBtn:hover {
+  color: #666;
+}
+
+/* ── Body ── */
+.body {
+  padding: 6px 0 18px;
+  max-height: calc(100vh - 158px - 60px); /* viewport minus header minus inputRow */
+  overflow-y: auto;
+  background: #fff;
+}
+
+/* ── Section ── */
+.section {
+  padding: 14px 22px 6px;
+}
+
+.sectionHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.sectionHead > span {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #999;
+}
+
+.clearAllBtn {
+  background: none;
+  border: none;
+  font-size: 11px;
+  font-weight: 600;
+  color: #e63946;
+  cursor: pointer;
+  letter-spacing: 0.03em;
+  padding: 0;
+  text-transform: uppercase;
+  transition: opacity 0.15s;
+}
+
+.clearAllBtn:hover {
+  opacity: 0.7;
+}
+
+/* ── Pill list ── */
+.pillList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 13px 7px 11px;
+  border: 1px solid #e8e8e8;
+  border-radius: 100px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #333;
+  cursor: pointer;
+  background: #fafafa;
+  transition: border-color 0.15s, background 0.15s;
+  user-select: none;
+}
+
+.pill svg {
+  color: #aaa;
+  flex-shrink: 0;
+}
+
+.pill:hover {
+  border-color: #111;
+  background: #f4f4f4;
+}
+
+.pillTrending {
+  background: #fff7f0;
+  border-color: #fde0cc;
+}
+
+.pillTrending svg {
+  color: #e8743b;
+}
+
+.pillTrending:hover {
+  border-color: #e8743b;
+  background: #fdeee4;
+}
+
+.pillRemove {
+  background: none;
+  border: none;
+  padding: 0;
+  margin-left: 2px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #ccc;
+  transition: color 0.15s;
+}
+
+.pillRemove:hover {
+  color: #e63946;
+}
+
+/* ── Suggestion list (while typing) ── */
+.suggestionList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.suggestionItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 22px;
+  font-size: 14px;
+  color: #222;
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.suggestionItem:hover {
+  background: #f7f7f7;
+}
+
+.suggIcon {
+  color: #ccc;
+  flex-shrink: 0;
+}
+
+.arrowIcon {
+  margin-left: auto;
+  color: #ccc;
+  flex-shrink: 0;
+}
+
+.suggestionItem mark {
+  background: none;
+  color: #111;
+  font-weight: 700;
+}
+
+.noResult {
+  padding: 28px 22px;
+  font-size: 14px;
+  color: #aaa;
+  text-align: center;
+}
+
+/* ══════════════════════════════════════════
+   TABLET (991px and below) — header loses genderNav row
+   topBar 35px + header row1 65px = 100px
+   ══════════════════════════════════════════ */
+@media (max-width: 991px) {
+  .overlay {
+    top: 100px; /* topBar(35) + headerTop(65) */
+  }
+
+  .body {
+    max-height: calc(100vh - 100px - 58px);
+  }
+}
+
+/* ══════════════════════════════════════════
+   MOBILE (640px and below) — fullscreen takeover
+   ══════════════════════════════════════════ */
+@media (max-width: 640px) {
+  .overlay {
+    top: 0;           /* cover everything including header */
+    align-items: stretch;
+    z-index: 26000;   /* above mobile drawer (25000) */
+  }
+
+  .backdrop {
+    display: none;    /* no backdrop needed — panel is fullscreen */
+  }
+
+  .panel {
+    max-width: 100%;
+    height: 100dvh;
+    border-radius: 0;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    animation: slideDown 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .inputRow {
+    /* Give breathing room so it clears the status bar / notch area */
+    padding: 14px 16px;
+    padding-top: max(14px, env(safe-area-inset-top));
+  }
+
+  .input {
+    font-size: 16px; /* Prevents iOS auto-zoom on focus */
+  }
+
+  .body {
+    flex: 1;
+    max-height: none;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .section {
+    padding: 14px 16px 6px;
+  }
+
+  .suggestionItem {
+    padding: 14px 16px;
+  }
+}
+
+/* ── Animations ── */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
