@@ -39,7 +39,7 @@ export default function App({ Component, pageProps }) {
     <main className={redhat.className}>
       <Head>
         {/* Add the favicon here */}
-        <link rel="icon" href="/final-new-fevicon.png" />
+        <link rel="icon" href="/favicon.ico" />
         {/* Optionally, you can use a PNG or other file type */}
         {/* <link rel="icon" href="/favicon.png" /> */}
         <title>Doppey shopping app</title> {/* Optional title change */}
