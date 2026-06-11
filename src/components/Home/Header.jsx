@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import Searchbar from "./Searchbar";
 
 import {
   ShoppingBag,
@@ -24,51 +25,20 @@ export default function Header() {
   const [mobileNumber, setMobileNumber] = useState("");
   const [otp, setOtp] = useState("");
   const [step, setStep] = useState(1);
-  const [cartCount, setCartCount] =
-  useState(0);
-
-const [wishlistCount, setWishlistCount] =
-  useState(0);
-
+  const [cartCount, setCartCount] = useState(0);
+  const [wishlistCount, setWishlistCount] = useState(0);
   const [activeMegaMenu, setActiveMegaMenu] = useState(null);
 
   const mainLinks = [
-    {
-      name: "NEW ARRIVALS",
-      href: "/new-arrivals",
-    },
-    {
-      name: "BEST SELLERS",
-      href: "/best-sellers",
-    },
-    {
-      name: "CLEARANCE SALE",
-      href: "/clearance-sale",
-    },
-    {
-      name: "DENIMS",
-      href: "/denims",
-    },
-    {
-      name: "TOPS",
-      href: "/tops",
-    },
-    {
-      name: "PANTS & TROUSERS",
-      href: "/pants-trousers",
-    },
-    {
-      name: "SKIRTS",
-      href: "/skirts",
-    },
-    {
-      name: "CORD SETS",
-      href: "/cord-sets",
-    },
-    {
-      name: "ACCESSORIES",
-      href: "/accessories",
-    },
+    { name: "NEW ARRIVALS", href: "/new-arrivals" },
+    { name: "BEST SELLERS", href: "/best-sellers" },
+    { name: "CLEARANCE SALE", href: "/clearance-sale" },
+    { name: "DENIMS", href: "/denims" },
+    { name: "TOPS", href: "/tops" },
+    { name: "PANTS & TROUSERS", href: "/pants-trousers" },
+    { name: "SKIRTS", href: "/skirts" },
+    { name: "CORD SETS", href: "/cord-sets" },
+    { name: "ACCESSORIES", href: "/accessories" },
   ];
 
   const megaMenus = {
@@ -83,29 +53,12 @@ const [wishlistCount, setWishlistCount] =
         "Hoodies",
         "Accessories",
       ],
-
       products: [
-        {
-          image: "/products/product-one.jpg",
-          title: "Oversized Tee",
-          price: "₹999",
-          oldPrice: "₹1499",
-        },
-        {
-          image: "/products/product-two.jpg",
-          title: "Cargo Pant",
-          price: "₹1499",
-          oldPrice: "₹2499",
-        },
-        {
-          image: "/products/product-three.jpg",
-          title: "Premium Hoodie",
-          price: "₹1999",
-          oldPrice: "₹2999",
-        },
+        { image: "/products/product-one.jpg", title: "Oversized Tee", price: "₹999", oldPrice: "₹1499" },
+        { image: "/products/product-two.jpg", title: "Cargo Pant", price: "₹1499", oldPrice: "₹2499" },
+        { image: "/products/product-three.jpg", title: "Premium Hoodie", price: "₹1999", oldPrice: "₹2999" },
       ],
     },
-
     WOMEN: {
       categories: [
         "Tops",
@@ -117,29 +70,12 @@ const [wishlistCount, setWishlistCount] =
         "Dresses",
         "Accessories",
       ],
-
       products: [
-        {
-          image: "/products/product-four.jpg",
-          title: "Oversized Top",
-          price: "₹899",
-          oldPrice: "₹1499",
-        },
-        {
-          image: "/products/product-five.jpg",
-          title: "Skirt",
-          price: "₹1299",
-          oldPrice: "₹1999",
-        },
-        {
-          image: "/products/product-six.jpg",
-          title: "Co-Ord Set",
-          price: "₹1999",
-          oldPrice: "₹2999",
-        },
+        { image: "/products/product-four.jpg", title: "Oversized Top", price: "₹899", oldPrice: "₹1499" },
+        { image: "/products/product-five.jpg", title: "Skirt", price: "₹1299", oldPrice: "₹1999" },
+        { image: "/products/product-six.jpg", title: "Co-Ord Set", price: "₹1999", oldPrice: "₹2999" },
       ],
     },
-
     KIDS: {
       categories: [
         "New Arrivals",
@@ -149,85 +85,42 @@ const [wishlistCount, setWishlistCount] =
         "Joggers",
         "Winter Wear",
       ],
-
       products: [
-        {
-          image: "/products/product-seven.jpg",
-          title: "Kids Tee",
-          price: "₹699",
-          oldPrice: "₹999",
-        },
-        {
-          image: "/products/product-eight.jpg",
-          title: "Kids Jogger",
-          price: "₹899",
-          oldPrice: "₹1299",
-        },
+        { image: "/products/product-seven.jpg", title: "Kids Tee", price: "₹699", oldPrice: "₹999" },
+        { image: "/products/product-eight.jpg", title: "Kids Jogger", price: "₹899", oldPrice: "₹1299" },
       ],
     },
   };
 
   useEffect(() => {
-  const updateCounts = () => {
-    const cart =
-      JSON.parse(
-        localStorage.getItem("cart")
-      ) || [];
+    const updateCounts = () => {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+      const totalQuantity = cart.reduce((total, item) => total + (item.quantity || 1), 0);
+      setCartCount(totalQuantity);
+      setWishlistCount(wishlist.length);
+    };
 
-    const wishlist =
-      JSON.parse(
-        localStorage.getItem("wishlist")
-      ) || [];
-
-    const totalQuantity =
-  cart.reduce(
-    (total, item) =>
-      total +
-      (item.quantity || 1),
-    0
-  );
-
-setCartCount(totalQuantity);
-
-    setWishlistCount(
-      wishlist.length
-    );
-  };
-
-  updateCounts();
-
-  window.addEventListener(
-    "storage",
-    updateCounts
-  );
-
-  return () => {
-    window.removeEventListener(
-      "storage",
-      updateCounts
-    );
-  };
-}, []);
+    updateCounts();
+    window.addEventListener("storage", updateCounts);
+    return () => window.removeEventListener("storage", updateCounts);
+  }, []);
 
   return (
     <>
       {/* Announcement Bar */}
-
       <div className={styles.topBar}>
         FREE SHIPPING ON ORDERS ABOVE ₹999
       </div>
 
       {/* Main Header */}
-
       <header className={styles.header}>
         <div className="container-fluid">
 
           {/* ROW 1 */}
-
           <div className={styles.headerTop}>
 
             {/* Mobile Menu */}
-
             <button
               className={styles.mobileMenuBtn}
               onClick={() => setMenuOpen(true)}
@@ -236,7 +129,6 @@ setCartCount(totalQuantity);
             </button>
 
             {/* Logo */}
-
             <Link href="/" className={styles.logoWrap}>
               <Image
                 src="/logo-new.bmp"
@@ -248,21 +140,15 @@ setCartCount(totalQuantity);
             </Link>
 
             {/* Main Navigation */}
-
             <nav className={styles.mainNav}>
               {mainLinks.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className={styles.navLink}
-                >
+                <Link key={item.name} href={item.href} className={styles.navLink}>
                   {item.name}
                 </Link>
               ))}
             </nav>
 
             {/* Icons */}
-
             <div className={styles.headerIcons}>
 
               <button
@@ -272,20 +158,12 @@ setCartCount(totalQuantity);
                 <Search size={20} />
               </button>
 
-              <Link
-  href="/wishlist"
-  className={styles.iconBtn}
->
-  <Heart size={20} />
-
-  {wishlistCount > 0 && (
-    <span
-      className={styles.wishlistCount}
-    >
-      {wishlistCount}
-    </span>
-  )}
-</Link>
+              <Link href="/wishlist" className={styles.iconBtn}>
+                <Heart size={20} />
+                {wishlistCount > 0 && (
+                  <span className={styles.wishlistCount}>{wishlistCount}</span>
+                )}
+              </Link>
 
               <button
                 className={styles.iconBtn}
@@ -294,38 +172,24 @@ setCartCount(totalQuantity);
                 <User size={20} />
               </button>
 
-              <Link
-  href="/cart"
-  className={styles.iconBtn}
->
-  <ShoppingBag size={20} />
-
-  {cartCount > 0 && (
-    <span
-      className={styles.cartCount}
-    >
-      {cartCount}
-    </span>
-  )}
-</Link>
+              <Link href="/cart" className={styles.iconBtn}>
+                <ShoppingBag size={20} />
+                {cartCount > 0 && (
+                  <span className={styles.cartCount}>{cartCount}</span>
+                )}
+              </Link>
 
             </div>
           </div>
 
           {/* ROW 2 */}
-
           <div className={styles.genderNav}>
-
             {["MEN", "WOMEN", "KIDS"].map((item) => (
               <div
                 key={item}
                 className={styles.genderItem}
-                onMouseEnter={() =>
-                  setActiveMegaMenu(item)
-                }
-                onMouseLeave={() =>
-                  setActiveMegaMenu(null)
-                }
+                onMouseEnter={() => setActiveMegaMenu(item)}
+                onMouseLeave={() => setActiveMegaMenu(null)}
               >
                 <button className={styles.genderBtn}>
                   {item}
@@ -334,242 +198,133 @@ setCartCount(totalQuantity);
 
                 {activeMegaMenu === item && (
                   <div className={styles.megaMenu}>
-                                        <div className={styles.megaLeft}>
+                    <div className={styles.megaLeft}>
                       <h4>SHOP {item}</h4>
-
                       <ul>
-                        {megaMenus[item].categories.map(
-                          (category, index) => (
-                            <li key={index}>
-                              <Link
-                                href={`/category/${category
-                                  .toLowerCase()
-                                  .replace(/\s+/g, "-")}`}
-                              >
-                                {category}
-                              </Link>
-                            </li>
-                          )
-                        )}
+                        {megaMenus[item].categories.map((category, index) => (
+                          <li key={index}>
+                            <Link href={`/category/${category.toLowerCase().replace(/\s+/g, "-")}`}>
+                              {category}
+                            </Link>
+                          </li>
+                        ))}
                       </ul>
                     </div>
 
                     <div className={styles.megaRight}>
-                      {megaMenus[item].products.map(
-                        (product, index) => (
-                          <div
-                            key={index}
-                            className={styles.productCard}
-                          >
-                            <Image
-                              src={product.image}
-                              alt={product.title}
-                              width={300}
-                              height={380}
-                              className={
-                                styles.productImage
-                              }
-                            />
-
-                            <h5>{product.title}</h5>
-
-                            <div
-                              className={
-                                styles.productPrice
-                              }
-                            >
-                              <span>
-                                {product.price}
-                              </span>
-
-                              <del>
-                                {product.oldPrice}
-                              </del>
-                            </div>
-
-                            <Link
-                              href="/shop"
-                              className={
-                                styles.shopNowBtn
-                              }
-                            >
-                              SHOP NOW
-                            </Link>
+                      {megaMenus[item].products.map((product, index) => (
+                        <div key={index} className={styles.productCard}>
+                          <Image
+                            src={product.image}
+                            alt={product.title}
+                            width={300}
+                            height={380}
+                            className={styles.productImage}
+                          />
+                          <h5>{product.title}</h5>
+                          <div className={styles.productPrice}>
+                            <span>{product.price}</span>
+                            <del>{product.oldPrice}</del>
                           </div>
-                        )
-                      )}
+                          <Link href="/shop" className={styles.shopNowBtn}>
+                            SHOP NOW
+                          </Link>
+                        </div>
+                      ))}
                     </div>
-
                   </div>
                 )}
               </div>
             ))}
-
           </div>
+
         </div>
       </header>
 
-      {/* SEARCH OVERLAY */}
+      {/* SEARCH — handled by Searchbar component */}
+      <Searchbar open={showSearch} onClose={() => setShowSearch(false)} />
 
-      {showSearch && (
-        <div className={styles.searchOverlay}>
-          <div className={styles.searchModal}>
-
+      {/* OTP LOGIN MODAL */}
+      {showLogin && (
+        <div className={styles.loginOverlay}>
+          <div className={styles.loginModal}>
             <button
               className={styles.closeBtn}
-              onClick={() =>
-                setShowSearch(false)
-              }
+              onClick={() => {
+                setShowLogin(false);
+                setStep(1);
+                setOtp("");
+              }}
             >
-              <X size={24} />
+              <X size={22} />
             </button>
 
-            <h3>Search Products</h3>
+            <h3>Login / Signup</h3>
 
-            <input
-              type="text"
-              placeholder="Search for products..."
-              className={styles.searchInput}
-            />
-
+            {step === 1 ? (
+              <>
+                <p>Enter your mobile number</p>
+                <input
+                  type="tel"
+                  placeholder="Mobile Number"
+                  value={mobileNumber}
+                  onChange={(e) => setMobileNumber(e.target.value)}
+                  className={styles.loginInput}
+                />
+                <button
+                  className={styles.primaryBtn}
+                  onClick={() => {
+                    if (mobileNumber.length < 10) {
+                      alert("Please enter valid mobile number");
+                      return;
+                    }
+                    setStep(2);
+                  }}
+                >
+                  SEND OTP
+                </button>
+              </>
+            ) : (
+              <>
+                <p>OTP sent to +91 {mobileNumber}</p>
+                <input
+                  type="text"
+                  placeholder="Enter OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  className={styles.loginInput}
+                />
+                <button className={styles.primaryBtn}>VERIFY OTP</button>
+                <button className={styles.secondaryBtn} onClick={() => setStep(1)}>
+                  Change Number
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
 
-      {/* OTP LOGIN MODAL */}
-
-      {showLogin && (
-  <div className={styles.loginOverlay}>
-    <div className={styles.loginModal}>
-      <button
-        className={styles.closeBtn}
-        onClick={() => {
-          setShowLogin(false);
-          setStep(1);
-          setOtp("");
-        }}
-      >
-        <X size={22} />
-      </button>
-
-      <h3>Login / Signup</h3>
-
-      {step === 1 ? (
-        <>
-          <p>Enter your mobile number</p>
-
-          <input
-            type="tel"
-            placeholder="Mobile Number"
-            value={mobileNumber}
-            onChange={(e) =>
-              setMobileNumber(e.target.value)
-            }
-            className={styles.loginInput}
-          />
-
-          <button
-            className={styles.primaryBtn}
-            onClick={() => {
-              if (mobileNumber.length < 10) {
-                alert("Please enter valid mobile number");
-                return;
-              }
-
-              setStep(2);
-            }}
-          >
-            SEND OTP
-          </button>
-        </>
-      ) : (
-        <>
-          <p>
-            OTP sent to +91 {mobileNumber}
-          </p>
-
-          <input
-            type="text"
-            placeholder="Enter OTP"
-            value={otp}
-            onChange={(e) =>
-              setOtp(e.target.value)
-            }
-            className={styles.loginInput}
-          />
-
-          <button
-            className={styles.primaryBtn}
-          >
-            VERIFY OTP
-          </button>
-
-          <button
-            className={styles.secondaryBtn}
-            onClick={() => setStep(1)}
-          >
-            Change Number
-          </button>
-        </>
-      )}
-    </div>
-  </div>
-)}
-
       {/* MOBILE MENU */}
-
-      <div
-        className={`${styles.mobileDrawer}
-        ${
-          menuOpen
-            ? styles.drawerOpen
-            : ""
-        }`}
-      >
-
-        <div
-          className={styles.drawerHeader}
-        >
+      <div className={`${styles.mobileDrawer} ${menuOpen ? styles.drawerOpen : ""}`}>
+        <div className={styles.drawerHeader}>
           <h4>MENU</h4>
-
-          <button
-            onClick={() =>
-              setMenuOpen(false)
-            }
-          >
+          <button onClick={() => setMenuOpen(false)}>
             <X size={24} />
           </button>
         </div>
 
-        <div
-          className={styles.drawerLinks}
-        >
-
+        <div className={styles.drawerLinks}>
           {mainLinks.map((item) => (
-            <Link
-              key={item.name}
-              href={item.href}
-              onClick={() =>
-                setMenuOpen(false)
-              }
-            >
+            <Link key={item.name} href={item.href} onClick={() => setMenuOpen(false)}>
               {item.name}
             </Link>
           ))}
 
           <hr />
 
-          <Link href="/men">
-            MEN
-          </Link>
-
-          <Link href="/women">
-            WOMEN
-          </Link>
-
-          <Link href="/kids">
-            KIDS
-          </Link>
+          <Link href="/men">MEN</Link>
+          <Link href="/women">WOMEN</Link>
+          <Link href="/kids">KIDS</Link>
 
           <hr />
 
@@ -582,19 +337,12 @@ setCartCount(totalQuantity);
           >
             LOGIN / SIGNUP
           </button>
-
         </div>
       </div>
 
       {/* MOBILE BACKDROP */}
-
       {menuOpen && (
-        <div
-          className={styles.backdrop}
-          onClick={() =>
-            setMenuOpen(false)
-          }
-        />
+        <div className={styles.backdrop} onClick={() => setMenuOpen(false)} />
       )}
     </>
   );
