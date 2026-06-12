@@ -4,6 +4,7 @@ import '@/styles/globals.css';
 // import 'bootstrap/dist/css/bootstrap.min.css';
 // import { Provider } from 'react-redux';
 import { Red_Hat_Display } from 'next/font/google';
+import Script from "next/script";
 // import { useState, useRef, useEffect } from 'react';
 // import WhatsApp from '@/components/Layout/Whatsapp';
 // import { Modal, ModalBody, ModalHeader } from 'react-bootstrap';
@@ -37,6 +38,10 @@ export default function App({ Component, pageProps }) {
 
   return (
     <main className={redhat.className}>
+      <Script
+    src="https://checkout.razorpay.com/v1/checkout.js"
+    strategy="beforeInteractive"
+  />
       <Head>
         {/* Add the favicon here */}
         <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2" />

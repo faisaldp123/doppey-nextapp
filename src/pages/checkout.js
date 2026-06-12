@@ -1,5 +1,6 @@
 "use client";
 
+import { startRazorpayPayment } from "@/utils/razorpay";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
@@ -118,43 +119,89 @@ return (
 
 };
 
-const handlePlaceOrder = () => {
-if (!validate()) return;
+const handlePlaceOrder = async () => {
+  if (!validate()) return;
 
+  const orderData = {
+    orderNumber:
+      "OD" +
+      Math.floor(
+        100000 + Math.random() * 900000
+      ),
 
-const orderData = {
-  orderNumber:
-    "OD" +
-    Math.floor(
-      100000 + Math.random() * 900000
-    ),
+    customer: formData,
 
-  customer: formData,
+    paymentMethod,
 
-  paymentMethod,
+    items: cartItems,
 
-  items: cartItems,
+    subtotal,
 
-  subtotal,
+    shipping,
 
-  shipping,
+    total,
 
-  total,
+    orderDate:
+      new Date().toISOString(),
+  };
 
-  orderDate:
-    new Date().toISOString(),
-};
+  // CASH ON DELIVERY
 
-localStorage.setItem(
-  "latestOrder",
-  JSON.stringify(orderData)
-);
+  if (paymentMethod === "cod") {
+    localStorage.setItem(
+      "latestOrder",
+      JSON.stringify(orderData)
+    );
 
-localStorage.removeItem("cart");
+    localStorage.removeItem("cart");
 
-router.push("/order-success");
+    router.push("/order-success");
 
+    return;
+  }
 
+  // ONLINE PAYMENT
+
+  try {
+    await startRazorpayPayment({
+      amount: total,
+
+      customer: {
+        fullName: formData.fullName,
+        email: formData.email,
+        phone: formData.phone,
+      },
+
+      onSuccess: (paymentResponse) => {
+        orderData.paymentStatus =
+          "Paid";
+
+        orderData.razorpayOrderId =
+          paymentResponse.razorpay_order_id;
+
+        orderData.razorpayPaymentId =
+          paymentResponse.razorpay_payment_id;
+
+        orderData.razorpaySignature =
+          paymentResponse.razorpay_signature;
+
+        localStorage.setItem(
+          "latestOrder",
+          JSON.stringify(orderData)
+        );
+
+        localStorage.removeItem("cart");
+
+        router.push("/order-success");
+      },
+    });
+  } catch (error) {
+    console.error(error);
+
+    alert(
+      "Payment failed. Please try again."
+    );
+  }
 };
 
 return ( <div className={styles.checkoutPage}> <h1>Checkout</h1>

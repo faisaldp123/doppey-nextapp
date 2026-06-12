@@ -1,54 +1,78 @@
 .heroSection {
-  margin-top: 90px;
-}
-
-.imageWrapper {
   position: relative;
   width: 100%;
-  height: calc(100vh - 90px);
+  height: calc(100vh - 64px);
+  margin-top: 90px;
   overflow: hidden;
+}
+.heroImage {
+  object-fit: cover;
+  object-position: center center;
+}
+
+.slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  visibility: hidden;
+
+  transition:
+    opacity 1.8s ease-in-out,
+    visibility 1.8s ease-in-out;
+}
+.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+.active {
+  opacity: 1;
+  visibility: visible;
 }
 
 .heroImage {
   object-fit: cover;
-  object-position: center;
 }
 
 .overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0, 0, 0, 0.25);
+  background: linear-gradient(
+    to right,
+    rgba(0,0,0,.55),
+    rgba(0,0,0,.15)
+  );
 }
 
 .heroContent {
   position: absolute;
+  top: 55%;
   left: 8%;
-  top: 50%;
   transform: translateY(-50%);
-  z-index: 2;
+  z-index: 5;
   color: white;
   max-width: 650px;
 }
 
 .badge {
   display: inline-block;
+  padding: 10px 18px;
   background: rgba(255,255,255,.15);
   backdrop-filter: blur(10px);
-  padding: 8px 16px;
+  margin-bottom: 20px;
   font-size: 12px;
   letter-spacing: 2px;
-  margin-bottom: 20px;
 }
 
 .heroContent h1 {
   font-size: 5rem;
-  font-weight: 800;
-  line-height: 1;
+  font-weight: 900;
+  line-height: .95;
   margin-bottom: 20px;
 }
 
 .heroContent p {
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   max-width: 500px;
   margin-bottom: 30px;
 }
@@ -57,16 +81,45 @@
   border: none;
   background: white;
   color: black;
-  padding: 14px 34px;
+  padding: 16px 38px;
   font-weight: 700;
-  letter-spacing: 1px;
-  transition: 0.3s;
+  cursor: pointer;
+  transition: .3s;
 }
 
 .heroBtn:hover {
-  background: black;
+  background: #111;
   color: white;
 }
+
+.dots {
+  position: absolute;
+  bottom: 35px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 10px;
+  z-index: 10;
+}
+
+.dot,
+.activeDot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+}
+
+.dot {
+  background: rgba(255,255,255,.4);
+}
+
+.activeDot {
+  background: white;
+}
+
+/* Tablet */
 
 @media (max-width: 992px) {
   .heroContent h1 {
@@ -74,18 +127,16 @@
   }
 }
 
+/* Mobile */
+
 @media (max-width: 768px) {
   .heroSection {
     margin-top: 75px;
-  }
-
-  .imageWrapper {
     height: calc(85vh - 75px);
   }
 
   .heroImage {
-    object-fit: cover;
-    object-position: center top;
+    object-position: center;
   }
 
   .heroContent {
@@ -95,14 +146,38 @@
   }
 
   .heroContent h1 {
-    font-size: 2.5rem;
+    font-size: 2.7rem;
   }
 
   .heroContent p {
-    font-size: 1rem;
+    font-size: .95rem;
   }
 
   .heroBtn {
     width: 100%;
+  }
+
+  .dots {
+    bottom: 20px;
+  }
+  .heroSection {
+    height: 90vh;
+  }
+
+  .heroImage {
+    object-fit: cover;
+    object-position: center center;
+  }
+}
+
+/* Small Mobile */
+
+@media (max-width: 480px) {
+  .heroContent h1 {
+    font-size: 2.2rem;
+  }
+
+  .badge {
+    font-size: 10px;
   }
 }

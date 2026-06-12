@@ -1,10 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/router";
 import Image from "next/image";
 import styles from "../styles/TrackOrder.module.css";
 
 export default function TrackOrder() {
+  const router = useRouter();
   const [orderId, setOrderId] = useState("");
   const [email, setEmail] = useState("");
   const [orderStatus, setOrderStatus] = useState(null);
@@ -311,27 +313,39 @@ export default function TrackOrder() {
             {/* HELP */}
 
             <div className={styles.helpCard}>
-              <h3>Need Help?</h3>
+  <h3>Need Help?</h3>
 
-              <p>
-                For any order-related
-                queries contact us.
-              </p>
+  <p>
+    For any order-related queries contact us.
+  </p>
 
-              <div
-                className={
-                  styles.helpDetails
-                }
-              >
-                <span>
-                  support@yourstore.com
-                </span>
+  <div className={styles.helpDetails}>
+    <span>support@doppey.com</span>
+    <span>+91 98765 43210</span>
+  </div>
 
-                <span>
-                  +91 98765 43210
-                </span>
-              </div>
-            </div>
+  <div className={styles.orderActions}>
+    <button
+      className={styles.ordersBtn}
+      onClick={() => router.push("/my-orders")}
+    >
+      My Orders
+    </button>
+
+    {orderStatus.status === "Delivered" && (
+      <button
+        className={styles.returnBtn}
+        onClick={() =>
+          router.push(
+            `/return-request/${orderStatus.orderId}`
+          )
+        }
+      >
+        Return Product
+      </button>
+    )}
+  </div>
+</div>
           </>
         )}
       </div>

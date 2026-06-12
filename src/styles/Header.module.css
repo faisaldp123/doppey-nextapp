@@ -376,7 +376,7 @@
 }
 
 .drawerLinks {
-  padding: 20px;
+  padding: 0px 20px;
 }
 
 .drawerLinks a,
@@ -492,6 +492,9 @@
     width: 20px;
     height: 20px;
   }
+  .logoWrap {
+  margin-right: 15px;
+}
    /* .headerIcons a[href="/wishlist"]{
     display:none;
   } */
