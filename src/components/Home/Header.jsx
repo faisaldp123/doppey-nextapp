@@ -307,7 +307,13 @@ export default function Header() {
       {/* MOBILE MENU */}
       <div className={`${styles.mobileDrawer} ${menuOpen ? styles.drawerOpen : ""}`}>
         <div className={styles.drawerHeader}>
-          <h4>MENU</h4>
+          <Image
+                src="/logo-new.webp"
+                alt="Doppey"
+                width={180}
+                height={60}
+                className={styles.logo}
+              />
           <button onClick={() => setMenuOpen(false)}>
             <X size={24} />
           </button>

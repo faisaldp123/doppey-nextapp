@@ -1,0 +1,165 @@
+.page {
+background: #fff;
+color: #111;
+}
+
+.hero {
+padding: 100px 20px 60px;
+text-align: center;
+margin-top: 72px;
+}
+
+.tag {
+display: inline-block;
+letter-spacing: 2px;
+font-size: 12px;
+margin-bottom: 10px;
+}
+
+.hero h1 {
+font-size: clamp(42px, 8vw, 72px);
+line-height: 1;
+margin-bottom: 16px;
+}
+
+.hero h1 span {
+color: #ff3f6c;
+}
+
+.hero p {
+max-width: 650px;
+margin: auto;
+color: #666;
+}
+
+.features {
+max-width: 1200px;
+margin: auto;
+padding: 0 20px 70px;
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 20px;
+}
+
+.feature {
+background: #fafafa;
+padding: 24px;
+border-radius: 20px;
+}
+
+.steps {
+max-width: 1200px;
+margin: auto;
+padding: 12px 20px;
+}
+
+.steps h2 {
+text-align: center;
+margin-bottom: 40px;
+}
+
+.stepGrid {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+gap: 20px;
+}
+
+.stepGrid div {
+background: #fafafa;
+padding: 24px;
+border-radius: 20px;
+}
+
+.stepGrid span {
+font-size: 50px;
+font-weight: 700;
+opacity: 0.15;
+}
+
+.rules {
+max-width: 1200px;
+margin: auto;
+padding: 0 20px 70px;
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 20px;
+}
+
+.card {
+background: #fafafa;
+padding: 24px;
+border-radius: 20px;
+}
+
+.card ul {
+margin-top: 20px;
+}
+
+.card li {
+margin-bottom: 10px;
+}
+
+.faq {
+max-width: 1000px;
+margin: auto;
+padding: 12px 20px;
+}
+
+.faq h2 {
+text-align: center;
+margin-bottom: 40px;
+}
+
+.faq details {
+border: 1px solid #eee;
+border-radius: 14px;
+padding: 18px;
+margin-bottom: 14px;
+}
+
+.faq summary {
+cursor: pointer;
+font-weight: 600;
+}
+
+.faq p {
+margin-top: 12px;
+color: #666;
+}
+
+.support {
+text-align: center;
+padding: 25px 20px;
+}
+
+.support button {
+margin-top: 20px;
+border: none;
+background: #111;
+color: #fff;
+padding: 14px 28px;
+border-radius: 999px;
+cursor: pointer;
+}
+
+@media (max-width: 768px) {
+.hero {
+padding: 34px 20px 50px;
+}
+
+.features,
+.stepGrid,
+.rules {
+grid-template-columns: 1fr;
+}
+
+.hero h1 {
+font-size: 42px;
+}
+
+.feature,
+.card,
+.stepGrid div {
+padding: 18px;
+}
+}

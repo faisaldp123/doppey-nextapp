@@ -247,6 +247,45 @@
   color: #111;
 }
 
+.orderActions {
+  margin-top: 25px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.ordersBtn,
+.returnBtn {
+  border: none;
+  cursor: pointer;
+  padding: 14px 24px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.ordersBtn {
+  background: #111;
+  color: white;
+}
+
+.ordersBtn:hover {
+  opacity: 0.9;
+}
+
+.returnBtn {
+  background: #ff3f6c;
+  color: white;
+}
+
+.returnBtn:hover {
+  opacity: 0.9;
+}
+
+
+
 /* TABLET */
 
 @media (max-width: 1024px) {
@@ -293,6 +332,14 @@
   .productImage {
     width: 100%;
     height: auto;
+  }
+   .orderActions {
+    flex-direction: column;
+  }
+
+  .ordersBtn,
+  .returnBtn {
+    width: 100%;
   }
 }
 
