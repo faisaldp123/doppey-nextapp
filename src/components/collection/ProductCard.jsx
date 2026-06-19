@@ -21,22 +21,54 @@ export default function ProductCard({
   const [hovered, setHovered] =
     useState(false);
 
+  const BASE_URL =
+    process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
+    "https://doppey-admin-backend.onrender.com";
+
+  const getImageUrl = (url) => {
+    if (!url) return "/placeholder.jpg";
+
+    // Cloudinary URL
+    if (url.startsWith("http")) {
+      return url;
+    }
+
+    // Local upload URL
+    if (url.startsWith("/")) {
+      return `${BASE_URL}${url}`;
+    }
+
+    return `${BASE_URL}/${url}`;
+  };
+
+  const image1 = getImageUrl(
+    product.images?.[0] || product.image
+  );
+
+  const image2 = getImageUrl(
+    product.images?.[1] ||
+      product.images?.[0] ||
+      product.image
+  );
+
   const isWishlisted =
     wishlist?.some(
-      (item) => item.id === product.id
+      (item) =>
+        item._id === product._id
     );
 
   const toggleWishlist = () => {
     let updated = [...wishlist];
 
     const exists = updated.find(
-      (item) => item.id === product.id
+      (item) =>
+        item._id === product._id
     );
 
     if (exists) {
       updated = updated.filter(
         (item) =>
-          item.id !== product.id
+          item._id !== product._id
       );
     } else {
       updated.push(product);
@@ -48,6 +80,10 @@ export default function ProductCard({
       "wishlist",
       JSON.stringify(updated)
     );
+
+    window.dispatchEvent(
+      new Event("storage")
+    );
   };
 
   const addToCart = () => {
@@ -57,7 +93,8 @@ export default function ProductCard({
       ) || [];
 
     const exists = cart.find(
-      (item) => item.id === product.id
+      (item) =>
+        item._id === product._id
     );
 
     if (exists) {
@@ -100,14 +137,13 @@ export default function ProductCard({
 
       <div className={styles.imageWrapper}>
         <Link
-          href={`/product/${product.id}`}
+          href={`/product/${product.slug}`}
         >
           <Image
             src={
-              hovered &&
-              product.images?.[1]
-                ? product.images[1]
-                : product.image
+              hovered
+                ? image2
+                : image1
             }
             alt={product.name}
             width={600}
@@ -153,14 +189,20 @@ export default function ProductCard({
         </span>
 
         <Link
-          href={`/product/${product.id}`}
-          className={styles.productLink}
+          href={`/product/${product.slug}`}
+          className={
+            styles.productLink
+          }
         >
           <h3>{product.name}</h3>
         </Link>
 
-        <div className={styles.priceRow}>
-          <span className={styles.price}>
+        <div
+          className={styles.priceRow}
+        >
+          <span
+            className={styles.price}
+          >
             ₹{product.price}
           </span>
 
@@ -192,7 +234,9 @@ export default function ProductCard({
         </div>
 
         <button
-          className={styles.quickAddBtn}
+          className={
+            styles.quickAddBtn
+          }
           onClick={addToCart}
         >
           <ShoppingBag size={16} />

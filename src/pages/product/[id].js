@@ -5,7 +5,7 @@ import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
 
-import { productsData } from "../../constant/productsData";
+import API from "@/utils/api";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
@@ -27,7 +27,9 @@ import styles from "../../styles/ProductDetail.module.css";
 
 export default function ProductDetail() {
   const router = useRouter();
-  const { id } = router.query;
+  const { id: slug } = router.query;
+
+  const [allProducts, setAllProducts] = useState([]);
 
   const [product, setProduct] = useState(null);
 
@@ -90,42 +92,70 @@ export default function ProductDetail() {
 };
 
   useEffect(() => {
-    if (!id) return;
+  const fetchProduct = async () => {
+    if (!slug) return;
 
-    const foundProduct = productsData.find(
-      (p) => p.id === parseInt(id)
-    );
+    try {
+      const res = await API.get(
+        `/products/product/${slug}`
+      );
 
-    if (foundProduct) {
-      setProduct(foundProduct);
-      setMainImg(foundProduct.image);
+      const foundProduct = res.data;
 
-      const cart =
-  JSON.parse(localStorage.getItem("cart")) || [];
-
-const alreadyAdded = cart.some(
-  (item) => item.id === foundProduct.id
+      const allProductsRes = await API.get(
+  "/products/public"
 );
 
-setIsInCart(alreadyAdded);
+setAllProducts(allProductsRes.data);
+
+      setProduct(foundProduct);
+
+      setMainImg(
+        foundProduct.images?.[0] || ""
+      );
+
+      const cart =
+        JSON.parse(
+          localStorage.getItem("cart")
+        ) || [];
+
+      const alreadyAdded = cart.some(
+        (item) =>
+          item._id === foundProduct._id
+      );
+
+      setIsInCart(alreadyAdded);
 
       const viewed =
         JSON.parse(
-          localStorage.getItem("recentlyViewed")
+          localStorage.getItem(
+            "recentlyViewed"
+          )
         ) || [];
 
       const filtered = viewed.filter(
-        (item) => item.id !== foundProduct.id
+        (item) =>
+          item._id !== foundProduct._id
       );
 
       filtered.unshift(foundProduct);
 
       localStorage.setItem(
         "recentlyViewed",
-        JSON.stringify(filtered.slice(0, 6))
+        JSON.stringify(
+          filtered.slice(0, 6)
+        )
+      );
+    } catch (error) {
+      console.error(
+        "Failed to fetch product:",
+        error
       );
     }
-  }, [id]);
+  };
+
+  fetchProduct();
+}, [slug]);
 
   useEffect(() => {
     const storedWishlist =
@@ -134,18 +164,56 @@ setIsInCart(alreadyAdded);
     setWishlist(storedWishlist);
   }, []);
 
-  if (!product) return null;
-
-  const featuredProducts = productsData
-    .filter((item) => item.rating >= 4)
-    .slice(0, 4);
-
-  const relatedProducts = productsData.filter(
-    (item) =>
-      item.mainCategory === product.mainCategory &&
-      item.subCategory === product.subCategory &&
-      item.id !== product.id
+  if (!product) {
+  return (
+    <div
+      style={{
+        padding: "80px",
+        textAlign: "center",
+      }}
+    >
+      Loading Product...
+    </div>
   );
+}
+
+  const BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL?.replace(
+    "/api",
+    ""
+  ) ||
+  "https://doppey-admin-backend.onrender.com";
+
+const getImageUrl = (url) => {
+  if (!url) return "/placeholder.jpg";
+
+  if (url.startsWith("http")) {
+    return url;
+  }
+
+  if (url.startsWith("/")) {
+    return `${BASE_URL}${url}`;
+  }
+
+  return `${BASE_URL}/${url}`;
+};
+
+  const featuredProducts = allProducts
+  .filter(
+    (item) =>
+      item.isBestSeller &&
+      item._id !== product._id
+  )
+  .slice(0, 4);
+
+const relatedProducts = allProducts
+  .filter(
+    (item) =>
+      item.subCategory?._id ===
+        product.subCategory?._id &&
+      item._id !== product._id
+  )
+  .slice(0, 4);
 
   const recentlyViewed =
     typeof window !== "undefined"
@@ -158,13 +226,13 @@ setIsInCart(alreadyAdded);
   let updatedWishlist = [...wishlist];
 
   const exists = updatedWishlist.find(
-    (item) => item.id === product.id
-  );
+  (item) => item._id === product._id
+);
 
   if (exists) {
     updatedWishlist = updatedWishlist.filter(
-      (item) => item.id !== product.id
-    );
+  (item) => item._id !== product._id
+);
 
     showToast(
       "remove",
@@ -188,7 +256,7 @@ setIsInCart(alreadyAdded);
 };
 
   const isWishlisted = wishlist.some(
-    (item) => item.id === product.id
+    (item) => item._id === product._id
   );
 
   const handleAddToCart = () => {
@@ -196,7 +264,7 @@ setIsInCart(alreadyAdded);
     JSON.parse(localStorage.getItem("cart")) || [];
 
   const existing = cart.find(
-    (item) => item.id === product.id
+    (item) => item._id === product._id
   );
 
   if (existing) {
@@ -232,7 +300,7 @@ const handleRemoveFromCart = () => {
     JSON.parse(localStorage.getItem("cart")) || [];
 
   const updatedCart = cart.filter(
-    (item) => item.id !== product.id
+    (item) => item._id !== product._id
   );
 
   localStorage.setItem(
@@ -336,7 +404,7 @@ const handleRemoveFromCart = () => {
 
         <div className={styles.mainImageWrapper}>
           <Image
-  src={mainImg}
+  src={getImageUrl(mainImg)}
   alt={product.name}
   fill
   sizes="(max-width:768px) 100vw, 50vw"
@@ -354,7 +422,7 @@ const handleRemoveFromCart = () => {
               ${mainImg === img ? styles.activeThumb : ""}`}
             >
               <Image
-                src={img}
+                src={getImageUrl(img)}
                 alt={product.name}
                 width={90}
                 height={90}
@@ -378,7 +446,7 @@ const handleRemoveFromCart = () => {
             {product.images?.map((img, index) => (
               <SwiperSlide key={index}>
                 <Image
-                  src={img}
+                  src={getImageUrl(img)}
                   alt={product.name}
                   width={700}
                   height={700}
@@ -420,8 +488,7 @@ const handleRemoveFromCart = () => {
         {/* RATING */}
 
         <div className={styles.rating}>
-          {"★".repeat(product.rating)}
-          {"☆".repeat(5 - product.rating)}
+          {"★".repeat(Math.round(product.rating || 5))}
 
           <span>
             ({reviews.length} Reviews)
@@ -431,10 +498,13 @@ const handleRemoveFromCart = () => {
         {/* PRICE */}
 
         <div className={styles.priceRow}>
-          <h2>${product.price}</h2>
+          <h2>₹{product.price}</h2>
 
           <span className={styles.oldPrice}>
-            ${(product.price + 25).toFixed(2)}
+            ₹{Math.round(
+  product.price /
+  (1 - (product.discount || 0) / 100)
+)}
           </span>
 
           <span className={styles.discount}>
@@ -760,13 +830,13 @@ const handleRemoveFromCart = () => {
 
         {featuredProducts.map((item) => (
           <Link
-            href={`/product/${item.id}`}
-            key={item.id}
+            href={`/product/${item.slug}`}
+            key={item._id}
           >
             <div className={styles.productCard}>
 
               <Image
-                src={item.image}
+               src={getImageUrl(item.images?.[0])}
                 alt={item.name}
                 width={300}
                 height={300}
@@ -801,13 +871,13 @@ const handleRemoveFromCart = () => {
 
         {relatedProducts.map((item) => (
           <Link
-            href={`/product/${item.id}`}
-            key={item.id}
+            href={`/product/${item.slug}`}
+            key={item._id}
           >
             <div className={styles.productCard}>
 
               <Image
-                src={item.image}
+                src={getImageUrl(item.images?.[0])}
                 alt={item.name}
                 width={300}
                 height={300}
@@ -843,22 +913,22 @@ const handleRemoveFromCart = () => {
 
           {recentlyViewed
             .filter(
-              (item) =>
-                item.id !== product.id
-            )
+  (item) =>
+    item._id !== product._id
+)
             .slice(0, 4)
             .map((item) => (
 
               <Link
-                href={`/product/${item.id}`}
-                key={item.id}
+                href={`/product/${item.slug}`}
+                key={item._id}
               >
                 <div
                   className={styles.productCard}
                 >
 
                   <Image
-                    src={item.image}
+                    src={getImageUrl(item.images?.[0])}
                     alt={item.name}
                     width={300}
                     height={300}

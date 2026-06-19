@@ -11,7 +11,7 @@ import ProductCard from "./collection/ProductCard";
 import QuickViewModal from "./collection/QuickViewModal";
 import SortBar from "./collection/SortBar";
 
-import { productsData } from "../constant/productsData";
+import API from "@/utils/api";
 
 import styles from "../styles/ProductListingPage.module.css";
 
@@ -20,6 +20,9 @@ export default function ProductListingPage({
 }) {
   const [wishlist, setWishlist] =
     useState([]);
+
+    const [products, setProducts] = useState([]);
+const [loading, setLoading] = useState(true);
 
   const [filters, setFilters] =
     useState({
@@ -55,7 +58,7 @@ export default function ProductListingPage({
 
   const pageProducts =
     useMemo(() => {
-      let data = [...productsData];
+      let data = [...products];
 
       switch (pageType) {
         case "new-arrivals":
@@ -79,18 +82,18 @@ export default function ProductListingPage({
         case "denims":
           data = data.filter(
             (p) =>
-              p.subCategory
-                ?.toLowerCase()
-                .includes("denim")
+              p.subCategory?.name
+  ?.toLowerCase()
+  .includes("denim")
           );
           break;
 
         case "tops":
           data = data.filter(
             (p) =>
-              p.subCategory
-                ?.toLowerCase()
-                .includes("top")
+              p.subCategory?.name
+  ?.toLowerCase()
+  .includes("top")
           );
           break;
 
@@ -99,7 +102,7 @@ export default function ProductListingPage({
       }
 
       return data;
-    }, [pageType]);
+    }, [pageType, products]);
 
   const filteredProducts =
     useMemo(() => {
@@ -135,11 +138,9 @@ export default function ProductListingPage({
         data = data.filter((p) =>
           filters.productTypes.some(
             (type) =>
-              p.subCategory
-                ?.toLowerCase()
-                .includes(
-                  type.toLowerCase()
-                )
+              p.subCategory?.name
+  ?.toLowerCase()
+  .includes(type.toLowerCase())
           )
         );
       }
@@ -238,28 +239,57 @@ export default function ProductListingPage({
     ]);
 
   const brands = [
-    ...new Set(
-      productsData.map(
-        (p) => p.brand
-      )
-    ),
-  ];
+  ...new Set(
+    products.map((p) => p.brand).filter(Boolean)
+  ),
+];
 
   const colors = [
-    ...new Set(
-      productsData.flatMap(
-        (p) => p.colors || []
-      )
-    ),
-  ];
+  ...new Set(
+    products.flatMap(
+      (p) => p.colors || []
+    )
+  ),
+];
 
   const productTypes = [
-    ...new Set(
-      productsData.map(
-        (p) => p.subCategory
-      )
-    ),
-  ];
+  ...new Set(
+    products
+      .map((p) => p.subCategory?.name)
+      .filter(Boolean)
+  ),
+];
+
+  useEffect(() => {
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+
+      const res = await API.get("/products/public");
+
+      setProducts(res.data);
+    } catch (error) {
+      console.error("Failed to fetch products:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchProducts();
+}, []);
+
+if (loading) {
+  return (
+    <div
+      style={{
+        padding: "60px",
+        textAlign: "center",
+      }}
+    >
+      Loading Products...
+    </div>
+  );
+}
 
   return (
     <section className={styles.page}>
@@ -300,7 +330,7 @@ export default function ProductListingPage({
             {filteredProducts.map(
               (product) => (
                 <ProductCard
-                  key={product.id}
+                  key={product._id}
                   product={product}
                   wishlist={wishlist}
                   setWishlist={

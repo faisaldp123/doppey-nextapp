@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Searchbar from "./Searchbar";
+import LoginModal from "./LoginModal";
+import AccountModal from "./AccountModal";
 
 import {
   ShoppingBag,
@@ -21,13 +23,13 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
-
-  const [mobileNumber, setMobileNumber] = useState("");
-  const [otp, setOtp] = useState("");
-  const [step, setStep] = useState(1);
+  const [showAccount, setShowAccount] = useState(false);
   const [cartCount, setCartCount] = useState(0);
   const [wishlistCount, setWishlistCount] = useState(0);
   const [activeMegaMenu, setActiveMegaMenu] = useState(null);
+  const [user, setUser] = useState(null);
+
+  const userBtnRef = useRef(null);
 
   const mainLinks = [
     { name: "NEW ARRIVALS", href: "/new-arrivals" },
@@ -92,6 +94,18 @@ export default function Header() {
     },
   };
 
+  // Sync user from localStorage
+  useEffect(() => {
+    const updateUser = () => {
+      const stored = localStorage.getItem("user");
+      setUser(stored ? JSON.parse(stored) : null);
+    };
+    updateUser();
+    window.addEventListener("user-login", updateUser);
+    return () => window.removeEventListener("user-login", updateUser);
+  }, []);
+
+  // Sync cart + wishlist counts
   useEffect(() => {
     const updateCounts = () => {
       const cart = JSON.parse(localStorage.getItem("cart")) || [];
@@ -100,11 +114,22 @@ export default function Header() {
       setCartCount(totalQuantity);
       setWishlistCount(wishlist.length);
     };
-
     updateCounts();
     window.addEventListener("storage", updateCounts);
     return () => window.removeEventListener("storage", updateCounts);
   }, []);
+
+  // Close account panel on outside click
+  useEffect(() => {
+    if (!showAccount) return;
+    const handler = (e) => {
+      if (userBtnRef.current && !userBtnRef.current.contains(e.target)) {
+        setShowAccount(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [showAccount]);
 
   return (
     <>
@@ -165,12 +190,27 @@ export default function Header() {
                 )}
               </Link>
 
-              <button
-                className={styles.iconBtn}
-                onClick={() => setShowLogin(true)}
-              >
-                <User size={20} />
-              </button>
+              {/* User icon + account dropdown anchored together */}
+              <div style={{ position: "relative" }} ref={userBtnRef}>
+                <button
+                  className={styles.iconBtn}
+                  onClick={() => {
+                    if (user) {
+                      setShowAccount((prev) => !prev);
+                    } else {
+                      setShowLogin(true);
+                    }
+                  }}
+                >
+                  <User size={20} />
+                </button>
+
+                <AccountModal
+                  open={showAccount}
+                  onClose={() => setShowAccount(false)}
+                  user={user}
+                />
+              </div>
 
               <Link href="/cart" className={styles.iconBtn}>
                 <ShoppingBag size={20} />
@@ -182,7 +222,7 @@ export default function Header() {
             </div>
           </div>
 
-          {/* ROW 2 */}
+          {/* ROW 2 — Gender mega menu */}
           <div className={styles.genderNav}>
             {["MEN", "WOMEN", "KIDS"].map((item) => (
               <div
@@ -241,79 +281,25 @@ export default function Header() {
         </div>
       </header>
 
-      {/* SEARCH — handled by Searchbar component */}
+      {/* Searchbar */}
       <Searchbar open={showSearch} onClose={() => setShowSearch(false)} />
 
-      {/* OTP LOGIN MODAL */}
-      {showLogin && (
-        <div className={styles.loginOverlay}>
-          <div className={styles.loginModal}>
-            <button
-              className={styles.closeBtn}
-              onClick={() => {
-                setShowLogin(false);
-                setStep(1);
-                setOtp("");
-              }}
-            >
-              <X size={22} />
-            </button>
+      {/* Login Modal */}
+      <LoginModal
+        open={showLogin}
+        onClose={() => setShowLogin(false)}
+      />
 
-            <h3>Login / Signup</h3>
-
-            {step === 1 ? (
-              <>
-                <p>Enter your mobile number</p>
-                <input
-                  type="tel"
-                  placeholder="Mobile Number"
-                  value={mobileNumber}
-                  onChange={(e) => setMobileNumber(e.target.value)}
-                  className={styles.loginInput}
-                />
-                <button
-                  className={styles.primaryBtn}
-                  onClick={() => {
-                    if (mobileNumber.length < 10) {
-                      alert("Please enter valid mobile number");
-                      return;
-                    }
-                    setStep(2);
-                  }}
-                >
-                  SEND OTP
-                </button>
-              </>
-            ) : (
-              <>
-                <p>OTP sent to +91 {mobileNumber}</p>
-                <input
-                  type="text"
-                  placeholder="Enter OTP"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  className={styles.loginInput}
-                />
-                <button className={styles.primaryBtn}>VERIFY OTP</button>
-                <button className={styles.secondaryBtn} onClick={() => setStep(1)}>
-                  Change Number
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-      )}
-
-      {/* MOBILE MENU */}
+      {/* Mobile Drawer */}
       <div className={`${styles.mobileDrawer} ${menuOpen ? styles.drawerOpen : ""}`}>
         <div className={styles.drawerHeader}>
           <Image
-                src="/logo-new.webp"
-                alt="Doppey"
-                width={180}
-                height={60}
-                className={styles.logo}
-              />
+            src="/logo-new.webp"
+            alt="Doppey"
+            width={180}
+            height={60}
+            className={styles.logo}
+          />
           <button onClick={() => setMenuOpen(false)}>
             <X size={24} />
           </button>
@@ -334,19 +320,31 @@ export default function Header() {
 
           <hr />
 
-          <button
-            className={styles.mobileLogin}
-            onClick={() => {
-              setMenuOpen(false);
-              setShowLogin(true);
-            }}
-          >
-            LOGIN / SIGNUP
-          </button>
+          {user ? (
+            <button
+              className={styles.mobileLogin}
+              onClick={() => {
+                setMenuOpen(false);
+                setShowAccount(true);
+              }}
+            >
+              MY ACCOUNT
+            </button>
+          ) : (
+            <button
+              className={styles.mobileLogin}
+              onClick={() => {
+                setMenuOpen(false);
+                setShowLogin(true);
+              }}
+            >
+              LOGIN / SIGNUP
+            </button>
+          )}
         </div>
       </div>
 
-      {/* MOBILE BACKDROP */}
+      {/* Mobile Backdrop */}
       {menuOpen && (
         <div className={styles.backdrop} onClick={() => setMenuOpen(false)} />
       )}

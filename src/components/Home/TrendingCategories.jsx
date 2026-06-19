@@ -3,14 +3,15 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Heart, ShoppingBag } from "lucide-react";
-
 import { useRouter } from "next/navigation";
-
+import API from "@/utils/api";
 import styles from "../../styles/TrendingCategories.module.css";
 
 export default function TrendingCategories() {
   const [active, setActive] = useState("ALL");
   const [wishlist, setWishlist] = useState([]);
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   const categories = [
@@ -24,145 +25,88 @@ export default function TrendingCategories() {
     "TOPS",
   ];
 
-  const products = [
-    {
-      id: 1,
-      category: "CARGO",
-      img1: "/products/product-one.jpg",
-      img2: "/products/product-two.jpg",
-      name: "Cargo Trouser",
-      price: "₹1499",
-      oldPrice: "₹2499",
-    },
-    {
-      id: 2,
-      category: "BOOTCUT",
-      img1: "/products/product-three.jpg",
-      img2: "/products/product-four.jpg",
-      name: "Bootcut Denim",
-      price: "₹1699",
-      oldPrice: "₹2699",
-    },
-    {
-      id: 3,
-      category: "JOGGERS",
-      img1: "/products/product-five.jpg",
-      img2: "/products/product-six.jpg",
-      name: "Urban Jogger",
-      price: "₹1199",
-      oldPrice: "₹1899",
-    },
-    {
-      id: 4,
-      category: "TOPS",
-      img1: "/products/product-seven.jpg",
-      img2: "/products/product-eight.jpg",
-      name: "Graphic Top",
-      price: "₹899",
-      oldPrice: "₹1499",
-    },
-    {
-      id: 5,
-      category: "BAGGY FIT",
-      img1: "/products/product-one.jpg",
-      img2: "/products/product-two.jpg",
-      name: "Baggy Denim",
-      price: "₹1899",
-      oldPrice: "₹2999",
-    },
-    {
-      id: 6,
-      category: "STRAIGHT FIT",
-      img1: "/products/product-three.jpg",
-      img2: "/products/product-four.jpg",
-      name: "Straight Fit Jeans",
-      price: "₹1599",
-      oldPrice: "₹2399",
-    },
-    {
-      id: 7,
-      category: "PANTS",
-      img1: "/products/product-five.jpg",
-      img2: "/products/product-six.jpg",
-      name: "Premium Pants",
-      price: "₹1399",
-      oldPrice: "₹2199",
-    },
-    {
-      id: 8,
-      category: "TOPS",
-      img1: "/products/product-seven.jpg",
-      img2: "/products/product-eight.jpg",
-      name: "Summer Top",
-      price: "₹999",
-      oldPrice: "₹1499",
-    },
-  ];
-
+  // Fetch products from backend
   useEffect(() => {
-  const wishlistItems =
-    JSON.parse(
-      localStorage.getItem("wishlist")
-    ) || [];
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        const res = await API.get("/products/public");
+        console.log("ALL PRODUCTS:", res.data);
 
-  setWishlist(
-    wishlistItems.map(
-      (item) => item.id
-    )
-  );
-}, []);
+res.data.forEach((p) => {
+  console.log(p.name, p.images);
+});
+        setProducts(res.data);
+      } catch (err) {
+        console.error("Failed to fetch products:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProducts();
+  }, []);
 
+  // Load wishlist from localStorage
+  useEffect(() => {
+    const wishlistItems = JSON.parse(localStorage.getItem("wishlist")) || [];
+    setWishlist(wishlistItems.map((item) => item._id));
+  }, []);
+
+  // Filter by subCategory name — matches your backend subCategory.name field
   const filtered =
     active === "ALL"
       ? products
       : products.filter(
-          (item) => item.category === active
+          (item) =>
+            item.subCategory?.name?.toUpperCase() === active ||
+            item.category?.name?.toUpperCase() === active
         );
 
   const toggleWishlist = (product) => {
-  const existingWishlist =
-    JSON.parse(
-      localStorage.getItem("wishlist")
-    ) || [];
+    const existingWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+    const alreadyExists = existingWishlist.find((item) => item._id === product._id);
 
-  const alreadyExists =
-    existingWishlist.find(
-      (item) => item.id === product.id
-    );
+    let updatedWishlist;
+    if (alreadyExists) {
+      updatedWishlist = existingWishlist.filter((item) => item._id !== product._id);
+    } else {
+      updatedWishlist = [...existingWishlist, product];
+    }
 
-  let updatedWishlist;
+    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
+    setWishlist(updatedWishlist.map((item) => item._id));
+    window.dispatchEvent(new Event("storage"));
+  };
 
-  if (alreadyExists) {
-    updatedWishlist =
-      existingWishlist.filter(
-        (item) =>
-          item.id !== product.id
-      );
-  } else {
-    updatedWishlist = [
-      ...existingWishlist,
-      product,
-    ];
-  }
-
-  localStorage.setItem(
-    "wishlist",
-    JSON.stringify(updatedWishlist)
+  // Skeleton loader cards
+  const SkeletonCard = () => (
+    <div className={styles.card}>
+      <div
+        style={{
+          width: "100%",
+          aspectRatio: "6/7",
+          background: "#f0f0f0",
+          borderRadius: "8px",
+          animation: "pulse 1.5s ease-in-out infinite",
+        }}
+      />
+      <div style={{ padding: "12px 0", display: "flex", flexDirection: "column", gap: "8px" }}>
+        <div style={{ height: "14px", width: "70%", background: "#f0f0f0", borderRadius: "4px" }} />
+        <div style={{ height: "14px", width: "40%", background: "#f0f0f0", borderRadius: "4px" }} />
+        <div style={{ height: "36px", width: "100%", background: "#f0f0f0", borderRadius: "6px" }} />
+      </div>
+    </div>
   );
-
-  setWishlist(
-    updatedWishlist.map(
-      (item) => item.id
-    )
-  );
-
-  window.dispatchEvent(
-    new Event("storage")
-  );
-};
 
   return (
     <section className={styles.section}>
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.4; }
+        }
+      `}</style>
+
       <h2>TRENDING CATEGORIES</h2>
 
       <div className={styles.tabs}>
@@ -170,11 +114,7 @@ export default function TrendingCategories() {
           <button
             key={cat}
             onClick={() => setActive(cat)}
-            className={
-              active === cat
-                ? styles.active
-                : ""
-            }
+            className={active === cat ? styles.active : ""}
           >
             {cat}
           </button>
@@ -182,18 +122,30 @@ export default function TrendingCategories() {
       </div>
 
       <div className={styles.grid}>
-        {filtered.map((item) => (
-          <ProductCard
-            key={item.id}
-            item={item}
-            wishlist={wishlist}
-            toggleWishlist={toggleWishlist}
-          />
-        ))}
+        {loading ? (
+          // Show 8 skeleton cards while loading
+          [...Array(8)].map((_, i) => <SkeletonCard key={i} />)
+        ) : filtered.length === 0 ? (
+          <p style={{ gridColumn: "1/-1", textAlign: "center", color: "#888", padding: "40px 0" }}>
+            No products found in this category.
+          </p>
+        ) : (
+          filtered.map((item) => (
+            <ProductCard
+              key={item._id}
+              item={item}
+              wishlist={wishlist}
+              toggleWishlist={toggleWishlist}
+            />
+          ))
+        )}
       </div>
 
       <div className={styles.viewAllWrapper}>
-        <button className={styles.viewAllBtn}>
+        <button
+          className={styles.viewAllBtn}
+          onClick={() => router.push("/shop")}
+        >
           VIEW ALL →
         </button>
       </div>
@@ -201,76 +153,72 @@ export default function TrendingCategories() {
   );
 }
 
-function ProductCard({
-  item,
-  wishlist,
-  toggleWishlist,
-}) {
+function ProductCard({ item, wishlist, toggleWishlist }) {
   const [hover, setHover] = useState(false);
   const [added, setAdded] = useState(false);
   const router = useRouter();
 
-useEffect(() => {
-  const cart =
-    JSON.parse(
-      localStorage.getItem("cart")
-    ) || [];
+  // Check if already in cart
+  useEffect(() => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const exists = cart.find((product) => product._id === item._id);
+    setAdded(!!exists);
+  }, [item._id]);
 
-  const exists = cart.find(
-    (product) =>
-      product.id === item.id
-  );
-
-  setAdded(!!exists);
-}, [item.id]);
+  // Price after discount
+  const discountedPrice = item.discount
+    ? Math.round(item.price - (item.price * item.discount) / 100)
+    : item.price;
 
   const handleAddToCart = () => {
-    const existingCart =
-      JSON.parse(localStorage.getItem("cart")) || [];
-
-    const alreadyExists = existingCart.find(
-      (product) => product.id === item.id
-    );
+    const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
+    const alreadyExists = existingCart.find((product) => product._id === item._id);
 
     if (alreadyExists) {
-      alert("This product is already in your cart.");
       setAdded(true);
       return;
     }
 
-    const updatedCart = [...existingCart, item];
-
-    localStorage.setItem(
-  "cart",
-  JSON.stringify(updatedCart)
-);
-
-// Update header cart count instantly
-window.dispatchEvent(
-  new Event("storage")
-);
-
-setAdded(true);
-
-alert(
-  `${item.name} has been added to your cart successfully!`
-);
+    const updatedCart = [...existingCart, { ...item, quantity: 1 }];
+    localStorage.setItem("cart", JSON.stringify(updatedCart));
+    window.dispatchEvent(new Event("storage"));
+    setAdded(true);
   };
+
+  // Use first image normally, second on hover
+const BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
+  "https://doppey-admin-backend.onrender.com";
+
+const getImageUrl = (url) => {
+  if (!url) return "/placeholder.jpg";
+
+  // Cloudinary URL
+  if (url.startsWith("http")) {
+    return url;
+  }
+
+  // Local upload URL
+  return `${BASE_URL}/${url}`;
+};
+
+const img1 = getImageUrl(item.images?.[0]);
+const img2 = getImageUrl(item.images?.[1]) || img1;
 
   return (
     <div
-  className={styles.card}
-  onMouseEnter={() => setHover(true)}
-  onMouseLeave={() => setHover(false)}
-  onClick={() => {
-    if (window.innerWidth <= 768) {
-      router.push(`/product/${item.id}`);
-    }
-  }}
->
+      className={styles.card}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      onClick={() => {
+        if (window.innerWidth <= 768) {
+          router.push(`/product/${item.slug}`);
+        }
+      }}
+    >
       <div className={styles.imageWrap}>
         <Image
-          src={hover ? item.img2 : item.img1}
+          src={hover ? img2 : img1}
           alt={item.name}
           width={600}
           height={700}
@@ -278,55 +226,52 @@ alert(
         />
 
         <button
-  className={styles.wishlist}
-  onClick={(e) => {
-    e.stopPropagation();
-    toggleWishlist(item);
-  }}
-> 
+          className={styles.wishlist}
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleWishlist(item);
+          }}
+        >
           <Heart
             size={18}
-            fill={
-              wishlist.includes(item.id)
-                ? "black"
-                : "none"
-            }
+            fill={wishlist.includes(item._id) ? "black" : "none"}
           />
         </button>
 
         <button
-  className={styles.quickBtn}
-  onClick={(e) => {
-    e.stopPropagation();
-    router.push(`/product/${item.id}`);
-  }}
->
-  QUICK VIEW
-</button>
+          className={styles.quickBtn}
+          onClick={(e) => {
+            e.stopPropagation();
+            router.push(`/product/${item.slug}`);
+          }}
+        >
+          QUICK VIEW
+        </button>
       </div>
 
       <div className={styles.content}>
         <h5>{item.name}</h5>
 
         <div className={styles.price}>
-          <span>{item.price}</span>
-          <del>{item.oldPrice}</del>
+          <span>₹{discountedPrice}</span>
+          {item.discount > 0 && <del>₹{item.price}</del>}
+          {item.discount > 0 && (
+            <span style={{ color: "green", fontSize: "12px", fontWeight: 600 }}>
+              {item.discount}% off
+            </span>
+          )}
         </div>
 
         <button
-          className={`${styles.cartBtn} ${
-            added ? styles.addedBtn : ""
-          }`}
+          className={`${styles.cartBtn} ${added ? styles.addedBtn : ""}`}
           onClick={(e) => {
-  e.stopPropagation();
-  handleAddToCart();
-}}
+            e.stopPropagation();
+            handleAddToCart();
+          }}
           disabled={added}
         >
           <ShoppingBag size={16} />
-          {added
-            ? "Added To Cart ✓"
-            : "Add To Cart"}
+          {added ? "Added To Cart ✓" : "Add To Cart"}
         </button>
       </div>
     </div>

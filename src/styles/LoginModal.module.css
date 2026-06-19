@@ -1,0 +1,288 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* On desktop — center as a modal card */
+@media (min-width: 640px) {
+  .overlay {
+    align-items: center;
+  }
+  .sheet {
+    border-radius: 16px !important;
+    max-width: 400px;
+    padding: 36px 32px !important;
+  }
+}
+
+.sheet {
+  background: #fff;
+  border-radius: 20px 20px 0 0;
+  width: 100%;
+  padding: 28px 20px 36px;
+  position: relative;
+  animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(40px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.closeBtn {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+}
+
+.brandRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.brandDot {
+  width: 34px;
+  height: 34px;
+  background: #1a1a1a;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.brandName {
+  font-size: 16px;
+  font-weight: 500;
+  color: #1a1a1a;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin-bottom: 6px;
+}
+
+.sub {
+  font-size: 13px;
+  color: #888;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.inputWrap {
+  position: relative;
+  margin-bottom: 14px;
+}
+
+.prefix {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  font-weight: 500;
+  color: #444;
+  border-right: 1px solid #e0e0e0;
+  padding-right: 10px;
+  line-height: 1;
+}
+
+.input {
+  width: 100%;
+  height: 50px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 0 14px 0 66px;
+  font-size: 15px;
+  color: #1a1a1a;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.input:focus {
+  border-color: #1a1a1a;
+}
+
+.ctaBtn {
+  width: 100%;
+  height: 50px;
+  background: #1a1a1a;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: 0.02em;
+  transition: opacity 0.15s;
+}
+
+.ctaBtn:hover {
+  opacity: 0.85;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 16px 0;
+  color: #ccc;
+  font-size: 12px;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #eee;
+}
+
+.googleBtn {
+  width: 100%;
+  height: 46px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.15s;
+}
+
+.googleBtn:hover {
+  background: #f9f9f9;
+}
+
+.terms {
+  font-size: 11px;
+  color: #aaa;
+  text-align: center;
+  margin-top: 18px;
+  line-height: 1.7;
+}
+
+.terms a {
+  color: #666;
+  text-decoration: underline;
+}
+/* Back button */
+.backBtn {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  display: flex;
+  align-items: center;
+  padding: 4px;
+}
+
+/* OTP icon */
+.otpIcon {
+  font-size: 36px;
+  margin-bottom: 14px;
+  margin-top: 8px;
+}
+
+/* Edit phone inline button */
+.editPhone {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #1a1a1a;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  margin-left: 8px;
+  padding: 0;
+}
+
+/* OTP boxes row */
+.otpRow {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin: 28px 0 24px;
+}
+
+.otpBox {
+  width: 46px;
+  height: 54px;
+  border: 1.5px solid #ddd;
+  border-radius: 10px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 600;
+  color: #1a1a1a;
+  outline: none;
+  transition: border-color 0.15s, transform 0.1s;
+  caret-color: transparent;
+  background: #fafafa;
+}
+
+.otpBox:focus {
+  border-color: #1a1a1a;
+  background: #fff;
+  transform: scale(1.04);
+}
+
+.otpFilled {
+  border-color: #1a1a1a;
+  background: #fff;
+}
+
+/* Resend row */
+.resendRow {
+  text-align: center;
+  font-size: 13px;
+  color: #888;
+  margin-top: 20px;
+}
+
+.timer {
+  color: #aaa;
+  font-weight: 500;
+}
+
+.resendBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #1a1a1a;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  padding: 0;
+}
+
+/* Disable state for CTA */
+.ctaBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

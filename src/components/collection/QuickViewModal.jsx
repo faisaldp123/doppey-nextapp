@@ -14,20 +14,42 @@ export default function QuickViewModal({
 }) {
   if (!product) return null;
 
+  const BASE_URL =
+    process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
+    "https://doppey-admin-backend.onrender.com";
+
+  const getImageUrl = (url) => {
+    if (!url) return "/placeholder.jpg";
+
+    if (url.startsWith("http")) {
+      return url;
+    }
+
+    if (url.startsWith("/")) {
+      return `${BASE_URL}${url}`;
+    }
+
+    return `${BASE_URL}/${url}`;
+  };
+
+  const productImage = getImageUrl(
+    product.images?.[0] || product.image
+  );
+
   const isWishlisted = wishlist?.some(
-    (item) => item.id === product.id
+    (item) => item._id === product._id
   );
 
   const toggleWishlist = () => {
     let updated = [...wishlist];
 
     const exists = updated.find(
-      (item) => item.id === product.id
+      (item) => item._id === product._id
     );
 
     if (exists) {
       updated = updated.filter(
-        (item) => item.id !== product.id
+        (item) => item._id !== product._id
       );
     } else {
       updated.push(product);
@@ -39,6 +61,10 @@ export default function QuickViewModal({
       "wishlist",
       JSON.stringify(updated)
     );
+
+    window.dispatchEvent(
+      new Event("storage")
+    );
   };
 
   const addToCart = () => {
@@ -48,13 +74,11 @@ export default function QuickViewModal({
       ) || [];
 
     const exists = cart.find(
-      (item) => item.id === product.id
+      (item) => item._id === product._id
     );
 
     if (exists) {
-      alert(
-        "Product already added to cart"
-      );
+      alert("Product already added to cart");
       return;
     }
 
@@ -72,9 +96,7 @@ export default function QuickViewModal({
       new Event("storage")
     );
 
-    alert(
-      `${product.name} added to cart`
-    );
+    alert(`${product.name} added to cart`);
   };
 
   return (
@@ -88,8 +110,6 @@ export default function QuickViewModal({
           e.stopPropagation()
         }
       >
-        {/* CLOSE */}
-
         <button
           className={styles.closeBtn}
           onClick={onClose}
@@ -97,19 +117,15 @@ export default function QuickViewModal({
           <X size={22} />
         </button>
 
-        {/* IMAGE */}
-
         <div className={styles.left}>
           <Image
-            src={product.image}
+            src={productImage}
             alt={product.name}
             width={700}
             height={900}
             className={styles.image}
           />
         </div>
-
-        {/* CONTENT */}
 
         <div className={styles.right}>
           <span className={styles.brand}>
@@ -119,9 +135,7 @@ export default function QuickViewModal({
           <h2>{product.name}</h2>
 
           <div className={styles.rating}>
-            {"★".repeat(
-              product.rating || 5
-            )}
+            ⭐ {product.rating || 5}
           </div>
 
           <div className={styles.priceRow}>
@@ -132,9 +146,7 @@ export default function QuickViewModal({
             {product.discount > 0 && (
               <>
                 <span
-                  className={
-                    styles.oldPrice
-                  }
+                  className={styles.oldPrice}
                 >
                   ₹
                   {Math.round(
@@ -146,9 +158,7 @@ export default function QuickViewModal({
                 </span>
 
                 <span
-                  className={
-                    styles.discount
-                  }
+                  className={styles.discount}
                 >
                   {product.discount}% OFF
                 </span>
@@ -160,42 +170,36 @@ export default function QuickViewModal({
             {product.description}
           </p>
 
-          {/* SIZES */}
+          {product.sizes?.length > 0 && (
+            <div
+              className={
+                styles.sizeSection
+              }
+            >
+              <h4>
+                Available Sizes
+              </h4>
 
-          {product.sizes &&
-            product.sizes.length >
-              0 && (
               <div
                 className={
-                  styles.sizeSection
+                  styles.sizeGrid
                 }
               >
-                <h4>
-                  Available Sizes
-                </h4>
-
-                <div
-                  className={
-                    styles.sizeGrid
-                  }
-                >
-                  {product.sizes.map(
-                    (size) => (
-                      <span
-                        key={size}
-                        className={
-                          styles.size
-                        }
-                      >
-                        {size}
-                      </span>
-                    )
-                  )}
-                </div>
+                {product.sizes.map(
+                  (size) => (
+                    <span
+                      key={size}
+                      className={
+                        styles.size
+                      }
+                    >
+                      {size}
+                    </span>
+                  )
+                )}
               </div>
-            )}
-
-          {/* BUTTONS */}
+            </div>
+          )}
 
           <div
             className={
@@ -208,9 +212,7 @@ export default function QuickViewModal({
               }
               onClick={addToCart}
             >
-              <ShoppingBag
-                size={18}
-              />
+              <ShoppingBag size={18} />
               Add To Cart
             </button>
 
@@ -230,13 +232,12 @@ export default function QuickViewModal({
                     : "none"
                 }
               />
-
               Wishlist
             </button>
           </div>
 
           <Link
-            href={`/product/${product.id}`}
+            href={`/product/${product.slug}`}
             className={
               styles.viewDetails
             }
@@ -244,24 +245,14 @@ export default function QuickViewModal({
             View Full Product →
           </Link>
 
-          {/* TRUST BADGES */}
-
           <div
             className={
               styles.trustBadges
             }
           >
-            <div>
-              ✓ Secure Checkout
-            </div>
-
-            <div>
-              ✓ Easy Returns
-            </div>
-
-            <div>
-              ✓ COD Available
-            </div>
+            <div>✓ Secure Checkout</div>
+            <div>✓ Easy Returns</div>
+            <div>✓ COD Available</div>
           </div>
         </div>
       </div>

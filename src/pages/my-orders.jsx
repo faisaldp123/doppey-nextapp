@@ -1,33 +1,41 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import API from "@/utils/api";
 import { useRouter } from "next/router";
 import styles from "../styles/MyOrder.module.css";
 
 export default function MyOrders() {
   const router = useRouter();
 
-  const orders = [
-    {
-      id: "DP123456",
-      status: "Delivered",
-      date: "10 June 2026",
-      total: 1499,
-      image: "/products/product-one.jpg",
-      name: "Premium Cargo Trouser",
-      size: "M",
-      qty: 1,
-    },
-    {
-      id: "DP123457",
-      status: "Shipped",
-      date: "12 June 2026",
-      total: 1999,
-      image: "/products/product-two.jpg",
-      name: "Oversized Black Tee",
-      size: "L",
-      qty: 1,
-    },
-  ];
+  const [orders, setOrders] = useState([]);
+const [loading, setLoading] = useState(true);
+
+useEffect(() => {
+  fetchOrders();
+}, []);
+
+const fetchOrders = async () => {
+  try {
+    const res = await API.get("/orders");
+
+    setOrders(res.data);
+  } catch (error) {
+    console.log(error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+if (loading) {
+  return (
+    <div className={styles.ordersPage}>
+      <div className={styles.container}>
+        Loading Orders...
+      </div>
+    </div>
+  );
+}
 
   return (
     <div className={styles.ordersPage}>
@@ -43,20 +51,24 @@ export default function MyOrders() {
         <div className={styles.ordersGrid}>
           {orders.map((order) => (
             <div
-              key={order.id}
+              key={order._id}
               className={styles.orderCard}
             >
               <div className={styles.imageWrap}>
                 <img
-                  src={order.image}
-                  alt={order.name}
-                />
+  src={
+    order.items?.[0]?.product?.images?.[0]
+      ? `${process.env.NEXT_PUBLIC_API_URL.replace("/api","")}/${order.items[0].product.images[0]}`
+      : "/placeholder.jpg"
+  }
+  alt=""
+/>
               </div>
 
               <div className={styles.orderContent}>
                 <div className={styles.topRow}>
                   <span className={styles.orderId}>
-                    {order.id}
+                    {order._id.slice(-8).toUpperCase()}
                   </span>
 
                   <span
@@ -72,31 +84,29 @@ export default function MyOrders() {
                   </span>
                 </div>
 
-                <h3>{order.name}</h3>
+                <h3>{order.items?.[0]?.product?.name}</h3>
 
                 <p>
-                  Size: {order.size}
+                  {order.items?.[0]?.product?.sizes?.[0] || "N/A"}
                 </p>
 
                 <p>
-                  Qty: {order.qty}
+                  Qty: {order.items?.[0]?.quantity}
                 </p>
 
                 <p>
-                  Ordered on {order.date}
+                  Ordered on {new Date(order.createdAt).toLocaleDateString()}
                 </p>
 
                 <strong>
-                  ₹{order.total}
+                  ₹{order.totalAmount}
                 </strong>
 
                 <div className={styles.actions}>
                   <button
                     className={styles.trackBtn}
                     onClick={() =>
-                      router.push(
-                        "/track-order"
-                      )
+                      router.push(`/track-order?id=${order._id}`)
                     }
                   >
                     Track Order
@@ -109,9 +119,7 @@ export default function MyOrders() {
                         styles.returnBtn
                       }
                       onClick={() =>
-                        router.push(
-                          `/return-request/${order.id}`
-                        )
+                        router.push(`/return-request/${order._id}`)
                       }
                     >
                       Return Product

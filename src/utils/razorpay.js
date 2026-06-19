@@ -9,7 +9,7 @@ export const startRazorpayPayment = async ({
 }) => {
   try {
     const response = await fetch(
-  `${API_URL}/api/payments/create-order`,
+  `${API_URL}/payments/create-order`,
   {
     method: "POST",
     headers: {
