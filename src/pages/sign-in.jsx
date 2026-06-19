@@ -2,21 +2,48 @@
 import { useState } from "react";
 import styles from "../styles/SignIn.module.css";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import API from "@/utils/api";
 
 export default function AuthPage() {
   const [mobile, setMobile] = useState("");
   const [agree, setAgree] = useState(false);
+  const router = useRouter();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!agree) {
-      alert("You must agree to Terms of Use and Privacy Policy.");
-      return;
-    }
-    alert(`OTP sent to +91 ${mobile}`);
-    setMobile("");
-    setAgree(false);
-  };
+  const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  console.log("BUTTON CLICKED");
+
+  if (!agree) {
+    alert("Accept Terms");
+    return;
+  }
+
+  if (!/^\d{10}$/.test(mobile)) {
+    alert("Enter valid mobile number");
+    return;
+  }
+
+  try {
+    console.log("SENDING OTP REQUEST");
+    
+    console.log("API URL =", process.env.NEXT_PUBLIC_API_URL);
+
+    const res = await API.post("/request-otp", {
+      phone: mobile,
+    });
+
+    console.log("OTP RESPONSE:", res.data);
+
+    localStorage.setItem("loginPhone", mobile);
+
+    router.push("/verify-otp");
+  } catch (err) {
+    console.error("OTP ERROR:", err);
+    alert("Failed to send OTP");
+  }
+};
 
   return (
     <div className={styles.authPage}>

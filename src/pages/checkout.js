@@ -1,5 +1,6 @@
 "use client";
 
+import API from "@/utils/api";
 import { startRazorpayPayment } from "@/utils/razorpay";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
@@ -28,13 +29,12 @@ useState("cod");
 const [errors, setErrors] = useState({});
 
 useEffect(() => {
-const cart =
-JSON.parse(localStorage.getItem("cart")) || [];
+  const cart =
+    JSON.parse(localStorage.getItem("cart")) || [];
 
+  setCartItems(cart);
 
-setCartItems(cart);
-
-
+  console.log("CART DATA:", cart);
 }, []);
 
 const getPriceNumber = (price) => {
@@ -119,8 +119,33 @@ return (
 
 };
 
+const user =
+  JSON.parse(
+    localStorage.getItem("user")
+  );
+
+if (!user) {
+  setShowLogin(true);
+  return;
+}
+
 const handlePlaceOrder = async () => {
   if (!validate()) return;
+
+   const orderItems = cartItems.map((item) => ({
+  product: item._id,
+  price: getPriceNumber(item.price),
+  quantity: item.quantity || 1,
+}));
+
+const address = {
+  fullName: formData.fullName,
+  phone: formData.phone,
+  street: formData.address,
+  city: formData.city,
+  state: formData.state,
+  pincode: formData.pincode,
+};
 
   const orderData = {
     orderNumber:
@@ -148,14 +173,21 @@ const handlePlaceOrder = async () => {
   // CASH ON DELIVERY
 
   if (paymentMethod === "cod") {
-    localStorage.setItem(
-      "latestOrder",
-      JSON.stringify(orderData)
-    );
+   
 
-    localStorage.removeItem("cart");
+const response = await API.post("/orders", {
+  items: orderItems,
+  address,
+});
 
-    router.push("/order-success");
+localStorage.setItem(
+  "latestOrder",
+  JSON.stringify(response.data.order)
+);
+
+localStorage.removeItem("cart");
+
+router.push("/order-success");
 
     return;
   }
@@ -172,27 +204,34 @@ const handlePlaceOrder = async () => {
         phone: formData.phone,
       },
 
-      onSuccess: (paymentResponse) => {
+      onSuccess: async (paymentResponse) => {
         orderData.paymentStatus =
           "Paid";
 
-        orderData.razorpayOrderId =
-          paymentResponse.razorpay_order_id;
+        await API.post("/payments/verify", {
+  razorpay_order_id:
+    paymentResponse.razorpay_order_id,
 
-        orderData.razorpayPaymentId =
-          paymentResponse.razorpay_payment_id;
+  razorpay_payment_id:
+    paymentResponse.razorpay_payment_id,
 
-        orderData.razorpaySignature =
-          paymentResponse.razorpay_signature;
+  razorpay_signature:
+    paymentResponse.razorpay_signature,
+});
 
-        localStorage.setItem(
-          "latestOrder",
-          JSON.stringify(orderData)
-        );
+const response = await API.post("/orders", {
+  items: orderItems,
+  address,
+});
 
-        localStorage.removeItem("cart");
+localStorage.setItem(
+  "latestOrder",
+  JSON.stringify(response.data.order)
+);
 
-        router.push("/order-success");
+localStorage.removeItem("cart");
+
+router.push("/order-success");
       },
     });
   } catch (error) {
@@ -491,7 +530,7 @@ return ( <div className={styles.checkoutPage}> <h1>Checkout</h1>
 
         {cartItems.map((item) => (
           <div
-            key={item.id}
+            key={item._id}
             className={
               styles.productRow
             }

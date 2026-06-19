@@ -1,5 +1,6 @@
 "use client";
 
+import API from "@/utils/api";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
@@ -11,39 +12,27 @@ export default function TrackOrder() {
   const [email, setEmail] = useState("");
   const [orderStatus, setOrderStatus] = useState(null);
 
-  const handleTrack = (e) => {
-    e.preventDefault();
+  const handleTrack = async (e) => {
+  e.preventDefault();
 
-    // Replace later with API call
+  try {
+    const res = await API.get("/orders");
 
-    const mockOrder = {
-      orderId: orderId,
-      email: email,
-      trackingId: "TRK78456231",
-      orderDate: "08 Aug 2026",
-      estimatedDelivery: "12 Aug 2026",
-      paymentMethod: "Cash On Delivery",
-      status: "Shipped",
+    const order = res.data.find(
+      (o) => o._id === orderId
+    );
 
-      product: {
-        name: "Premium Cargo Trouser",
-        image: "/products/product-one.jpg",
-        qty: 1,
-        size: "M",
-        price: "₹1499",
-      },
+    if (!order) {
+      alert("Order not found");
+      return;
+    }
 
-      address: {
-        name: "Mohd Faisal",
-        city: "New Delhi",
-        state: "Delhi",
-        pincode: "110025",
-        country: "India",
-      },
-    };
-
-    setOrderStatus(mockOrder);
-  };
+    setOrderStatus(order);
+  } catch (error) {
+    console.error(error);
+    alert("Failed to fetch order");
+  }
+};
 
   const getStepClass = (step) => {
     const statusOrder = [
@@ -117,7 +106,7 @@ export default function TrackOrder() {
               <div>
                 <span>Order ID</span>
                 <strong>
-                  {orderStatus.orderId}
+                  {orderStatus._id}
                 </strong>
               </div>
 
@@ -131,7 +120,7 @@ export default function TrackOrder() {
               <div>
                 <span>Order Date</span>
                 <strong>
-                  {orderStatus.orderDate}
+                  {new Date(orderStatus.createdAt).toLocaleDateString()}
                 </strong>
               </div>
 
@@ -206,7 +195,7 @@ export default function TrackOrder() {
                 >
                   <Image
                     src={
-                      orderStatus.product.image
+                      orderStatus.items?.[0]?.product?.images?.[0]
                     }
                     alt={
                       orderStatus.product.name
@@ -261,8 +250,7 @@ export default function TrackOrder() {
 
                 <p>
                   {
-                    orderStatus.address
-                      .name
+                    orderStatus.address.fullName
                   }
                 </p>
 
