@@ -7,6 +7,8 @@ import { useRouter } from "next/navigation";
 import API from "@/utils/api";
 import styles from "../../styles/TrendingCategories.module.css";
 
+const PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='400' viewBox='0 0 300 400'%3E%3Crect width='300' height='400' fill='%23f0f0f0'/%3E%3C/svg%3E";
+
 export default function TrendingCategories() {
   const [active, setActive] = useState("ALL");
   const [wishlist, setWishlist] = useState([]);
@@ -25,17 +27,15 @@ export default function TrendingCategories() {
     "TOPS",
   ];
 
-  // Fetch products from backend
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
         const res = await API.get("/products/public");
         console.log("ALL PRODUCTS:", res.data);
-
-res.data.forEach((p) => {
-  console.log(p.name, p.images);
-});
+        res.data.forEach((p) => {
+          console.log(p.name, p.images);
+        });
         setProducts(res.data);
       } catch (err) {
         console.error("Failed to fetch products:", err);
@@ -46,13 +46,11 @@ res.data.forEach((p) => {
     fetchProducts();
   }, []);
 
-  // Load wishlist from localStorage
   useEffect(() => {
     const wishlistItems = JSON.parse(localStorage.getItem("wishlist")) || [];
     setWishlist(wishlistItems.map((item) => item._id));
   }, []);
 
-  // Filter by subCategory name — matches your backend subCategory.name field
   const filtered =
     active === "ALL"
       ? products
@@ -78,7 +76,6 @@ res.data.forEach((p) => {
     window.dispatchEvent(new Event("storage"));
   };
 
-  // Skeleton loader cards
   const SkeletonCard = () => (
     <div className={styles.card}>
       <div
@@ -123,7 +120,6 @@ res.data.forEach((p) => {
 
       <div className={styles.grid}>
         {loading ? (
-          // Show 8 skeleton cards while loading
           [...Array(8)].map((_, i) => <SkeletonCard key={i} />)
         ) : filtered.length === 0 ? (
           <p style={{ gridColumn: "1/-1", textAlign: "center", color: "#888", padding: "40px 0" }}>
@@ -158,14 +154,12 @@ function ProductCard({ item, wishlist, toggleWishlist }) {
   const [added, setAdded] = useState(false);
   const router = useRouter();
 
-  // Check if already in cart
   useEffect(() => {
     const cart = JSON.parse(localStorage.getItem("cart")) || [];
     const exists = cart.find((product) => product._id === item._id);
     setAdded(!!exists);
   }, [item._id]);
 
-  // Price after discount
   const discountedPrice = item.discount
     ? Math.round(item.price - (item.price * item.discount) / 100)
     : item.price;
@@ -185,25 +179,18 @@ function ProductCard({ item, wishlist, toggleWishlist }) {
     setAdded(true);
   };
 
-  // Use first image normally, second on hover
-const BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
-  "https://doppey-admin-backend.onrender.com";
+  const BASE_URL =
+    process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
+    "https://doppey-admin-backend.onrender.com";
 
-const getImageUrl = (url) => {
-  if (!url) return "/placeholder.jpg";
+  const getImageUrl = (url) => {
+    if (!url) return PLACEHOLDER;
+    if (url.startsWith("http")) return url;
+    return `${BASE_URL}/${url}`;
+  };
 
-  // Cloudinary URL
-  if (url.startsWith("http")) {
-    return url;
-  }
-
-  // Local upload URL
-  return `${BASE_URL}/${url}`;
-};
-
-const img1 = getImageUrl(item.images?.[0]);
-const img2 = getImageUrl(item.images?.[1]) || img1;
+  const img1 = getImageUrl(item.images?.[0]);
+  const img2 = getImageUrl(item.images?.[1]) || img1;
 
   return (
     <div

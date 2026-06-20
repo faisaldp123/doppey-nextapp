@@ -52,6 +52,7 @@ padding: 0 16px;
 font-size: 15px;
 outline: none;
 transition: 0.3s;
+margin-bottom: 16px;
 }
 
 .card textarea {
