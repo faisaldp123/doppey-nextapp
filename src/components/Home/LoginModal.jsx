@@ -146,8 +146,12 @@ export default function LoginModal({ open, onClose }) {
       onClose();
       resetModal();
     } catch (err) {
-      alert(err.message || "Google login failed");
-    } finally {
+  console.error("GOOGLE LOGIN ERROR:", err);
+  console.error("CODE:", err.code);
+  console.error("MESSAGE:", err.message);
+
+  alert(`${err.code} - ${err.message}`);
+} finally {
       setLoading(false);
     }
   };
