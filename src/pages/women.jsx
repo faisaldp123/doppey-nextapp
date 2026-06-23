@@ -1,10 +1,10 @@
 import ProductListingPage from "../components/ProductListingPage";
 
-export default function PantsTrousers() {
+export default function Women() {
   return (
     <ProductListingPage
-      pageType="pants-trousers"
-      title="Pants & Trousers"
+      mainCategory="womens"
+      title="Women"
     />
   );
 }

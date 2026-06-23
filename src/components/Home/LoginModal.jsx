@@ -78,6 +78,7 @@ export default function LoginModal({ open, onClose }) {
     setLoading(true);
     try {
       const res = await API.post("/verify-otp", { phone: mobile, otp: code });
+      localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
       window.dispatchEvent(new Event("user-login"));
       onClose();
@@ -106,6 +107,49 @@ export default function LoginModal({ open, onClose }) {
   const handleClose = () => {
     onClose();
     setTimeout(resetModal, 300);
+  };
+
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    try {
+      const { initializeApp, getApps } = await import("firebase/app");
+      const { getAuth, GoogleAuthProvider, signInWithPopup } = await import("firebase/auth");
+
+      const firebaseConfig = {
+        apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+        authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+        appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+      };
+
+      if (!firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId || !firebaseConfig.appId) {
+        alert("Google login is not configured. Please add Firebase env values.");
+        return;
+      }
+
+      const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const provider = new GoogleAuthProvider();
+      const result = await signInWithPopup(auth, provider);
+      const googleUser = result.user;
+
+      const res = await API.post("/google-login", {
+        email: googleUser.email,
+        name: googleUser.displayName,
+        googleId: googleUser.uid,
+        photo: googleUser.photoURL,
+      });
+
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+      window.dispatchEvent(new Event("user-login"));
+      onClose();
+      resetModal();
+    } catch (err) {
+      alert(err.message || "Google login failed");
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (!open) return null;
@@ -153,7 +197,7 @@ export default function LoginModal({ open, onClose }) {
 
             <div className={styles.divider}><span>or</span></div>
 
-            <button className={styles.googleBtn}>
+            <button className={styles.googleBtn} onClick={handleGoogleLogin} disabled={loading}>
               <svg width="16" height="16" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
                 <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>

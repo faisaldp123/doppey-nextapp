@@ -14,7 +14,7 @@ const ProfileDropdown = () => {
       </div>
 
       <ul className={styles.menu}>
-        <li><Link href="/orders">Orders</Link></li>
+        <li><Link href="/my-orders">Orders</Link></li>
         <li><Link href="/wishlist">Wishlist</Link></li>
         <li><Link href="/gift-cards">Gift Cards</Link></li>
         <li><Link href="/contact">Contact Us</Link></li>

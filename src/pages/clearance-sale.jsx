@@ -4,6 +4,7 @@ export default function ClearanceSale() {
   return (
     <ProductListingPage
       pageType="clearance-sale"
+      title="Clearance Sale"
     />
   );
 }

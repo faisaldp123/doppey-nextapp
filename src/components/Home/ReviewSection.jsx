@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { Star, Quote } from "lucide-react";
 
@@ -8,53 +9,81 @@ import { Autoplay } from "swiper/modules";
 
 import "swiper/css";
 
+import API from "@/utils/api";
+import { productsData } from "@/constant/productsData";
+import {
+  getImageUrl,
+  getProductId,
+  getProductImages,
+  getStoredReviews,
+} from "@/utils/productHelpers";
+
 import styles from "../../styles/ReviewSection.module.css";
 
+const fallbackReviews = [
+  {
+    name: "Aarav Sharma",
+    image: "/products/product-three.jpg",
+    rating: 5,
+    comment:
+      "Amazing quality. The oversized fit is exactly what I wanted. The fabric feels premium and looks great after multiple washes.",
+  },
+  {
+    name: "Priya Singh",
+    image: "/products/product-three.jpg",
+    rating: 5,
+    comment:
+      "Fabric feels premium and delivery was super fast. Packaging was excellent and the fit was perfect.",
+  },
+];
+
 export default function ReviewSection() {
-  const reviews = [
-    {
-      name: "Aarav Sharma",
-      image: "/products/product-three.jpg",
-      rating: 5,
-      review:
-        "Amazing quality. The oversized fit is exactly what I wanted. The fabric feels premium and looks great after multiple washes.",
-    },
-    {
-      name: "Priya Singh",
-      image: "/products/product-three.jpg",
-      rating: 5,
-      review:
-        "Fabric feels premium and delivery was super fast. Packaging was excellent and the fit was perfect.",
-    },
-    {
-      name: "Rohan Mehta",
-      image: "/products/product-three.jpg",
-      rating: 5,
-      review:
-        "Best streetwear brand I've purchased from recently. The quality exceeded my expectations.",
-    },
-    {
-      name: "Ananya Gupta",
-      image: "/products/product-three.jpg",
-      rating: 5,
-      review:
-        "The fit and quality exceeded my expectations. Definitely purchasing again.",
-    },
-    {
-      name: "Karan Verma",
-      image: "/products/product-three.jpg",
-      rating: 5,
-      review:
-        "Loved the packaging and premium feel. Every detail feels carefully designed.",
-    },
-    {
-      name: "Neha Kapoor",
-      image: "/products/product-three.jpg",
-      rating: 5,
-      review:
-        "Will definitely order again from Doppey. Great customer support and amazing products.",
-    },
-  ];
+  const [products, setProducts] = useState([]);
+  const [storedReviews, setStoredReviews] = useState({});
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const res = await API.get("/products/public");
+        setProducts(res.data || []);
+      } catch (error) {
+        console.error("Failed to fetch review products:", error);
+        setProducts(productsData);
+      }
+    };
+
+    const refreshReviews = () => setStoredReviews(getStoredReviews());
+
+    loadProducts();
+    refreshReviews();
+    window.addEventListener("product-reviews-updated", refreshReviews);
+
+    return () =>
+      window.removeEventListener("product-reviews-updated", refreshReviews);
+  }, []);
+
+  const reviews = useMemo(() => {
+    const dynamicReviews = products.flatMap((product) => {
+      const productReviews = [
+        ...(product.reviews || product.customerReviews || []),
+        ...(storedReviews[getProductId(product)] || []),
+      ];
+
+      return productReviews.map((review) => ({
+        name: review.name || review.userName || "Verified Buyer",
+        rating: Number(review.rating || 5),
+        comment: review.comment || review.review || review.message || "",
+        image: getImageUrl(getProductImages(product)[0]),
+      }));
+    });
+
+    return dynamicReviews.filter((review) => review.comment).slice(-12).reverse();
+  }, [products, storedReviews]);
+
+  const visibleReviews = reviews.length ? reviews : fallbackReviews;
+  const averageRating =
+    visibleReviews.reduce((sum, review) => sum + Number(review.rating || 5), 0) /
+    visibleReviews.length;
 
   return (
     <section className={styles.section}>
@@ -62,11 +91,11 @@ export default function ReviewSection() {
         <span>REAL CUSTOMER STORIES</span>
 
         <div className={styles.ratingSummary}>
-          ⭐⭐⭐⭐⭐ <strong>4.8/5 Rating</strong>
+          <strong>{averageRating.toFixed(1)}/5 Rating</strong>
         </div>
 
         <p className={styles.reviewCount}>
-          Based on 12,000+ Reviews
+          Based on {visibleReviews.length} Reviews
         </p>
 
         <h2>WHAT OUR CUSTOMERS SAY</h2>
@@ -74,26 +103,20 @@ export default function ReviewSection() {
 
       <Swiper
         modules={[Autoplay]}
-        loop={true}
+        loop={visibleReviews.length > 4}
         autoplay={{
           delay: 2500,
           disableOnInteraction: false,
         }}
         spaceBetween={20}
         breakpoints={{
-          0: {
-            slidesPerView: 1,
-          },
-          768: {
-            slidesPerView: 2,
-          },
-          1200: {
-            slidesPerView: 4,
-          },
+          0: { slidesPerView: 1 },
+          768: { slidesPerView: 2 },
+          1200: { slidesPerView: 4 },
         }}
       >
-        {reviews.map((review, index) => (
-          <SwiperSlide key={index}>
+        {visibleReviews.map((review, index) => (
+          <SwiperSlide key={`${review.name}-${index}`}>
             <div className={styles.card}>
               <Image
                 src={review.image}
@@ -104,34 +127,20 @@ export default function ReviewSection() {
               />
 
               <div className={styles.content}>
-                <Quote
-                  size={28}
-                  className={styles.quote}
-                />
+                <Quote size={28} className={styles.quote} />
 
                 <div className={styles.stars}>
-                  {[...Array(review.rating)].map(
-                    (_, i) => (
-                      <Star
-                        key={i}
-                        size={16}
-                        fill="currentColor"
-                      />
-                    )
-                  )}
+                  {[...Array(Math.round(review.rating))].map((_, i) => (
+                    <Star key={i} size={16} fill="currentColor" />
+                  ))}
                 </div>
 
                 <h4>{review.name}</h4>
 
-                <span className={styles.verified}>
-                  ✓ Verified Buyer
-                </span>
+                <span className={styles.verified}>Verified Buyer</span>
 
-                <p
-                  className={styles.reviewText}
-                  title={review.review}
-                >
-                  {review.review}
+                <p className={styles.reviewText} title={review.comment}>
+                  {review.comment}
                 </p>
               </div>
             </div>

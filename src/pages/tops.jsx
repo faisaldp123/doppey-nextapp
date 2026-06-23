@@ -4,6 +4,7 @@ export default function Tops() {
   return (
     <ProductListingPage
       pageType="tops"
+      title="Tops"
     />
   );
 }

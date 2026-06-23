@@ -23,6 +23,7 @@ import Header from '@/components/Home/Header';
 import Footer from '@/components/Home/Footer';
 import TopHeader from '@/components/Home/TopHeader';
 import Preloader from '@/components/Preloader';
+import ShopToast from '@/components/ShopToast';
 
 const redhat = Red_Hat_Display({
   subsets: ['latin'],
@@ -55,6 +56,7 @@ export default function App({ Component, pageProps }) {
       <Preloader />
         <Header />
         <Component {...pageProps} />
+        <ShopToast />
         {/* <MobileBottomNav /> */}
         {/* <WhatsApp /> */}
         {/* <div className="chatbot-container">

@@ -1,11 +1,20 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import Searchbar from "./Searchbar";
 import LoginModal from "./LoginModal";
 import AccountModal from "./AccountModal";
+import API from "@/utils/api";
+import { productsData } from "@/constant/productsData";
+import {
+  getImageUrl,
+  getOldPrice,
+  getProductSlug,
+  readName,
+  slugify,
+} from "@/utils/productHelpers";
 
 import {
   ShoppingBag,
@@ -28,11 +37,13 @@ export default function Header() {
   const [wishlistCount, setWishlistCount] = useState(0);
   const [activeMegaMenu, setActiveMegaMenu] = useState(null);
   const [user, setUser] = useState(null);
+  const [products, setProducts] = useState([]);
 
   const userBtnRef = useRef(null);
 
   const mainLinks = [
     { name: "NEW ARRIVALS", href: "/new-arrivals" },
+    { name: "SUMMER COLLECTION", href: "/summer-collection" },
     { name: "BEST SELLERS", href: "/best-sellers" },
     { name: "CLEARANCE SALE", href: "/clearance-sale" },
     { name: "DENIMS", href: "/denims" },
@@ -43,58 +54,78 @@ export default function Header() {
     { name: "ACCESSORIES", href: "/accessories" },
   ];
 
-  const megaMenus = {
+  const fallbackMegaMenus = {
     MEN: {
-      categories: [
-        "Oversized T-Shirts",
-        "Graphic Tees",
-        "Shirts",
-        "Denims",
-        "Cargo Pants",
-        "Joggers",
-        "Hoodies",
-        "Accessories",
-      ],
-      products: [
-        { image: "/products/product-one.jpg", title: "Oversized Tee", price: "₹999", oldPrice: "₹1499" },
-        { image: "/products/product-two.jpg", title: "Cargo Pant", price: "₹1499", oldPrice: "₹2499" },
-        { image: "/products/product-three.jpg", title: "Premium Hoodie", price: "₹1999", oldPrice: "₹2999" },
-      ],
+      categories: ["Oversized T-Shirts", "Graphic Tees", "Shirts", "Denims", "Cargo Pants", "Joggers", "Hoodies", "Accessories"],
+      products: [],
     },
     WOMEN: {
-      categories: [
-        "Tops",
-        "Oversized",
-        "Co-Ord Sets",
-        "Skirts",
-        "Denims",
-        "Cargo",
-        "Dresses",
-        "Accessories",
-      ],
-      products: [
-        { image: "/products/product-four.jpg", title: "Oversized Top", price: "₹899", oldPrice: "₹1499" },
-        { image: "/products/product-five.jpg", title: "Skirt", price: "₹1299", oldPrice: "₹1999" },
-        { image: "/products/product-six.jpg", title: "Co-Ord Set", price: "₹1999", oldPrice: "₹2999" },
-      ],
+      categories: ["Tops", "Oversized", "Co-Ord Sets", "Skirts", "Denims", "Cargo", "Dresses", "Accessories"],
+      products: [],
     },
     KIDS: {
-      categories: [
-        "New Arrivals",
-        "T-Shirts",
-        "Shorts",
-        "Denims",
-        "Joggers",
-        "Winter Wear",
-      ],
-      products: [
-        { image: "/products/product-seven.jpg", title: "Kids Tee", price: "₹699", oldPrice: "₹999" },
-        { image: "/products/product-eight.jpg", title: "Kids Jogger", price: "₹899", oldPrice: "₹1299" },
-      ],
+      categories: ["New Arrivals", "T-Shirts", "Shorts", "Denims", "Joggers", "Winter Wear"],
+      products: [],
     },
   };
 
-  // Sync user from localStorage
+  const genderConfig = {
+    MEN:   "mens",
+    WOMEN: "womens",
+    KIDS:  "kids",
+  };
+
+  const genderMenus = [
+    { label: "MEN",   slug: "mens"   },
+    { label: "WOMEN", slug: "womens" },
+    { label: "KIDS",  slug: "kids"   },
+  ];
+
+  const megaMenus = useMemo(() => {
+    return Object.entries(genderConfig).reduce((menus, [gender, categorySlug]) => {
+      const genderProducts = products.filter((product) => {
+        const cat = product.category;
+        const catSlug = typeof cat === "object"
+          ? (cat.slug || slugify(cat.name || ""))
+          : slugify(cat || "");
+        return catSlug === categorySlug;
+      });
+
+      const categories = [
+        ...new Set(
+          genderProducts
+            .map((p) => readName(p.subCategory))
+            .filter(Boolean)
+        ),
+      ];
+
+      // ← ONLY CHANGE: sort by newest first before slicing
+      const newestProducts = [...genderProducts]
+        .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        .slice(0, 3);
+
+      menus[gender] = {
+        categories: categories.length ? categories : fallbackMegaMenus[gender].categories,
+        products: newestProducts,
+      };
+
+      return menus;
+    }, {});
+  }, [products]);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const res = await API.get("/products/public");
+        setProducts(res.data || []);
+      } catch (error) {
+        console.error("Failed to fetch header products:", error);
+        setProducts(productsData);
+      }
+    };
+    loadProducts();
+  }, []);
+
   useEffect(() => {
     const updateUser = () => {
       const stored = localStorage.getItem("user");
@@ -102,24 +133,83 @@ export default function Header() {
     };
     updateUser();
     window.addEventListener("user-login", updateUser);
-    return () => window.removeEventListener("user-login", updateUser);
-  }, []);
+    const openLogin = () => setShowLogin(true);
+    window.addEventListener("open-login-modal", openLogin);
 
-  // Sync cart + wishlist counts
-  useEffect(() => {
-    const updateCounts = () => {
-      const cart = JSON.parse(localStorage.getItem("cart")) || [];
-      const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-      const totalQuantity = cart.reduce((total, item) => total + (item.quantity || 1), 0);
-      setCartCount(totalQuantity);
-      setWishlistCount(wishlist.length);
+    if (!storedSessionFlag() && !localStorage.getItem("user")) {
+      localStorage.setItem("doppeyLoginPromptSeen", "1");
+      setShowLogin(true);
+    }
+
+    return () => {
+      window.removeEventListener("user-login", updateUser);
+      window.removeEventListener("open-login-modal", openLogin);
     };
-    updateCounts();
-    window.addEventListener("storage", updateCounts);
-    return () => window.removeEventListener("storage", updateCounts);
   }, []);
 
-  // Close account panel on outside click
+  const storedSessionFlag = () => {
+    if (typeof window === "undefined") return true;
+    return localStorage.getItem("doppeyLoginPromptSeen");
+  };
+
+  useEffect(() => {
+  const updateCounts = () => {
+    const cart =
+      JSON.parse(
+        localStorage.getItem("cart")
+      ) || [];
+
+    const wishlist =
+      JSON.parse(
+        localStorage.getItem("wishlist")
+      ) || [];
+
+    const totalQuantity =
+      cart.reduce(
+        (total, item) =>
+          total + (item.quantity || 1),
+        0
+      );
+
+    setCartCount(totalQuantity);
+    setWishlistCount(wishlist.length);
+  };
+
+  updateCounts();
+
+  window.addEventListener(
+    "storage",
+    updateCounts
+  );
+
+  window.addEventListener(
+    "cartUpdated",
+    updateCounts
+  );
+
+  window.addEventListener(
+    "wishlistUpdated",
+    updateCounts
+  );
+
+  return () => {
+    window.removeEventListener(
+      "storage",
+      updateCounts
+    );
+
+    window.removeEventListener(
+      "cartUpdated",
+      updateCounts
+    );
+
+    window.removeEventListener(
+      "wishlistUpdated",
+      updateCounts
+    );
+  };
+}, []);
+
   useEffect(() => {
     if (!showAccount) return;
     const handler = (e) => {
@@ -133,38 +223,23 @@ export default function Header() {
 
   return (
     <>
-      {/* Announcement Bar */}
       <div className={styles.topBar}>
-        FREE SHIPPING ON ORDERS ABOVE ₹999
+        FREE SHIPPING ON ORDERS ABOVE ₹1999
       </div>
 
-      {/* Main Header */}
       <header className={styles.header}>
         <div className="container-fluid">
 
-          {/* ROW 1 */}
           <div className={styles.headerTop}>
 
-            {/* Mobile Menu */}
-            <button
-              className={styles.mobileMenuBtn}
-              onClick={() => setMenuOpen(true)}
-            >
+            <button className={styles.mobileMenuBtn} onClick={() => setMenuOpen(true)}>
               <Menu size={24} />
             </button>
 
-            {/* Logo */}
             <Link href="/" className={styles.logoWrap}>
-              <Image
-                src="/logo-new.webp"
-                alt="Doppey"
-                width={180}
-                height={60}
-                className={styles.logo}
-              />
+              <Image src="/logo-new.webp" alt="Doppey" width={180} height={60} className={styles.logo} />
             </Link>
 
-            {/* Main Navigation */}
             <nav className={styles.mainNav}>
               {mainLinks.map((item) => (
                 <Link key={item.name} href={item.href} className={styles.navLink}>
@@ -173,24 +248,22 @@ export default function Header() {
               ))}
             </nav>
 
-            {/* Icons */}
             <div className={styles.headerIcons}>
 
-              <button
-                className={styles.iconBtn}
-                onClick={() => setShowSearch(true)}
-              >
+              <button className={styles.iconBtn} onClick={() => setShowSearch(true)}>
                 <Search size={20} />
               </button>
 
               <Link href="/wishlist" className={styles.iconBtn}>
                 <Heart size={20} />
-                {wishlistCount > 0 && (
-                  <span className={styles.wishlistCount}>{wishlistCount}</span>
-                )}
+                {wishlistCount > 0 && <span className={styles.wishlistCount}>{wishlistCount}</span>}
               </Link>
 
-              {/* User icon + account dropdown anchored together */}
+              <Link href="/cart" className={styles.iconBtn}>
+                <ShoppingBag size={20} />
+                {cartCount > 0 && <span className={styles.cartCount}>{cartCount}</span>}
+              </Link>
+
               <div style={{ position: "relative" }} ref={userBtnRef}>
                 <button
                   className={styles.iconBtn}
@@ -204,46 +277,33 @@ export default function Header() {
                 >
                   <User size={20} />
                 </button>
-
-                <AccountModal
-                  open={showAccount}
-                  onClose={() => setShowAccount(false)}
-                  user={user}
-                />
+                <AccountModal open={showAccount} onClose={() => setShowAccount(false)} user={user} />
               </div>
-
-              <Link href="/cart" className={styles.iconBtn}>
-                <ShoppingBag size={20} />
-                {cartCount > 0 && (
-                  <span className={styles.cartCount}>{cartCount}</span>
-                )}
-              </Link>
 
             </div>
           </div>
 
-          {/* ROW 2 — Gender mega menu */}
           <div className={styles.genderNav}>
-            {["MEN", "WOMEN", "KIDS"].map((item) => (
+            {genderMenus.map((item) => (
               <div
-                key={item}
+                key={item.label}
                 className={styles.genderItem}
-                onMouseEnter={() => setActiveMegaMenu(item)}
+                onMouseEnter={() => setActiveMegaMenu(item.label)}
                 onMouseLeave={() => setActiveMegaMenu(null)}
               >
                 <button className={styles.genderBtn}>
-                  {item}
+                  {item.label}
                   <ChevronDown size={15} />
                 </button>
 
-                {activeMegaMenu === item && (
+                {activeMegaMenu === item.label && (
                   <div className={styles.megaMenu}>
                     <div className={styles.megaLeft}>
-                      <h4>SHOP {item}</h4>
+                      <h4>SHOP {item.label}</h4>
                       <ul>
-                        {megaMenus[item].categories.map((category, index) => (
+                        {megaMenus[item.label]?.categories.map((category, index) => (
                           <li key={index}>
-                            <Link href={`/category/${category.toLowerCase().replace(/\s+/g, "-")}`}>
+                            <Link href={`/category/${item.slug}/${slugify(category)}`}>
                               {category}
                             </Link>
                           </li>
@@ -252,25 +312,35 @@ export default function Header() {
                     </div>
 
                     <div className={styles.megaRight}>
-                      {megaMenus[item].products.map((product, index) => (
-                        <div key={index} className={styles.productCard}>
-                          <Image
-                            src={product.image}
-                            alt={product.title}
-                            width={300}
-                            height={380}
-                            className={styles.productImage}
-                          />
-                          <h5>{product.title}</h5>
-                          <div className={styles.productPrice}>
-                            <span>{product.price}</span>
-                            <del>{product.oldPrice}</del>
+                      {megaMenus[item.label]?.products?.length ? (
+                        megaMenus[item.label].products.map((product) => (
+                          <div key={getProductSlug(product)} className={styles.productCard}>
+                            <Image
+                              src={getImageUrl(product.images?.[0])}
+                              alt={product.name}
+                              width={300}
+                              height={380}
+                              className={styles.productImage}
+                            />
+                            <h5>{product.name}</h5>
+                            <div className={styles.productPrice}>
+                              <span>₹{product.price}</span>
+                              {getOldPrice(product) && <del>₹{getOldPrice(product)}</del>}
+                            </div>
+                            <Link href={`/product/${getProductSlug(product)}`} className={styles.shopNowBtn}>
+                              SHOP NOW
+                            </Link>
                           </div>
-                          <Link href="/shop" className={styles.shopNowBtn}>
-                            SHOP NOW
+                        ))
+                      ) : (
+                        <div className={styles.productCard}>
+                          <h5>Products coming soon</h5>
+                          <p style={{ fontSize: "13px", color: "#888" }}>New styles are being added.</p>
+                          <Link href={`/${item.slug}`} className={styles.shopNowBtn}>
+                            VIEW SECTION
                           </Link>
                         </div>
-                      ))}
+                      )}
                     </div>
                   </div>
                 )}
@@ -281,28 +351,13 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Searchbar */}
       <Searchbar open={showSearch} onClose={() => setShowSearch(false)} />
+      <LoginModal open={showLogin} onClose={() => setShowLogin(false)} />
 
-      {/* Login Modal */}
-      <LoginModal
-        open={showLogin}
-        onClose={() => setShowLogin(false)}
-      />
-
-      {/* Mobile Drawer */}
       <div className={`${styles.mobileDrawer} ${menuOpen ? styles.drawerOpen : ""}`}>
         <div className={styles.drawerHeader}>
-          <Image
-            src="/logo-new.webp"
-            alt="Doppey"
-            width={180}
-            height={60}
-            className={styles.logo}
-          />
-          <button onClick={() => setMenuOpen(false)}>
-            <X size={24} />
-          </button>
+          <Image src="/logo-new.webp" alt="Doppey" width={180} height={60} className={styles.logo} />
+          <button onClick={() => setMenuOpen(false)}><X size={24} /></button>
         </div>
 
         <div className={styles.drawerLinks}>
@@ -314,40 +369,25 @@ export default function Header() {
 
           <hr />
 
-          <Link href="/men">MEN</Link>
-          <Link href="/women">WOMEN</Link>
-          <Link href="/kids">KIDS</Link>
+          <Link href="/category/mens">MEN</Link>
+          <Link href="/category/womens">WOMEN</Link>
+          <Link href="/category/kids">KIDS</Link>
 
           <hr />
 
           {user ? (
-            <button
-              className={styles.mobileLogin}
-              onClick={() => {
-                setMenuOpen(false);
-                setShowAccount(true);
-              }}
-            >
+            <button className={styles.mobileLogin} onClick={() => { setMenuOpen(false); setShowAccount(true); }}>
               MY ACCOUNT
             </button>
           ) : (
-            <button
-              className={styles.mobileLogin}
-              onClick={() => {
-                setMenuOpen(false);
-                setShowLogin(true);
-              }}
-            >
+            <button className={styles.mobileLogin} onClick={() => { setMenuOpen(false); setShowLogin(true); }}>
               LOGIN / SIGNUP
             </button>
           )}
         </div>
       </div>
 
-      {/* Mobile Backdrop */}
-      {menuOpen && (
-        <div className={styles.backdrop} onClick={() => setMenuOpen(false)} />
-      )}
+      {menuOpen && <div className={styles.backdrop} onClick={() => setMenuOpen(false)} />}
     </>
   );
 }

@@ -5,72 +5,28 @@ import Link from "next/link";
 import Image from "next/image";
 import { ShoppingBag, X, Heart } from "lucide-react";
 import styles from "../styles/Wishlist.module.css";
+import {
+  addToCart as addProductToCart,
+  getWishlist,
+  toggleWishlist as toggleProductWishlist,
+} from "@/utils/shopState";
+import { getImageUrl, getProductId } from "@/utils/productHelpers";
 
 export default function Wishlist() {
   const [wishlistItems, setWishlistItems] =
     useState([]);
 
   useEffect(() => {
-    const wishlist =
-      JSON.parse(
-        localStorage.getItem("wishlist")
-      ) || [];
-
-    setWishlistItems(wishlist);
+    setWishlistItems(getWishlist());
   }, []);
 
-  const handleRemove = (id) => {
-    const updated =
-      wishlistItems.filter(
-        (item) => item.id !== id
-      );
-
+  const handleRemove = (item) => {
+    const { wishlist: updated } = toggleProductWishlist(item);
     setWishlistItems(updated);
-
-    localStorage.setItem(
-      "wishlist",
-      JSON.stringify(updated)
-    );
-
-    window.dispatchEvent(
-      new Event("storage")
-    );
   };
 
   const handleAddToCart = (item) => {
-    const cart =
-      JSON.parse(
-        localStorage.getItem("cart")
-      ) || [];
-
-    const exists = cart.find(
-      (product) =>
-        product.id === item.id
-    );
-
-    if (!exists) {
-      cart.push({
-        ...item,
-        quantity: 1,
-      });
-
-      localStorage.setItem(
-        "cart",
-        JSON.stringify(cart)
-      );
-
-      window.dispatchEvent(
-        new Event("storage")
-      );
-
-      alert(
-        `${item.name} added to cart`
-      );
-    } else {
-      alert(
-        "Product already in cart"
-      );
-    }
+    addProductToCart(item, 1);
   };
 
   return (
@@ -124,7 +80,7 @@ export default function Wishlist() {
             {wishlistItems.map(
               (item) => (
                 <div
-                  key={item.id}
+                  key={getProductId(item)}
                   className={
                     styles.productCard
                   }
@@ -136,8 +92,7 @@ export default function Wishlist() {
                   >
                     <Image
                       src={
-                        item.img1 ||
-                        item.img
+                        getImageUrl(item.images?.[0] || item.img1 || item.img)
                       }
                       alt={item.name}
                       width={350}
@@ -153,7 +108,7 @@ export default function Wishlist() {
                       }
                       onClick={() =>
                         handleRemove(
-                          item.id
+                          item
                         )
                       }
                     >

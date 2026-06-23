@@ -3,6 +3,15 @@ text-align: center;
 padding: 50px 0;
 }
 
+.headingRow {
+display: flex;
+align-items: flex-end;
+justify-content: space-between;
+gap: 20px;
+text-align: left;
+margin-bottom: 35px;
+}
+
 .section h2 {
 font-size: 34px;
 font-weight: 700;
@@ -11,7 +20,24 @@ letter-spacing: 1px;
 
 .section p {
 color: #777;
-margin-bottom: 35px;
+margin-bottom: 0;
+}
+
+.viewAll {
+color: #111;
+font-size: 13px;
+font-weight: 700;
+letter-spacing: .5px;
+text-decoration: none;
+text-transform: uppercase;
+border-bottom: 1px solid #111;
+padding-bottom: 4px;
+white-space: nowrap;
+}
+
+.emptyText {
+padding: 32px 0;
+text-align: center;
 }
 
 .pro {

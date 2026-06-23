@@ -1,28 +1,30 @@
+/* ── DESKTOP ── */
+.heroPlaceholder {
+  width: 100%;
+  height: calc(100vh - 157px);
+  margin-top: 157px;
+  background: #f0f0f0;
+}
+
 .heroSection {
   position: relative;
   width: 100%;
-  height: calc(100vh - 64px);
-  margin-top: 90px;
+  height: calc(100vh - 157px);
+  margin-top: 157px;
   overflow: hidden;
-}
-.heroImage {
-  object-fit: cover;
-  object-position: center center;
 }
 
 .slide {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   opacity: 0;
   visibility: hidden;
-
   transition:
     opacity 1.8s ease-in-out,
     visibility 1.8s ease-in-out;
-}
-.active {
-  opacity: 1;
-  visibility: visible;
 }
 
 .active {
@@ -32,64 +34,16 @@
 
 .heroImage {
   object-fit: cover;
+  object-position: center top;
 }
 
-.overlay {
+.slideLink {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to right,
-    rgba(0,0,0,.55),
-    rgba(0,0,0,.15)
-  );
-}
-
-.heroContent {
-  position: absolute;
-  top: 55%;
-  left: 8%;
-  transform: translateY(-50%);
-  z-index: 5;
-  color: white;
-  max-width: 650px;
-}
-
-.badge {
-  display: inline-block;
-  padding: 10px 18px;
-  background: rgba(255,255,255,.15);
-  backdrop-filter: blur(10px);
-  margin-bottom: 20px;
-  font-size: 12px;
-  letter-spacing: 2px;
-}
-
-.heroContent h1 {
-  font-size: 5rem;
-  font-weight: 900;
-  line-height: .95;
-  margin-bottom: 20px;
-}
-
-.heroContent p {
-  font-size: 1.15rem;
-  max-width: 500px;
-  margin-bottom: 30px;
-}
-
-.heroBtn {
-  border: none;
-  background: white;
-  color: black;
-  padding: 16px 38px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: .3s;
-}
-
-.heroBtn:hover {
-  background: #111;
-  color: white;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
 }
 
 .dots {
@@ -112,72 +66,79 @@
 }
 
 .dot {
-  background: rgba(255,255,255,.4);
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .activeDot {
   background: white;
 }
-
-/* Tablet */
-
-@media (max-width: 992px) {
-  .heroContent h1 {
-    font-size: 3.8rem;
-  }
+.heroVideo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-/* Mobile */
+/* ── TABLET (genderNav hidden at 991px → header = 35+65 = 100px) ── */
+@media (max-width: 991px) {
+  .heroPlaceholder {
+    height: calc(100vh - 100px);
+    margin-top: 100px;
+  }
 
-@media (max-width: 768px) {
   .heroSection {
-    margin-top: 75px;
-    height: calc(85vh - 75px);
+    margin-top: 100px;
+    height: calc(100vh - 100px);
   }
 
   .heroImage {
-    object-position: center;
+    object-position: center top;
+  }
+}
+
+/* ── MOBILE ── */
+@media (max-width: 768px) {
+  .heroPlaceholder {
+    height: 56vw;
+    margin-top: 100px;
   }
 
-  .heroContent {
-    left: 20px;
-    right: 20px;
-    max-width: 100%;
-  }
-
-  .heroContent h1 {
-    font-size: 2.7rem;
-  }
-
-  .heroContent p {
-    font-size: .95rem;
-  }
-
-  .heroBtn {
-    width: 100%;
-  }
-
-  .dots {
-    bottom: 20px;
-  }
   .heroSection {
-    height: 90vh;
+    margin-top: 100px;
+    height: 100vw;
+    min-height: 650px;
+    max-height: 480px;
   }
 
   .heroImage {
     object-fit: cover;
     object-position: center center;
   }
-}
 
-/* Small Mobile */
-
-@media (max-width: 480px) {
-  .heroContent h1 {
-    font-size: 2.2rem;
+  .dots {
+    bottom: 12px;
   }
 
-  .badge {
-    font-size: 10px;
+  .dot,
+  .activeDot {
+    width: 8px;
+    height: 8px;
+  }
+}
+
+/* ── SMALL MOBILE ── */
+@media (max-width: 480px) {
+  .heroPlaceholder {
+    height: 60vw;
+    margin-top: 100px;
+  }
+
+  .heroSection {
+    margin-top: 100px;
+    height: 60vw;
+    min-height: 200px;
+    max-height: 380px;
   }
 }

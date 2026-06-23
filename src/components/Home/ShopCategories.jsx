@@ -4,19 +4,19 @@ import styles from "../../styles/ShopCategories.module.css";
 export default function ShopCategories() {
 const categories = [
 {
-title: "MEN",
+title: "ALL",
 image: "/products/product-one.jpg",
 },
 {
-title: "WOMEN",
+title: "MEN",
 image: "/products/product-two.jpg",
 },
 {
-title: "OVERSIZED",
+title: "WOMEN",
 image: "/products/product-three.jpg",
 },
 {
-title: "HOODIES",
+title: "KIDS",
 image: "/products/product-four.jpg",
 },
 ];

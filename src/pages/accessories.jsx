@@ -4,6 +4,7 @@ export default function Accessories() {
   return (
     <ProductListingPage
       pageType="accessories"
+      title="Accessories"
     />
   );
 }

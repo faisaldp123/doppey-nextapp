@@ -10,6 +10,15 @@ import {
   Eye,
 } from "lucide-react";
 
+import {
+  getImageUrl,
+  getOldPrice,
+  getProductId,
+  getProductImages,
+  getProductSlug,
+} from "@/utils/productHelpers";
+import { addToCart as addProductToCart, toggleWishlist as toggleProductWishlist } from "@/utils/shopState";
+
 import styles from "../../styles/PruductCard.module.css";
 
 export default function ProductCard({
@@ -21,106 +30,26 @@ export default function ProductCard({
   const [hovered, setHovered] =
     useState(false);
 
-  const BASE_URL =
-    process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") ||
-    "https://doppey-admin-backend.onrender.com";
-
-  const getImageUrl = (url) => {
-    if (!url) return "/placeholder.jpg";
-
-    // Cloudinary URL
-    if (url.startsWith("http")) {
-      return url;
-    }
-
-    // Local upload URL
-    if (url.startsWith("/")) {
-      return `${BASE_URL}${url}`;
-    }
-
-    return `${BASE_URL}/${url}`;
-  };
-
-  const image1 = getImageUrl(
-    product.images?.[0] || product.image
-  );
-
-  const image2 = getImageUrl(
-    product.images?.[1] ||
-      product.images?.[0] ||
-      product.image
-  );
+  const productId = getProductId(product);
+  const productSlug = getProductSlug(product);
+  const images = getProductImages(product);
+  const image1 = getImageUrl(images[0]);
+  const image2 = getImageUrl(images[1] || images[0]);
+  const oldPrice = getOldPrice(product);
 
   const isWishlisted =
     wishlist?.some(
       (item) =>
-        item._id === product._id
+        getProductId(item) === productId
     );
 
   const toggleWishlist = () => {
-    let updated = [...wishlist];
-
-    const exists = updated.find(
-      (item) =>
-        item._id === product._id
-    );
-
-    if (exists) {
-      updated = updated.filter(
-        (item) =>
-          item._id !== product._id
-      );
-    } else {
-      updated.push(product);
-    }
-
+    const { wishlist: updated } = toggleProductWishlist(product);
     setWishlist(updated);
-
-    localStorage.setItem(
-      "wishlist",
-      JSON.stringify(updated)
-    );
-
-    window.dispatchEvent(
-      new Event("storage")
-    );
   };
 
   const addToCart = () => {
-    const cart =
-      JSON.parse(
-        localStorage.getItem("cart")
-      ) || [];
-
-    const exists = cart.find(
-      (item) =>
-        item._id === product._id
-    );
-
-    if (exists) {
-      alert(
-        "Product already added to cart"
-      );
-      return;
-    }
-
-    cart.push({
-      ...product,
-      quantity: 1,
-    });
-
-    localStorage.setItem(
-      "cart",
-      JSON.stringify(cart)
-    );
-
-    window.dispatchEvent(
-      new Event("storage")
-    );
-
-    alert(
-      `${product.name} added to cart`
-    );
+    addProductToCart(product, 1);
   };
 
   return (
@@ -137,7 +66,7 @@ export default function ProductCard({
 
       <div className={styles.imageWrapper}>
         <Link
-          href={`/product/${product.slug}`}
+          href={`/product/${productSlug}`}
         >
           <Image
             src={
@@ -173,7 +102,7 @@ export default function ProductCard({
         <button
           className={styles.quickViewBtn}
           onClick={() =>
-            onQuickView(product)
+            onQuickView?.(product)
           }
         >
           <Eye size={16} />
@@ -189,7 +118,7 @@ export default function ProductCard({
         </span>
 
         <Link
-          href={`/product/${product.slug}`}
+          href={`/product/${productSlug}`}
           className={
             styles.productLink
           }
@@ -206,7 +135,7 @@ export default function ProductCard({
             ₹{product.price}
           </span>
 
-          {product.discount > 0 && (
+          {oldPrice && (
             <>
               <span
                 className={
@@ -214,21 +143,18 @@ export default function ProductCard({
                 }
               >
                 ₹
-                {Math.round(
-                  product.price /
-                    (1 -
-                      product.discount /
-                        100)
-                )}
+                {oldPrice}
               </span>
 
-              <span
-                className={
-                  styles.discount
-                }
-              >
-                {product.discount}% OFF
-              </span>
+              {product.discount > 0 && (
+                <span
+                  className={
+                    styles.discount
+                  }
+                >
+                  {product.discount}% OFF
+                </span>
+              )}
             </>
           )}
         </div>
