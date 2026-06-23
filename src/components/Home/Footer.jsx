@@ -55,12 +55,12 @@ const Footer = () => {
 
         {/* Install App */}
         <div className={styles.footerColumn}>
-          <h4>Install App</h4>
+          {/* <h4>Install App</h4>
           <p>From App Store or Google Play</p>
           <div className={styles.appLinks}>
             <Link href="/"><Image className={styles.play} src="/footer/app-store.jpg" alt="App Store" width={130} height={40} /></Link>
             <Link href="/"><Image className={styles.play} src="/footer/google-play.jpg" alt="Google Play" width={120} height={40} /></Link>
-          </div>
+          </div> */}
           {/* <p>Secured Payment Gateways</p>
           <div className={styles.paymentIcons}>
             <Image src="/footer/visa.png" alt="Visa" width={50} height={30} />

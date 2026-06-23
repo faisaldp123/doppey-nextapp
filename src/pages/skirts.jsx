@@ -4,6 +4,7 @@ export default function Skirts() {
   return (
     <ProductListingPage
       pageType="skirts"
+      title="Skirts"
     />
   );
 }

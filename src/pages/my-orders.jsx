@@ -27,15 +27,22 @@ const fetchOrders = async () => {
   }
 };
 
-if (loading) {
-  return (
-    <div className={styles.ordersPage}>
-      <div className={styles.container}>
-        Loading Orders...
+  const getImageUrl = (url) => {
+    if (!url) return "/placeholder.jpg";
+    if (url.startsWith("http")) return url;
+    const base = process.env.NEXT_PUBLIC_API_URL?.replace("/api", "") || "";
+    return url.startsWith("/") ? `${base}${url}` : `${base}/${url}`;
+  };
+
+  if (loading) {
+    return (
+      <div className={styles.ordersPage}>
+        <div className={styles.container}>
+          Loading Orders...
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
   return (
     <div className={styles.ordersPage}>
@@ -56,13 +63,9 @@ if (loading) {
             >
               <div className={styles.imageWrap}>
                 <img
-  src={
-    order.items?.[0]?.product?.images?.[0]
-      ? `${process.env.NEXT_PUBLIC_API_URL.replace("/api","")}/${order.items[0].product.images[0]}`
-      : "/placeholder.jpg"
-  }
-  alt=""
-/>
+                  src={getImageUrl(order.items?.[0]?.product?.images?.[0])}
+                  alt=""
+                />
               </div>
 
               <div className={styles.orderContent}>

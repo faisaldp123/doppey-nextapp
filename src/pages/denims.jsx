@@ -4,6 +4,7 @@ export default function Denims() {
   return (
     <ProductListingPage
       pageType="denims"
+      title="Denims"
     />
   );
 }

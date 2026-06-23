@@ -4,8 +4,23 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
+import ProductCard from "@/components/collection/ProductCard";
 
 import API from "@/utils/api";
+import {
+  getCategorySlug,
+  getImageUrl,
+  getProductId,
+  getProductImages,
+  getProductSlug,
+  getStoredReviews,
+  saveStoredReviews,
+} from "@/utils/productHelpers";
+import {
+  addToCart as addProductToCart,
+  removeFromCart as removeProductFromCart,
+  toggleWishlist as toggleProductWishlist,
+} from "@/utils/shopState";
 
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
@@ -55,23 +70,11 @@ export default function ProductDetail() {
 
   const [deliveryMsg, setDeliveryMsg] = useState("");
 
-  const [reviews, setReviews] = useState([
-    {
-      name: "Rahul Sharma",
-      rating: 5,
-      comment:
-        "Amazing quality and fitting. Worth every penny."
-    },
-    {
-      name: "Arjun Singh",
-      rating: 5,
-      comment:
-        "Fabric quality is excellent and delivery was fast."
-    },
-  ]);
+  const [reviews, setReviews] = useState([]);
 
   const [reviewForm, setReviewForm] = useState({
     name: "",
+    rating: 5,
     comment: "",
   });
 
@@ -111,7 +114,7 @@ setAllProducts(allProductsRes.data);
       setProduct(foundProduct);
 
       setMainImg(
-        foundProduct.images?.[0] || ""
+        getProductImages(foundProduct)[0] || ""
       );
 
       const cart =
@@ -121,7 +124,7 @@ setAllProducts(allProductsRes.data);
 
       const alreadyAdded = cart.some(
         (item) =>
-          item._id === foundProduct._id
+          getProductId(item) === getProductId(foundProduct)
       );
 
       setIsInCart(alreadyAdded);
@@ -135,7 +138,7 @@ setAllProducts(allProductsRes.data);
 
       const filtered = viewed.filter(
         (item) =>
-          item._id !== foundProduct._id
+          getProductId(item) !== getProductId(foundProduct)
       );
 
       filtered.unshift(foundProduct);
@@ -164,6 +167,17 @@ setAllProducts(allProductsRes.data);
     setWishlist(storedWishlist);
   }, []);
 
+  useEffect(() => {
+    if (!product) return;
+
+    const storedReviews =
+      getStoredReviews()[getProductId(product)] || [];
+    const backendReviews =
+      product.reviews || product.customerReviews || [];
+
+    setReviews([...backendReviews, ...storedReviews]);
+  }, [product]);
+
   if (!product) {
   return (
     <div
@@ -177,41 +191,20 @@ setAllProducts(allProductsRes.data);
   );
 }
 
-  const BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL?.replace(
-    "/api",
-    ""
-  ) ||
-  "https://doppey-admin-backend.onrender.com";
-
-const getImageUrl = (url) => {
-  if (!url) return "/placeholder.jpg";
-
-  if (url.startsWith("http")) {
-    return url;
-  }
-
-  if (url.startsWith("/")) {
-    return `${BASE_URL}${url}`;
-  }
-
-  return `${BASE_URL}/${url}`;
-};
-
   const featuredProducts = allProducts
   .filter(
     (item) =>
       item.isBestSeller &&
-      item._id !== product._id
+      getProductId(item) !== getProductId(product)
   )
   .slice(0, 4);
 
 const relatedProducts = allProducts
   .filter(
     (item) =>
-      item.subCategory?._id ===
-        product.subCategory?._id &&
-      item._id !== product._id
+      getCategorySlug(item) ===
+        getCategorySlug(product) &&
+      getProductId(item) !== getProductId(product)
   )
   .slice(0, 4);
 
@@ -223,101 +216,27 @@ const relatedProducts = allProducts
       : [];
 
   const toggleWishlist = () => {
-  let updatedWishlist = [...wishlist];
-
-  const exists = updatedWishlist.find(
-  (item) => item._id === product._id
-);
-
-  if (exists) {
-    updatedWishlist = updatedWishlist.filter(
-  (item) => item._id !== product._id
-);
-
-    showToast(
-      "remove",
-      `${product.name} removed from wishlist`
-    );
-  } else {
-    updatedWishlist.push(product);
-
-    showToast(
-      "wishlist",
-      `${product.name} added to wishlist`
-    );
-  }
-
+  const { wishlist: updatedWishlist } = toggleProductWishlist(product);
   setWishlist(updatedWishlist);
-
-  localStorage.setItem(
-    "wishlist",
-    JSON.stringify(updatedWishlist)
-  );
 };
 
   const isWishlisted = wishlist.some(
-    (item) => item._id === product._id
+    (item) => getProductId(item) === getProductId(product)
   );
 
   const handleAddToCart = () => {
-  const cart =
-    JSON.parse(localStorage.getItem("cart")) || [];
-
-  const existing = cart.find(
-    (item) => item._id === product._id
-  );
-
-  if (existing) {
-    showToast(
-      "cart",
-      "Product already added to cart"
-    );
-
-    return;
-  }
-
-  cart.push({
-    ...product,
-    quantity: qty,
-    size: selectedSize,
-  });
-
-  localStorage.setItem(
-    "cart",
-    JSON.stringify(cart)
-  );
-
-  setIsInCart(true);
-
-  showToast(
-    "cart",
-    `${product.name} added to your cart`
-  );
+  const result = addProductToCart(product, qty, { size: selectedSize });
+  if (result.ok) setIsInCart(true);
+  return result.ok;
 };
 
 const handleRemoveFromCart = () => {
-  const cart =
-    JSON.parse(localStorage.getItem("cart")) || [];
-
-  const updatedCart = cart.filter(
-    (item) => item._id !== product._id
-  );
-
-  localStorage.setItem(
-    "cart",
-    JSON.stringify(updatedCart)
-  );
-
+  removeProductFromCart(product);
   setIsInCart(false);
-
-  showToast(
-    "remove",
-    `${product.name} removed from cart`
-  );
 };
 
   const handleBuyNow = () => {
-    handleAddToCart();
+    if (!handleAddToCart()) return;
 
     router.push("/cart");
   };
@@ -345,18 +264,30 @@ const handleRemoveFromCart = () => {
     )
       return;
 
-    setReviews([
-      ...reviews,
-      {
-        ...reviewForm,
-        rating: 5,
-      },
-    ]);
+    const newReview = {
+      ...reviewForm,
+      rating: Number(reviewForm.rating) || 5,
+      createdAt: new Date().toISOString(),
+    };
+
+    const reviewsByProduct = getStoredReviews();
+    const productId = getProductId(product);
+
+    reviewsByProduct[productId] = [
+      ...(reviewsByProduct[productId] || []),
+      newReview,
+    ];
+
+    saveStoredReviews(reviewsByProduct);
+    setReviews([...reviews, newReview]);
 
     setReviewForm({
       name: "",
+      rating: 5,
       comment: "",
     });
+
+    showToast("cart", "Review submitted successfully");
   };
   return (
   <div className={styles.container}>
@@ -403,19 +334,27 @@ const handleRemoveFromCart = () => {
         {/* DESKTOP IMAGE */}
 
         <div className={styles.mainImageWrapper}>
-          <Image
-  src={getImageUrl(mainImg)}
-  alt={product.name}
-  fill
-  sizes="(max-width:768px) 100vw, 50vw"
-  className={styles.mainImage}
-/>
+          {product.video && mainImg === product.video ? (
+            <video
+              src={product.video}
+              controls
+              className={styles.mainVideo}
+            />
+          ) : (
+            <Image
+              src={getImageUrl(mainImg)}
+              alt={product.name}
+              fill
+              sizes="(max-width:768px) 100vw, 50vw"
+              className={styles.mainImage}
+            />
+          )}
         </div>
 
         {/* THUMBNAILS */}
 
         <div className={styles.thumbnailRow}>
-          {product.images?.map((img, index) => (
+          {getProductImages(product).map((img, index) => (
             <div
               key={index}
               className={`${styles.thumbWrapper}
@@ -431,6 +370,15 @@ const handleRemoveFromCart = () => {
               />
             </div>
           ))}
+          {product.video && (
+            <button
+              type="button"
+              className={styles.videoThumb}
+              onClick={() => setMainImg(product.video)}
+            >
+              Video
+            </button>
+          )}
         </div>
 
         {/* MOBILE SWIPER */}
@@ -443,7 +391,7 @@ const handleRemoveFromCart = () => {
             spaceBetween={20}
             slidesPerView={1}
           >
-            {product.images?.map((img, index) => (
+            {getProductImages(product).map((img, index) => (
               <SwiperSlide key={index}>
                 <Image
                   src={getImageUrl(img)}
@@ -799,6 +747,22 @@ const handleRemoveFromCart = () => {
           }
         />
 
+        <select
+          value={reviewForm.rating}
+          onChange={(e) =>
+            setReviewForm({
+              ...reviewForm,
+              rating: e.target.value,
+            })
+          }
+        >
+          {[5, 4, 3, 2, 1].map((rating) => (
+            <option key={rating} value={rating}>
+              {rating} Star{rating > 1 ? "s" : ""}
+            </option>
+          ))}
+        </select>
+
         <textarea
           rows={5}
           placeholder="Write your review..."
@@ -819,137 +783,156 @@ const handleRemoveFromCart = () => {
 
     {/* FEATURED PRODUCTS */}
 
-    <div className={styles.featuredSection}>
-
-      <div className={styles.sectionTitle}>
-        <h2>Featured Products</h2>
-        <p>Our Best Selling Collection</p>
-      </div>
-
-      <div className={styles.productGrid}>
-
-        {featuredProducts.map((item) => (
-          <Link
-            href={`/product/${item.slug}`}
-            key={item._id}
-          >
-            <div className={styles.productCard}>
-
-              <Image
-               src={getImageUrl(item.images?.[0])}
-                alt={item.name}
-                width={300}
-                height={300}
-                className={styles.productImage}
-              />
-
-              <h4>{item.name}</h4>
-
-              <div className={styles.cardStars}>
-                {"★".repeat(item.rating)}
-              </div>
-
-              <h5>${item.price}</h5>
-
+    {/* FEATURED PRODUCTS */}
+<div className={styles.featuredSection}>
+  <div className={styles.sectionTitle}>
+    <h2>Featured Products</h2>
+    <p>Our Best Selling Collection</p>
+  </div>
+  <div className={styles.productGrid}>
+    {featuredProducts.map((item) => {
+      const discounted = item.discount
+        ? Math.round(item.price - (item.price * item.discount) / 100)
+        : item.price;
+      const oldPrice = item.discount ? item.price : null;
+      return (
+        <Link
+          href={`/product/${getProductSlug(item)}`}
+          key={getProductId(item)}
+          className={styles.productCard}
+        >
+          <div className={styles.productImageWrap}>
+            <Image
+              src={getImageUrl(getProductImages(item)[0])}
+              alt={item.name}
+              fill
+              sizes="(max-width:768px) 50vw, 25vw"
+              className={styles.productImage}
+            />
+          </div>
+          <div className={styles.productInfo}>
+            <p className={styles.productBrand}>{item.brand || "Doppey"}</p>
+            <p className={styles.productName}>{item.name}</p>
+            <div className={styles.productPriceRow}>
+              <span className={styles.productCurrentPrice}>₹{discounted}</span>
+              {oldPrice && <span className={styles.productOldPrice}>₹{oldPrice}</span>}
+              {item.discount > 0 && (
+                <span className={styles.productDiscount}>{item.discount}% off</span>
+              )}
             </div>
-          </Link>
-        ))}
-
-      </div>
-    </div>
-
-    {/* RELATED PRODUCTS */}
-
-    <div className={styles.relatedSection}>
-
-      <div className={styles.sectionTitle}>
-        <h2>You May Also Like</h2>
-        <p>Similar Products</p>
-      </div>
-
-      <div className={styles.productGrid}>
-
-        {relatedProducts.map((item) => (
-          <Link
-            href={`/product/${item.slug}`}
-            key={item._id}
-          >
-            <div className={styles.productCard}>
-
-              <Image
-                src={getImageUrl(item.images?.[0])}
-                alt={item.name}
-                width={300}
-                height={300}
-                className={styles.productImage}
-              />
-
-              <h4>{item.name}</h4>
-
+            {item.rating > 0 && (
               <div className={styles.cardStars}>
-                {"★".repeat(item.rating)}
+                {"★".repeat(Math.round(item.rating))}
               </div>
+            )}
+          </div>
+        </Link>
+      );
+    })}
+  </div>
+</div>
 
-              <h5>${item.price}</h5>
-
+{/* RELATED PRODUCTS */}
+<div className={styles.relatedSection}>
+  <div className={styles.sectionTitle}>
+    <h2>You May Also Like</h2>
+    <p>Similar Products</p>
+  </div>
+  <div className={styles.productGrid}>
+    {relatedProducts.map((item) => {
+      const discounted = item.discount
+        ? Math.round(item.price - (item.price * item.discount) / 100)
+        : item.price;
+      const oldPrice = item.discount ? item.price : null;
+      return (
+        <Link
+          href={`/product/${getProductSlug(item)}`}
+          key={getProductId(item)}
+          className={styles.productCard}
+        >
+          <div className={styles.productImageWrap}>
+            <Image
+              src={getImageUrl(getProductImages(item)[0])}
+              alt={item.name}
+              fill
+              sizes="(max-width:768px) 50vw, 25vw"
+              className={styles.productImage}
+            />
+          </div>
+          <div className={styles.productInfo}>
+            <p className={styles.productBrand}>{item.brand || "Doppey"}</p>
+            <p className={styles.productName}>{item.name}</p>
+            <div className={styles.productPriceRow}>
+              <span className={styles.productCurrentPrice}>₹{discounted}</span>
+              {oldPrice && <span className={styles.productOldPrice}>₹{oldPrice}</span>}
+              {item.discount > 0 && (
+                <span className={styles.productDiscount}>{item.discount}% off</span>
+              )}
             </div>
-          </Link>
-        ))}
+            {item.rating > 0 && (
+              <div className={styles.cardStars}>
+                {"★".repeat(Math.round(item.rating))}
+              </div>
+            )}
+          </div>
+        </Link>
+      );
+    })}
+  </div>
+</div>
 
-      </div>
+{/* RECENTLY VIEWED */}
+{recentlyViewed.length > 1 && (
+  <div className={styles.recentSection}>
+    <div className={styles.sectionTitle}>
+      <h2>Recently Viewed</h2>
     </div>
-
-    {/* RECENTLY VIEWED */}
-
-    {recentlyViewed.length > 1 && (
-
-      <div className={styles.recentSection}>
-
-        <div className={styles.sectionTitle}>
-          <h2>Recently Viewed</h2>
-        </div>
-
-        <div className={styles.productGrid}>
-
-          {recentlyViewed
-            .filter(
-  (item) =>
-    item._id !== product._id
-)
-            .slice(0, 4)
-            .map((item) => (
-
-              <Link
-                href={`/product/${item.slug}`}
-                key={item._id}
-              >
-                <div
-                  className={styles.productCard}
-                >
-
-                  <Image
-                    src={getImageUrl(item.images?.[0])}
-                    alt={item.name}
-                    width={300}
-                    height={300}
-                    className={
-                      styles.productImage
-                    }
-                  />
-
-                  <h4>{item.name}</h4>
-
-                  <h5>${item.price}</h5>
-
+    <div className={styles.productGrid}>
+      {recentlyViewed
+        .filter((item) => getProductId(item) !== getProductId(product))
+        .slice(0, 4)
+        .map((item) => {
+          const discounted = item.discount
+            ? Math.round(item.price - (item.price * item.discount) / 100)
+            : item.price;
+          const oldPrice = item.discount ? item.price : null;
+          return (
+            <Link
+              href={`/product/${getProductSlug(item)}`}
+              key={getProductId(item)}
+              className={styles.productCard}
+            >
+              <div className={styles.productImageWrap}>
+                <Image
+                  src={getImageUrl(getProductImages(item)[0])}
+                  alt={item.name}
+                  fill
+                  sizes="(max-width:768px) 50vw, 25vw"
+                  className={styles.productImage}
+                />
+              </div>
+              <div className={styles.productInfo}>
+                <p className={styles.productBrand}>{item.brand || "Doppey"}</p>
+                <p className={styles.productName}>{item.name}</p>
+                <div className={styles.productPriceRow}>
+                  <span className={styles.productCurrentPrice}>₹{discounted}</span>
+                  {oldPrice && <span className={styles.productOldPrice}>₹{oldPrice}</span>}
+                  {item.discount > 0 && (
+                    <span className={styles.productDiscount}>{item.discount}% off</span>
+                  )}
                 </div>
-              </Link>
-
-            ))}
-
-        </div>
-      </div>
-
-    )}
+                {item.rating > 0 && (
+                  <div className={styles.cardStars}>
+                    {"★".repeat(Math.round(item.rating))}
+                  </div>
+                )}
+              </div>
+            </Link>
+          );
+        })}
+    </div>
+  </div>
+)}
 
   </div>
 );}

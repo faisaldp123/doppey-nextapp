@@ -11,6 +11,8 @@ export default function MobileFilters({
   brands = [],
   productTypes = [],
   colors = [],
+  sizes = [],
+  maxPrice = 10000,
 }) {
   if (!isOpen) return null;
 
@@ -87,7 +89,7 @@ export default function MobileFilters({
           <input
             type="range"
             min="0"
-            max="10000"
+            max={maxPrice}
             value={filters.maxPrice}
             onChange={(e) =>
               setFilters({
@@ -170,18 +172,7 @@ export default function MobileFilters({
           <div
             className={styles.sizeGrid}
           >
-            {[
-              "XS",
-              "S",
-              "M",
-              "L",
-              "XL",
-              "28",
-              "30",
-              "32",
-              "34",
-              "36",
-            ].map((size) => (
+          {sizes.map((size) => (
               <button
                 key={size}
                 className={

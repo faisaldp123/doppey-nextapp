@@ -54,13 +54,18 @@ export default function OrderSuccess() {
         <h1>Order Placed Successfully!</h1>
 
         <div className={styles.orderNumber}>
-  Order ID: {order.orderNumber}
+  Order ID: {order._id}
 </div>
+{order.waybill && (
+  <div className={styles.orderNumber}>
+    Tracking ID: {order.waybill}
+  </div>
+)}
 
         <p>
           Thank you{" "}
           <strong>
-            {order.customer.fullName}
+            {order?.address?.fullName || "Customer"}
           </strong>
           . Your order has been received.
         </p>
@@ -78,7 +83,7 @@ export default function OrderSuccess() {
           <div>
             <span>Order Total</span>
             <strong>
-              ₹{order.total.toLocaleString()}
+              ₹{order.totalAmount?.toLocaleString("en-IN")}
             </strong>
           </div>
 
@@ -102,7 +107,9 @@ export default function OrderSuccess() {
           <button
   className={styles.trackBtn}
   onClick={() =>
-    router.push("/track-order")
+    router.push(
+      `/track-order?id=${order._id}`
+    )
   }
 >
   Track Order

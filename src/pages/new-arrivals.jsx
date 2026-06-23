@@ -4,6 +4,7 @@ export default function NewArrivals() {
   return (
     <ProductListingPage
       pageType="new-arrivals"
+      title="New Arrivals"
     />
   );
 }

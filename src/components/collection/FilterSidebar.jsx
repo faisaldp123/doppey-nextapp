@@ -6,55 +6,14 @@ import styles from "../../styles/FilterSidebar.module.css";
 export default function FilterSidebar({
   filters,
   setFilters,
+  brands = [],
+  colors = [],
+  productTypes = [],
+  sizes = [],
+  maxPrice = 10000,
 }) {
   const [showMoreColors, setShowMoreColors] =
     useState(false);
-
-  const productTypes = [
-    "T-Shirts",
-    "Shirts",
-    "Jeans",
-    "Cargo",
-    "Joggers",
-    "Tops",
-    "Skirts",
-    "Co-Ord Sets",
-    "Accessories",
-    "Denims",
-  ];
-
-  const sizes = [
-    "XS",
-    "S",
-    "M",
-    "L",
-    "XL",
-    "XXL",
-    "28",
-    "30",
-    "32",
-    "34",
-    "36",
-    "38",
-  ];
-
-  const colors = [
-    "Black",
-    "Blue",
-    "Brown",
-    "Clay",
-    "Deep Blue",
-    "Deep Indigo",
-    "Green",
-    "Grey",
-    "Khaki",
-    "Navy",
-    "Olive",
-    "Pink",
-    "Purple",
-    "White",
-    "Yellow",
-  ];
 
   const visibleColors =
     showMoreColors
@@ -134,11 +93,11 @@ export default function FilterSidebar({
         <input
           type="range"
           min="0"
-          max="10000"
+          max={maxPrice}
           step="100"
           value={
             filters.maxPrice ||
-            10000
+            maxPrice
           }
           onChange={(e) =>
             setFilters({
@@ -155,7 +114,7 @@ export default function FilterSidebar({
           ₹0 - ₹
           {(
             filters.maxPrice ||
-            10000
+            maxPrice
           ).toLocaleString()}
         </p>
       </div>
@@ -165,7 +124,7 @@ export default function FilterSidebar({
       <div className={styles.filterGroup}>
         <h3>Product Type</h3>
 
-        {productTypes.map((type) => (
+        {productTypes.length ? productTypes.map((type) => (
           <label key={type}>
             <input
               type="checkbox"
@@ -184,7 +143,7 @@ export default function FilterSidebar({
 
             {type}
           </label>
-        ))}
+        )) : <p>No product types yet.</p>}
       </div>
 
       {/* SIZE */}
@@ -193,7 +152,7 @@ export default function FilterSidebar({
         <h3>Size</h3>
 
         <div className={styles.sizeGrid}>
-          {sizes.map((size) => (
+          {sizes.length ? sizes.map((size) => (
             <button
               key={size}
               type="button"
@@ -215,7 +174,7 @@ export default function FilterSidebar({
             >
               {size}
             </button>
-          ))}
+          )) : <p>No sizes yet.</p>}
         </div>
       </div>
 
@@ -224,7 +183,7 @@ export default function FilterSidebar({
       <div className={styles.filterGroup}>
         <h3>Color</h3>
 
-        {visibleColors.map(
+        {visibleColors.length ? visibleColors.map(
           (color) => (
             <label key={color}>
               <input
@@ -245,23 +204,50 @@ export default function FilterSidebar({
               {color}
             </label>
           )
-        )}
+        ) : <p>No colors yet.</p>}
 
-        <button
-          type="button"
-          className={
-            styles.showMoreBtn
-          }
-          onClick={() =>
-            setShowMoreColors(
-              !showMoreColors
-            )
-          }
-        >
-          {showMoreColors
-            ? "Show Less"
-            : "Show More"}
-        </button>
+        {colors.length > 8 && (
+          <button
+            type="button"
+            className={
+              styles.showMoreBtn
+            }
+            onClick={() =>
+              setShowMoreColors(
+                !showMoreColors
+              )
+            }
+          >
+            {showMoreColors
+              ? "Show Less"
+              : "Show More"}
+          </button>
+        )}
+      </div>
+
+      <div className={styles.filterGroup}>
+        <h3>Brand</h3>
+
+        {brands.length ? brands.map((brand) => (
+          <label key={brand}>
+            <input
+              type="checkbox"
+              checked={
+                filters.brands?.includes(
+                  brand
+                ) || false
+              }
+              onChange={() =>
+                toggleArrayFilter(
+                  "brands",
+                  brand
+                )
+              }
+            />
+
+            {brand}
+          </label>
+        )) : <p>No brands yet.</p>}
       </div>
 
       {/* DISCOUNT */}
@@ -303,7 +289,7 @@ export default function FilterSidebar({
         }
         onClick={() =>
           setFilters({
-            maxPrice: 10000,
+            maxPrice,
             productTypes: [],
             sizes: [],
             colors: [],

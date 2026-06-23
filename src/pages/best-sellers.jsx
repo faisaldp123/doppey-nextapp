@@ -4,6 +4,7 @@ export default function BestSellers() {
   return (
     <ProductListingPage
       pageType="best-sellers"
+      title="Best Sellers"
     />
   );
 }

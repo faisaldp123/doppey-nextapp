@@ -45,7 +45,7 @@ export default function AccountModal({ open, onClose, user }) {
         </div>
 
         <nav className={styles.links}>
-          <Link href="/orders" className={styles.link} onClick={onClose}>
+          <Link href="/my-orders" className={styles.link} onClick={onClose}>
             <Package size={17} /> My orders
           </Link>
           <Link href="/wishlist" className={styles.link} onClick={onClose}>

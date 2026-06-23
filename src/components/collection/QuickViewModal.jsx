@@ -3,6 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { X, Heart, ShoppingBag } from "lucide-react";
+import { addToCart as addProductToCart, toggleWishlist as toggleProductWishlist } from "@/utils/shopState";
+import { getProductId } from "@/utils/productHelpers";
 
 import styles from "../../styles/QuickViewModal.module.css";
 
@@ -37,66 +39,16 @@ export default function QuickViewModal({
   );
 
   const isWishlisted = wishlist?.some(
-    (item) => item._id === product._id
+    (item) => getProductId(item) === getProductId(product)
   );
 
   const toggleWishlist = () => {
-    let updated = [...wishlist];
-
-    const exists = updated.find(
-      (item) => item._id === product._id
-    );
-
-    if (exists) {
-      updated = updated.filter(
-        (item) => item._id !== product._id
-      );
-    } else {
-      updated.push(product);
-    }
-
+    const { wishlist: updated } = toggleProductWishlist(product);
     setWishlist(updated);
-
-    localStorage.setItem(
-      "wishlist",
-      JSON.stringify(updated)
-    );
-
-    window.dispatchEvent(
-      new Event("storage")
-    );
   };
 
   const addToCart = () => {
-    const cart =
-      JSON.parse(
-        localStorage.getItem("cart")
-      ) || [];
-
-    const exists = cart.find(
-      (item) => item._id === product._id
-    );
-
-    if (exists) {
-      alert("Product already added to cart");
-      return;
-    }
-
-    cart.push({
-      ...product,
-      quantity: 1,
-    });
-
-    localStorage.setItem(
-      "cart",
-      JSON.stringify(cart)
-    );
-
-    window.dispatchEvent(
-      new Event("storage")
-    );
-
-    alert(`${product.name} added to cart`);
+    addProductToCart(product, 1);
   };
 
   return (

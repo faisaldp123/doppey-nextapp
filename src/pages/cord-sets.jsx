@@ -4,6 +4,7 @@ export default function CordSets() {
   return (
     <ProductListingPage
       pageType="cord-sets"
+      title="Cord Sets"
     />
   );
 }

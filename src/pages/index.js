@@ -9,7 +9,7 @@ import Head from "next/head";
 import AOS from "aos";
 import "aos/dist/aos.css";
 import { useEffect } from "react";
-import TrendingCategories from "@/components/Home/TrendingCategories";
+// import TrendingCategories from "@/components/Home/TrendingCategories";
 import LifestyleSection from "@/components/Home/LifestyleSection";
 import BrandStorySection from "@/components/Home/BrandStorySection";
 import InstagramSection from "@/components/Home/InstagramSection";
@@ -93,20 +93,22 @@ return (
         {/* Fashion Banner */}
         <BannerSection />
 
+        {/* LifestyleSection */}
+        <div className="container">
+          <LifestyleSection />
+        </div>
+
         {/* Best Sellers */}
         <div className="container">
           <ProductSection />
         </div>
 
         {/* TrendingCategories */}
-        <div className="container">
+        {/* <div className="container">
           <TrendingCategories />
-        </div>
+        </div> */}
 
-          {/* LifestyleSection */}
-        <div className="container">
-          <LifestyleSection />
-        </div>
+          
 
           {/* BrandStorySection */}
         <div className="container">
@@ -124,7 +126,7 @@ return (
         </div>
 
         {/* Newsletter */}
-        <NewsletterSection />
+        {/* <NewsletterSection /> */}
 
       </div>
     </section>

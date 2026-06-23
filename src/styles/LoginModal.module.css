@@ -27,6 +27,7 @@
   padding: 28px 20px 36px;
   position: relative;
   animation: slideUp 0.25s ease;
+  margin-top: 24vh;
 }
 
 @keyframes slideUp {

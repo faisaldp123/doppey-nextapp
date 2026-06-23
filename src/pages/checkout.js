@@ -2,6 +2,7 @@
 
 import API from "@/utils/api";
 import { startRazorpayPayment } from "@/utils/razorpay";
+import { requireLogin } from "@/utils/auth";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
@@ -54,7 +55,16 @@ export default function Checkout() {
   );
 
   const shipping = cartItems.length > 0 ? 99 : 0;
-  const total = subtotal + shipping;
+
+const codCharge =
+  paymentMethod === "cod"
+    ? 100
+    : 0;
+
+const total =
+  subtotal +
+  shipping +
+  codCharge;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -75,6 +85,7 @@ export default function Checkout() {
   };
 
   const handlePlaceOrder = async () => {
+    if (!requireLogin()) return;
     if (!validate()) return;
 
     const orderItems = cartItems.map((item) => ({
@@ -92,9 +103,28 @@ export default function Checkout() {
       pincode: formData.pincode,
     };
 
+    const orderData = {
+  items: orderItems,
+  address,
+  shipping,
+  codCharge,
+  total,
+  paymentMethod,
+};
+
     if (paymentMethod === "cod") {
       try {
-        const response = await API.post("/orders", { items: orderItems, address });
+       const response = await API.post(
+  "/orders",
+  {
+    items: orderItems,
+    address,
+    shipping,
+    codCharge,
+    total,
+    paymentMethod,
+  }
+);
         localStorage.setItem("latestOrder", JSON.stringify(response.data.order));
         localStorage.removeItem("cart");
         window.dispatchEvent(new Event("storage"));
@@ -106,21 +136,34 @@ export default function Checkout() {
       return;
     }
 
-    try {
-      await startRazorpayPayment({
-        amount: total,
-        customer: {
-          fullName: formData.fullName,
-          email: formData.email,
-          phone: formData.phone,
-        },
+    const razorpayAmount =
+  subtotal + shipping;
+
+try {
+  await startRazorpayPayment({
+    amount: razorpayAmount,
+    customer: {
+      fullName: formData.fullName,
+      email: formData.email,
+      phone: formData.phone,
+    },
         onSuccess: async (paymentResponse) => {
           await API.post("/payments/verify", {
             razorpay_order_id: paymentResponse.razorpay_order_id,
             razorpay_payment_id: paymentResponse.razorpay_payment_id,
             razorpay_signature: paymentResponse.razorpay_signature,
           });
-          const response = await API.post("/orders", { items: orderItems, address });
+          const response = await API.post(
+  "/orders",
+  {
+    items: orderItems,
+    address,
+    shipping,
+    codCharge,
+    total,
+    paymentMethod,
+  }
+);
           localStorage.setItem("latestOrder", JSON.stringify(response.data.order));
           localStorage.removeItem("cart");
           window.dispatchEvent(new Event("storage"));
@@ -284,6 +327,15 @@ export default function Checkout() {
               <span>Shipping</span>
               <span>₹{shipping.toLocaleString("en-IN")}</span>
             </div>
+
+            {codCharge > 0 && (
+  <div className={styles.priceRow}>
+    <span>COD Charge</span>
+    <span>
+      ₹{codCharge.toLocaleString("en-IN")}
+    </span>
+  </div>
+)}
 
             <div className={styles.totalRow}>
               <span>Total</span>
