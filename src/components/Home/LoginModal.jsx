@@ -3,17 +3,20 @@
 import { useState, useRef, useEffect } from "react";
 import API from "@/utils/api";
 import { X, ArrowLeft } from "lucide-react";
+import {
+  loadUserDataFromBackend,
+  syncLocalShopStateToBackend,
+} from "@/utils/shopState";
 import styles from "@/styles/LoginModal.module.css";
 
 export default function LoginModal({ open, onClose }) {
   const [mobile, setMobile] = useState("");
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-  const [step, setStep] = useState(1); // 1 = phone, 2 = otp
+  const [step, setStep] = useState(1);
   const [timer, setTimer] = useState(30);
   const [loading, setLoading] = useState(false);
   const inputRefs = useRef([]);
 
-  // Countdown timer for resend
   useEffect(() => {
     if (step !== 2) return;
     setTimer(30);
@@ -26,7 +29,6 @@ export default function LoginModal({ open, onClose }) {
     return () => clearInterval(interval);
   }, [step]);
 
-  // Auto-focus first OTP box when step changes
   useEffect(() => {
     if (step === 2) {
       setTimeout(() => inputRefs.current[0]?.focus(), 100);
@@ -80,7 +82,12 @@ export default function LoginModal({ open, onClose }) {
       const res = await API.post("/verify-otp", { phone: mobile, otp: code });
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
+
+      // ← Sync cart and wishlist from backend after login
+      await syncLocalShopStateToBackend();
+      await loadUserDataFromBackend();
       window.dispatchEvent(new Event("user-login"));
+
       onClose();
       resetModal();
     } catch {
@@ -116,10 +123,10 @@ export default function LoginModal({ open, onClose }) {
       const { getAuth, GoogleAuthProvider, signInWithPopup } = await import("firebase/auth");
 
       const firebaseConfig = {
-        apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+        apiKey:     process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
         authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-        appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+        projectId:  process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+        appId:      process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
       };
 
       if (!firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId || !firebaseConfig.appId) {
@@ -134,24 +141,26 @@ export default function LoginModal({ open, onClose }) {
       const googleUser = result.user;
 
       const res = await API.post("/google-login", {
-        email: googleUser.email,
-        name: googleUser.displayName,
+        email:    googleUser.email,
+        name:     googleUser.displayName,
         googleId: googleUser.uid,
-        photo: googleUser.photoURL,
+        photo:    googleUser.photoURL,
       });
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
+
+      // ← Sync cart and wishlist from backend after Google login
+      await syncLocalShopStateToBackend();
+      await loadUserDataFromBackend();
       window.dispatchEvent(new Event("user-login"));
+
       onClose();
       resetModal();
     } catch (err) {
-  console.error("GOOGLE LOGIN ERROR:", err);
-  console.error("CODE:", err.code);
-  console.error("MESSAGE:", err.message);
-
-  alert(`${err.code} - ${err.message}`);
-} finally {
+      console.error("GOOGLE LOGIN ERROR:", err);
+      alert(`${err.code} - ${err.message}`);
+    } finally {
       setLoading(false);
     }
   };
@@ -166,7 +175,6 @@ export default function LoginModal({ open, onClose }) {
           <X size={20} />
         </button>
 
-        {/* STEP 1 — Phone number */}
         {step === 1 && (
           <>
             <div className={styles.brandRow}>
@@ -191,11 +199,7 @@ export default function LoginModal({ open, onClose }) {
               />
             </div>
 
-            <button
-              className={styles.ctaBtn}
-              onClick={handleSendOtp}
-              disabled={loading}
-            >
+            <button className={styles.ctaBtn} onClick={handleSendOtp} disabled={loading}>
               {loading ? "Sending..." : "Continue"}
             </button>
 
@@ -217,7 +221,6 @@ export default function LoginModal({ open, onClose }) {
           </>
         )}
 
-        {/* STEP 2 — OTP */}
         {step === 2 && (
           <>
             <button className={styles.backBtn} onClick={() => setStep(1)}>
@@ -229,9 +232,7 @@ export default function LoginModal({ open, onClose }) {
             <h2 className={styles.title}>Verify your number</h2>
             <p className={styles.sub}>
               We sent a 6-digit OTP to <strong>+91 {mobile}</strong>
-              <button className={styles.editPhone} onClick={() => setStep(1)}>
-                Edit
-              </button>
+              <button className={styles.editPhone} onClick={() => setStep(1)}>Edit</button>
             </p>
 
             <div className={styles.otpRow} onPaste={handleOtpPaste}>
@@ -262,9 +263,7 @@ export default function LoginModal({ open, onClose }) {
               {timer > 0 ? (
                 <span className={styles.timer}>Resend in {timer}s</span>
               ) : (
-                <button className={styles.resendBtn} onClick={handleResend}>
-                  Resend OTP
-                </button>
+                <button className={styles.resendBtn} onClick={handleResend}>Resend OTP</button>
               )}
             </p>
           </>

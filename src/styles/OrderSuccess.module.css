@@ -156,12 +156,29 @@
     flex-direction: column;
   }
   .checkoutSteps {
-    flex-wrap: wrap;
-    gap: 10px;
+    flex-wrap: nowrap;
+    gap: 5px;
+  }
+
+  .completedStep {
+    font-size: 13px;
+    gap: 5px;
+    white-space: nowrap;
+  }
+
+  .completedStep span {
+    width: 25px;
+    height: 25px;
+    font-size: 12px;
   }
 
   .stepLine {
-    width: 40px;
+    flex: 1;
+    max-width: 40px;
+    min-width: 15px;
+    height: 1px;
+    background: #111;
+    margin: 0 5px;
   }
 }
 

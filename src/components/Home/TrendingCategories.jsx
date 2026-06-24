@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Heart, ShoppingBag } from "lucide-react";
 import { useRouter } from "next/navigation";
 import API from "@/utils/api";
+import { addToCart as addProductToCart, toggleWishlist as toggleProductWishlist } from "@/utils/shopState";
 import styles from "../../styles/TrendingCategories.module.css";
 
 const PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='400' viewBox='0 0 300 400'%3E%3Crect width='300' height='400' fill='%23f0f0f0'/%3E%3C/svg%3E";
@@ -47,8 +48,13 @@ export default function TrendingCategories() {
   }, []);
 
   useEffect(() => {
-    const wishlistItems = JSON.parse(localStorage.getItem("wishlist")) || [];
-    setWishlist(wishlistItems.map((item) => item._id));
+    const updateWishlistState = () => {
+      const wishlistItems = JSON.parse(localStorage.getItem("wishlist")) || [];
+      setWishlist(wishlistItems.map((item) => item._id));
+    };
+    updateWishlistState();
+    window.addEventListener("wishlistUpdated", updateWishlistState);
+    return () => window.removeEventListener("wishlistUpdated", updateWishlistState);
   }, []);
 
   const filtered =
@@ -61,19 +67,7 @@ export default function TrendingCategories() {
         );
 
   const toggleWishlist = (product) => {
-    const existingWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-    const alreadyExists = existingWishlist.find((item) => item._id === product._id);
-
-    let updatedWishlist;
-    if (alreadyExists) {
-      updatedWishlist = existingWishlist.filter((item) => item._id !== product._id);
-    } else {
-      updatedWishlist = [...existingWishlist, product];
-    }
-
-    localStorage.setItem("wishlist", JSON.stringify(updatedWishlist));
-    setWishlist(updatedWishlist.map((item) => item._id));
-    window.dispatchEvent(new Event("storage"));
+    toggleProductWishlist(product);
   };
 
   const SkeletonCard = () => (
@@ -155,9 +149,14 @@ function ProductCard({ item, wishlist, toggleWishlist }) {
   const router = useRouter();
 
   useEffect(() => {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const exists = cart.find((product) => product._id === item._id);
-    setAdded(!!exists);
+    const updateAddedState = () => {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      const exists = cart.some((product) => product._id === item._id);
+      setAdded(exists);
+    };
+    updateAddedState();
+    window.addEventListener("cartUpdated", updateAddedState);
+    return () => window.removeEventListener("cartUpdated", updateAddedState);
   }, [item._id]);
 
   const discountedPrice = item.discount
@@ -165,18 +164,7 @@ function ProductCard({ item, wishlist, toggleWishlist }) {
     : item.price;
 
   const handleAddToCart = () => {
-    const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
-    const alreadyExists = existingCart.find((product) => product._id === item._id);
-
-    if (alreadyExists) {
-      setAdded(true);
-      return;
-    }
-
-    const updatedCart = [...existingCart, { ...item, quantity: 1 }];
-    localStorage.setItem("cart", JSON.stringify(updatedCart));
-    window.dispatchEvent(new Event("storage"));
-    setAdded(true);
+    addProductToCart(item, 1);
   };
 
   const BASE_URL =

@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import Link from "next/link";
 import { Package, Heart, MapPin, CreditCard, Headphones, Info, LogOut } from "lucide-react";
 import styles from "@/styles/AccountModal.module.css";
+import { clearUserData } from "@/utils/shopState";
 
 export default function AccountModal({ open, onClose, user }) {
   const ref = useRef(null);
@@ -17,12 +18,11 @@ export default function AccountModal({ open, onClose, user }) {
   }, [open, onClose]);
 
   const handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("loginPhone");
-    window.dispatchEvent(new Event("user-login"));
-    onClose();
-    window.location.href = "/";
-  };
+  clearUserData(); // ← clears cart, wishlist, token, user from localStorage
+  window.dispatchEvent(new Event("user-login")); // ← updates header user state
+  onClose();
+  window.location.href = "/";
+};
 
   if (!open || !user) return null;
 

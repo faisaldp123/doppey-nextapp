@@ -4,9 +4,9 @@
 
 .container {
   width: 100%;
-  padding: 120px 70px 80px;
+  padding: 175px 48px 56px;
   background: #fff;
-  margin-top: 12vh;
+  margin-top: 0;
 }
 
 /* =========================================
@@ -69,10 +69,16 @@
   display: flex;
   gap: 12px;
   margin-top: 20px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: thin;
 }
 
 .thumbWrapper {
+  width: 90px;
+  height: 90px;
+  flex: 0 0 90px;
   border: 2px solid transparent;
   border-radius: 12px;
   overflow: hidden;
@@ -90,6 +96,8 @@
 
 .thumbnail {
   display: block;
+  width: 100% !important;
+  height: 100% !important;
   object-fit: cover;
 }
 
@@ -510,8 +518,25 @@
 }
 
 .reviewStars {
+  display: none;
   color: #f6b01e;
   margin-bottom: 15px;
+}
+
+.reviewImageWrap {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #f5f5f5;
+  margin-bottom: 14px;
+}
+
+.reviewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .reviewCard h4 {
@@ -564,7 +589,7 @@
 .featuredSection,
 .relatedSection,
 .recentSection {
-  margin-top: 60px;
+  /* margin-top: 60px; */
   padding-top: 40px;
   border-top: 1px solid #f0f0f0;
 }
@@ -748,7 +773,7 @@
 ========================================= */
 
 @media (max-width: 992px) {
-  .container { padding: 100px 30px 50px; }
+  .container { padding: 118px 24px 42px; }
   .productSection { grid-template-columns: 1fr; }
   .gallerySection { position: static; }
   .reviewGrid { grid-template-columns: repeat(2, 1fr); }
@@ -761,12 +786,12 @@
 ========================================= */
 
 @media (max-width: 768px) {
-  .container { padding: 90px 15px 40px; }
+  .container { padding: 104px 12px 32px; }
 
   .productSection {
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 18px;
   }
 
   .gallerySection { position: static; width: 100%; }
@@ -774,35 +799,39 @@
   .mainImageWrapper {
     width: 100%;
     max-width: 100%;
-    height: 350px;
+    height: 330px;
+    border-radius: 10px;
   }
 
   .mainImage { width: 100%; height: 100%; object-fit: cover; }
 
   .thumbnailRow {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 8px;
-    margin-top: 12px;
+    display: flex;
+    gap: 14px;
+    margin-top: 8px;
     width: 100%;
   }
 
-  .thumbWrapper { width: 100%; }
+  .thumbWrapper {
+    width: 62px;
+    height: 62px;
+    flex-basis: 62px;
+    border-radius: 8px;
+  }
 
   .thumbnail {
-    width: 100% !important;
-    height: 70px !important;
     object-fit: cover;
-    border-radius: 8px;
+    border-radius: 6px;
   }
 
   .videoThumb {
-    width: 100%;
-    height: 70px;
+    width: 62px;
+    height: 62px;
+    flex: 0 0 62px;
     border-radius: 8px;
   }
 
-  .detailsSection { width: 100%; display: flex; flex-direction: column; gap: 18px; }
+  .detailsSection { width: 100%; display: flex; flex-direction: column; gap: 14px; }
   .titleRow { flex-direction: row; align-items: center; }
   .titleRow h1 { font-size: 22px; }
   .priceRow h2 { font-size: 24px; }
@@ -839,7 +868,7 @@
   }
 
   .toast { left: 15px; right: 15px; width: auto; }
-  .reviewGrid { grid-template-columns: 1fr; }
+  .reviewGrid { grid-template-columns: 1fr; gap: 16px; }
   .productGrid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .trustBadges { grid-template-columns: 1fr; }
 }
@@ -854,4 +883,8 @@
   .priceRow h2 { font-size: 24px; }
   .popup { left: 15px; right: 15px; bottom: 15px; text-align: center; }
   .sectionTitle h2 { font-size: 24px; }
+
+  .mainImageWrapper {
+    height: 310px;
+  }
 }

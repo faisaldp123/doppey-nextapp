@@ -9,6 +9,7 @@ import ProductCard from "./collection/ProductCard";
 import QuickViewModal from "./collection/QuickViewModal";
 
 import API from "@/utils/api";
+import { getWishlist } from "@/utils/shopState";
 import { productsData } from "@/constant/productsData";
 import {
   readName,
@@ -62,8 +63,18 @@ export default function ProductListingPage({
   const [quickViewProduct, setQuickViewProduct] = useState(null);
 
   useEffect(() => {
-    const storedWishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
-    setWishlist(storedWishlist);
+    const updateWishlist = () => setWishlist(getWishlist());
+
+    updateWishlist();
+    window.addEventListener("storage", updateWishlist);
+    window.addEventListener("wishlistUpdated", updateWishlist);
+    window.addEventListener("user-login", updateWishlist);
+
+    return () => {
+      window.removeEventListener("storage", updateWishlist);
+      window.removeEventListener("wishlistUpdated", updateWishlist);
+      window.removeEventListener("user-login", updateWishlist);
+    };
   }, []);
 
   useEffect(() => {

@@ -3,6 +3,7 @@
 import API from "@/utils/api";
 import { startRazorpayPayment } from "@/utils/razorpay";
 import { requireLogin } from "@/utils/auth";
+import { clearCart, getCart, loadUserDataFromBackend } from "@/utils/shopState";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
@@ -39,10 +40,22 @@ export default function Checkout() {
 
   useEffect(() => {
     setMounted(true);
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    setCartItems(cart);
-    const savedUser = JSON.parse(localStorage.getItem("user"));
-    setUser(savedUser);
+    const loadCheckoutState = async () => {
+      await loadUserDataFromBackend();
+      setCartItems(getCart());
+      setUser(JSON.parse(localStorage.getItem("user") || "null"));
+    };
+
+    const updateCart = () => setCartItems(getCart());
+
+    loadCheckoutState();
+    window.addEventListener("cartUpdated", updateCart);
+    window.addEventListener("user-login", loadCheckoutState);
+
+    return () => {
+      window.removeEventListener("cartUpdated", updateCart);
+      window.removeEventListener("user-login", loadCheckoutState);
+    };
   }, []);
 
   const getPriceNumber = (price) => {
@@ -126,8 +139,7 @@ const total =
   }
 );
         localStorage.setItem("latestOrder", JSON.stringify(response.data.order));
-        localStorage.removeItem("cart");
-        window.dispatchEvent(new Event("storage"));
+        clearCart();
         router.push("/order-success");
       } catch (err) {
         console.error(err);
@@ -139,35 +151,46 @@ const total =
     const razorpayAmount =
   subtotal + shipping;
 
-try {
-  await startRazorpayPayment({
-    amount: razorpayAmount,
-    customer: {
-      fullName: formData.fullName,
-      email: formData.email,
-      phone: formData.phone,
-    },
+    try {
+      await startRazorpayPayment({
+        amount: razorpayAmount,
+        customer: {
+          fullName: formData.fullName,
+          email: formData.email,
+          phone: formData.phone,
+        },
         onSuccess: async (paymentResponse) => {
-          await API.post("/payments/verify", {
-            razorpay_order_id: paymentResponse.razorpay_order_id,
-            razorpay_payment_id: paymentResponse.razorpay_payment_id,
-            razorpay_signature: paymentResponse.razorpay_signature,
-          });
-          const response = await API.post(
-  "/orders",
-  {
-    items: orderItems,
-    address,
-    shipping,
-    codCharge,
-    total,
-    paymentMethod,
-  }
-);
-          localStorage.setItem("latestOrder", JSON.stringify(response.data.order));
-          localStorage.removeItem("cart");
-          window.dispatchEvent(new Event("storage"));
-          router.push("/order-success");
+          try {
+            const verifyRes = await API.post("/payments/verify", {
+              razorpay_order_id: paymentResponse.razorpay_order_id,
+              razorpay_payment_id: paymentResponse.razorpay_payment_id,
+              razorpay_signature: paymentResponse.razorpay_signature,
+            });
+
+            if (!verifyRes.data || !verifyRes.data.success) {
+              alert("Payment verification failed. Please try again or contact support.");
+              return;
+            }
+
+            const response = await API.post(
+              "/orders",
+              {
+                items: orderItems,
+                address,
+                shipping,
+                codCharge,
+                total,
+                paymentMethod,
+              }
+            );
+
+            localStorage.setItem("latestOrder", JSON.stringify(response.data.order));
+            clearCart();
+            router.push("/order-success");
+          } catch (err) {
+            console.error("Verification/Order placement failed:", err);
+            alert("Payment verification or order placement failed. If your account was debited, please contact customer support.");
+          }
         },
       });
     } catch (error) {

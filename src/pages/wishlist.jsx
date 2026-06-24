@@ -8,6 +8,7 @@ import styles from "../styles/Wishlist.module.css";
 import {
   addToCart as addProductToCart,
   getWishlist,
+  loadUserDataFromBackend,
   toggleWishlist as toggleProductWishlist,
 } from "@/utils/shopState";
 import { getImageUrl, getProductId } from "@/utils/productHelpers";
@@ -17,7 +18,23 @@ export default function Wishlist() {
     useState([]);
 
   useEffect(() => {
-    setWishlistItems(getWishlist());
+    const refreshWishlist = async () => {
+      await loadUserDataFromBackend();
+      setWishlistItems(getWishlist());
+    };
+
+    const updateWishlist = () => setWishlistItems(getWishlist());
+
+    refreshWishlist();
+    window.addEventListener("storage", updateWishlist);
+    window.addEventListener("wishlistUpdated", updateWishlist);
+    window.addEventListener("user-login", refreshWishlist);
+
+    return () => {
+      window.removeEventListener("storage", updateWishlist);
+      window.removeEventListener("wishlistUpdated", updateWishlist);
+      window.removeEventListener("user-login", refreshWishlist);
+    };
   }, []);
 
   const handleRemove = (item) => {
