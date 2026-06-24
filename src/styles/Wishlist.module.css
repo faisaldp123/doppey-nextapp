@@ -1,8 +1,8 @@
 .wishlistPage {
-  padding: 120px 20px 60px;
+  padding: 175px 20px 48px;
   background: #f8f8f8;
   min-height: 100vh;
-  margin-top: 55px;
+  margin-top: 0;
 }
 
 .container {
@@ -14,11 +14,11 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 40px;
+  margin-bottom: 24px;
 }
 
 .header h1 {
-  font-size: 42px;
+  font-size: 34px;
   font-weight: 700;
   color: #111;
 }
@@ -36,7 +36,7 @@
 
 .productCard {
   background: white;
-  border-radius: 18px;
+  border-radius: 8px;
   overflow: hidden;
   border: 1px solid #ececec;
   transition: 0.3s;
@@ -124,8 +124,8 @@
 
 .emptyWishlist {
   background: white;
-  border-radius: 20px;
-  padding: 80px 20px;
+  border-radius: 8px;
+  padding: 56px 20px;
   text-align: center;
 }
 
@@ -171,10 +171,11 @@
   }
 
   .header h1 {
-    font-size: 32px;
+    font-size: 28px;
   }
   .wishlistPage {
-  margin-top: 5px;
+  padding: 105px 12px 32px;
+  margin-top: 0;
 }
 }
 
@@ -191,6 +192,6 @@
     font-size: 28px;
   }
   .wishlistPage {
-  margin-top: 5px;
+  margin-top: 0;
 }
 }

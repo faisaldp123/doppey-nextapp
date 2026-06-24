@@ -3,6 +3,7 @@
 ========================= */
 
 .topBar {
+  display: none;
   height: 35px;
   background: #000;
   color: #fff;
@@ -57,7 +58,7 @@
 .mainNav {
   display: flex;
   align-items: center;
-  gap: 22px;
+  gap: 16px;
   flex: 1;
   justify-content: center;
 }
@@ -109,35 +110,30 @@
 .headerIcons {
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 8px;
+  justify-content: flex-end;
+  min-width: 148px;
 }
 
 .iconBtn {
+  width: 36px;
+  height: 36px;
   background: transparent;
   border: none;
   cursor: pointer;
   color: #111;
   position: relative;
   transition: 0.3s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  text-decoration: none;
+  flex: 0 0 36px;
 }
 
 .iconBtn:hover {
   transform: translateY(-2px);
-}
-
-.cartCount {
-  position: absolute;
-  top: -8px;
-  right: -10px;
-  width: 18px;
-  height: 18px;
-  background: #000;
-  color: #fff;
-  font-size: 10px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 /* =========================
@@ -399,18 +395,15 @@
   z-index: 24000;
 }
 
-.iconBtn {
-  position: relative;
-}
-
 .cartCount,
 .wishlistCount {
   position: absolute;
-  top: -8px;
-  right: -8px;
+  top: 2px;
+  right: 2px;
 
-  width: 18px;
-  height: 18px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
 
   background: #111;
   color: #fff;
@@ -421,7 +414,7 @@
   align-items: center;
   justify-content: center;
 
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
 
   line-height: 1;
@@ -460,15 +453,34 @@
   }
 
   .headerTop {
+    display: grid;
+    grid-template-columns: 40px 1fr auto;
+    gap: 8px;
     height: 65px;
   }
 
   .logo {
-    width: 130px;
+    width: 118px;
   }
 
   .headerIcons {
-    gap: 12px;
+    gap: 4px;
+    min-width: 0;
+    justify-self: end;
+  }
+
+  .logoWrap {
+    justify-self: center;
+    margin: 0;
+  }
+
+  .mobileMenuBtn {
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
   }
 }
 
@@ -485,16 +497,19 @@
   }
 
   .headerIcons {
-    gap: 10px;
+    gap: 4px;
   }
 
   .iconBtn svg {
-    width: 20px;
-    height: 20px;
+    width: 19px;
+    height: 19px;
   }
-  .logoWrap {
-  margin-right: 32px;
-}
+
+  .iconBtn {
+    width: 32px;
+    height: 32px;
+    flex-basis: 32px;
+  }
    /* .headerIcons a[href="/wishlist"]{
     display:none;
   } */

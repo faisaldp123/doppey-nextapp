@@ -8,6 +8,7 @@ import LoginModal from "./LoginModal";
 import AccountModal from "./AccountModal";
 import API from "@/utils/api";
 import { productsData } from "@/constant/productsData";
+import { loadUserDataFromBackend } from "@/utils/shopState";
 import {
   getImageUrl,
   getOldPrice,
@@ -42,38 +43,25 @@ export default function Header() {
   const userBtnRef = useRef(null);
 
   const mainLinks = [
-    { name: "NEW ARRIVALS", href: "/new-arrivals" },
+    { name: "NEW ARRIVALS",     href: "/new-arrivals" },
     { name: "SUMMER COLLECTION", href: "/summer-collection" },
-    { name: "BEST SELLERS", href: "/best-sellers" },
-    { name: "CLEARANCE SALE", href: "/clearance-sale" },
-    { name: "DENIMS", href: "/denims" },
-    { name: "TOPS", href: "/tops" },
+    { name: "BEST SELLERS",     href: "/best-sellers" },
+    { name: "CLEARANCE SALE",   href: "/clearance-sale" },
+    { name: "DENIMS",           href: "/denims" },
+    { name: "TOPS",             href: "/tops" },
     { name: "PANTS & TROUSERS", href: "/pants-trousers" },
-    { name: "SKIRTS", href: "/skirts" },
-    { name: "CORD SETS", href: "/cord-sets" },
-    { name: "ACCESSORIES", href: "/accessories" },
+    { name: "SKIRTS",           href: "/skirts" },
+    { name: "CORD SETS",        href: "/cord-sets" },
+    { name: "ACCESSORIES",      href: "/accessories" },
   ];
 
   const fallbackMegaMenus = {
-    MEN: {
-      categories: ["Oversized T-Shirts", "Graphic Tees", "Shirts", "Denims", "Cargo Pants", "Joggers", "Hoodies", "Accessories"],
-      products: [],
-    },
-    WOMEN: {
-      categories: ["Tops", "Oversized", "Co-Ord Sets", "Skirts", "Denims", "Cargo", "Dresses", "Accessories"],
-      products: [],
-    },
-    KIDS: {
-      categories: ["New Arrivals", "T-Shirts", "Shorts", "Denims", "Joggers", "Winter Wear"],
-      products: [],
-    },
+    MEN:   { categories: ["Oversized T-Shirts", "Graphic Tees", "Shirts", "Denims", "Cargo Pants", "Joggers", "Hoodies", "Accessories"], products: [] },
+    WOMEN: { categories: ["Tops", "Oversized", "Co-Ord Sets", "Skirts", "Denims", "Cargo", "Dresses", "Accessories"], products: [] },
+    KIDS:  { categories: ["New Arrivals", "T-Shirts", "Shorts", "Denims", "Joggers", "Winter Wear"], products: [] },
   };
 
-  const genderConfig = {
-    MEN:   "mens",
-    WOMEN: "womens",
-    KIDS:  "kids",
-  };
+  const genderConfig = { MEN: "mens", WOMEN: "womens", KIDS: "kids" };
 
   const genderMenus = [
     { label: "MEN",   slug: "mens"   },
@@ -92,14 +80,9 @@ export default function Header() {
       });
 
       const categories = [
-        ...new Set(
-          genderProducts
-            .map((p) => readName(p.subCategory))
-            .filter(Boolean)
-        ),
+        ...new Set(genderProducts.map((p) => readName(p.subCategory)).filter(Boolean)),
       ];
 
-      // ← ONLY CHANGE: sort by newest first before slicing
       const newestProducts = [...genderProducts]
         .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         .slice(0, 3);
@@ -127,16 +110,26 @@ export default function Header() {
   }, []);
 
   useEffect(() => {
-    const updateUser = () => {
+    const updateUser = async () => {
       const stored = localStorage.getItem("user");
       setUser(stored ? JSON.parse(stored) : null);
+
+      // ← Sync backend cart/wishlist on every page load if logged in
+      if (stored) {
+        await loadUserDataFromBackend();
+      }
     };
+
     updateUser();
     window.addEventListener("user-login", updateUser);
+
     const openLogin = () => setShowLogin(true);
     window.addEventListener("open-login-modal", openLogin);
 
-    if (!storedSessionFlag() && !localStorage.getItem("user")) {
+    // Show login prompt once per session for guests
+    const seen = localStorage.getItem("doppeyLoginPromptSeen");
+    const loggedIn = localStorage.getItem("user");
+    if (!seen && !loggedIn) {
       localStorage.setItem("doppeyLoginPromptSeen", "1");
       setShowLogin(true);
     }
@@ -147,68 +140,26 @@ export default function Header() {
     };
   }, []);
 
-  const storedSessionFlag = () => {
-    if (typeof window === "undefined") return true;
-    return localStorage.getItem("doppeyLoginPromptSeen");
-  };
-
   useEffect(() => {
-  const updateCounts = () => {
-    const cart =
-      JSON.parse(
-        localStorage.getItem("cart")
-      ) || [];
+    const updateCounts = () => {
+      const cart     = JSON.parse(localStorage.getItem("cart"))     || [];
+      const wishlist = JSON.parse(localStorage.getItem("wishlist")) || [];
+      const totalQuantity = cart.reduce((total, item) => total + (item.quantity || 1), 0);
+      setCartCount(totalQuantity);
+      setWishlistCount(wishlist.length);
+    };
 
-    const wishlist =
-      JSON.parse(
-        localStorage.getItem("wishlist")
-      ) || [];
+    updateCounts();
+    window.addEventListener("storage",         updateCounts);
+    window.addEventListener("cartUpdated",     updateCounts);
+    window.addEventListener("wishlistUpdated", updateCounts);
 
-    const totalQuantity =
-      cart.reduce(
-        (total, item) =>
-          total + (item.quantity || 1),
-        0
-      );
-
-    setCartCount(totalQuantity);
-    setWishlistCount(wishlist.length);
-  };
-
-  updateCounts();
-
-  window.addEventListener(
-    "storage",
-    updateCounts
-  );
-
-  window.addEventListener(
-    "cartUpdated",
-    updateCounts
-  );
-
-  window.addEventListener(
-    "wishlistUpdated",
-    updateCounts
-  );
-
-  return () => {
-    window.removeEventListener(
-      "storage",
-      updateCounts
-    );
-
-    window.removeEventListener(
-      "cartUpdated",
-      updateCounts
-    );
-
-    window.removeEventListener(
-      "wishlistUpdated",
-      updateCounts
-    );
-  };
-}, []);
+    return () => {
+      window.removeEventListener("storage",         updateCounts);
+      window.removeEventListener("cartUpdated",     updateCounts);
+      window.removeEventListener("wishlistUpdated", updateCounts);
+    };
+  }, []);
 
   useEffect(() => {
     if (!showAccount) return;
@@ -336,9 +287,7 @@ export default function Header() {
                         <div className={styles.productCard}>
                           <h5>Products coming soon</h5>
                           <p style={{ fontSize: "13px", color: "#888" }}>New styles are being added.</p>
-                          <Link href={`/${item.slug}`} className={styles.shopNowBtn}>
-                            VIEW SECTION
-                          </Link>
+                          <Link href={`/${item.slug}`} className={styles.shopNowBtn}>VIEW SECTION</Link>
                         </div>
                       )}
                     </div>

@@ -12,6 +12,7 @@
   align-items: center;
   justify-content: center;
   position: relative;
+  margin-top: 16vh;
 }
 
 .overlay {
@@ -112,11 +113,15 @@
   .overlay p {
     font-size: 1rem;
   }
+  .hero {
+  margin-top: 0px;
+}
 
 }
 @media (max-width: 480px) {
     .hero {
   padding: 10px;
+  margin-top: -45px !important;
 }
 .faqSection {
   padding: 0rem 2rem 0rem 2rem;

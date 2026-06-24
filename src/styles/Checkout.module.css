@@ -1,13 +1,13 @@
 .checkoutPage {
 max-width: 1400px;
 margin: 52px auto;
-padding: 120px 20px 60px;
+padding: 175px 20px 48px;
 }
 
 .checkoutPage h1 {
-font-size: 42px;
+font-size: 34px;
 font-weight: 700;
-margin-bottom: 40px;
+margin-bottom: 24px;
 color: #111;
 }
 
@@ -197,7 +197,7 @@ transform: translateY(-2px);
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 40px;
+  margin-bottom: 24px;
 }
 
 .activeStep,
@@ -308,11 +308,11 @@ position: static;
 
 @media (max-width: 768px) {
 .checkoutPage {
-padding: 90px 15px 40px;
+padding: 105px 12px 32px;
 }
 
 .checkoutPage h1 {
-font-size: 32px;
+font-size: 28px;
 }
 
 .card {
@@ -331,12 +331,31 @@ flex-direction: column;
 height: 48px;
 }
 .checkoutSteps {
-    flex-wrap: wrap;
-    gap: 10px;
+    flex-wrap: nowrap;
+    gap: 5px;
+  }
+
+  .activeStep,
+  .step {
+    font-size: 13px;
+    gap: 5px;
+    white-space: nowrap;
+  }
+
+  .activeStep span,
+  .step span {
+    width: 25px;
+    height: 25px;
+    font-size: 12px;
   }
 
   .stepLine {
-    width: 40px;
+    flex: 1;
+    max-width: 40px;
+    min-width: 15px;
+    height: 1px;
+    background: #ddd;
+    margin: 0 5px;
   }
 }
 
