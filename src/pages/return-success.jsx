@@ -2,12 +2,53 @@
 
 import { useRouter } from "next/router";
 import styles from "../styles/ReturnSuccess.module.css";
+import { useEffect, useState } from "react";
+import API from "@/utils/api";
 
 export default function ReturnSuccess() {
   const router = useRouter();
 
-  const requestId =
-    "RTN" + Math.floor(100000 + Math.random() * 900000);
+  const { id } = router.query;
+
+const [returnData, setReturnData] = useState(null);
+
+const [loading, setLoading] = useState(true);
+
+useEffect(() => {
+  if (!router.isReady || !id) return;
+
+  fetchReturn();
+}, [router.isReady, id]);
+
+const fetchReturn = async () => {
+  try {
+    const res = await API.get(`/returns/${id}`);
+
+    setReturnData(res.data);
+  } catch (error) {
+    console.error("Failed to fetch return:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+if (loading) {
+  return (
+    <div
+      style={{
+        padding: "100px",
+        textAlign: "center",
+        fontSize: "20px",
+      }}
+    >
+      Loading Return Details...
+    </div>
+  );
+}
+
+const requestId = returnData?._id ? returnData._id.slice(-8).toUpperCase() : "PENDING";
+const productName = returnData?.product?.name || "Your product";
+const orderId = returnData?.orderId?._id || returnData?.orderId || "";
 
   return (
     <div className={styles.page}>
@@ -26,9 +67,8 @@ export default function ReturnSuccess() {
         </h1>
 
         <p className={styles.description}>
-          Thank you. Your return request has been
-          received and is currently under review.
-          Our team will verify the details and
+          Thank you. Your return request for {productName} has been received
+          and is currently under review. Our team will verify the details and
           update you shortly.
         </p>
 
@@ -36,6 +76,13 @@ export default function ReturnSuccess() {
           <span>Request ID</span>
           <strong>{requestId}</strong>
         </div>
+
+        {orderId && (
+          <div className={styles.requestBox}>
+            <span>Order ID</span>
+            <strong>{String(orderId).slice(-8).toUpperCase()}</strong>
+          </div>
+        )}
 
         <div className={styles.timeline}>
           <div className={styles.active}>

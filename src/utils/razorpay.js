@@ -23,6 +23,8 @@ export const startRazorpayPayment = async ({
 
 const data = await response.json();
 
+console.log("Create Order Response:", data);
+
     const options = {
       key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
       amount: data.amount,
@@ -47,6 +49,7 @@ const data = await response.json();
       },
     };
 
+    console.log("Razorpay Options:", options);
     const razorpay = new window.Razorpay(options);
     razorpay.open();
   } catch (error) {

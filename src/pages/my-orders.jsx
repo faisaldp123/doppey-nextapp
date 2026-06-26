@@ -121,9 +121,18 @@ const fetchOrders = async () => {
                       className={
                         styles.returnBtn
                       }
-                      onClick={() =>
-                        router.push(`/return-request/${order._id}`)
-                      }
+                     onClick={() => {
+  const validItem = order.items.find((item) => item.product);
+
+  if (!validItem) {
+    alert("No valid product found in this order.");
+    return;
+  }
+
+  router.push(
+    `/return-request/${order._id}?productId=${validItem.product._id}`
+  );
+}}
                     >
                       Return Product
                     </button>

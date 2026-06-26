@@ -25,6 +25,20 @@
   object-fit: cover;
 }
 
+.avatarFallback {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  background: #111;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  font-weight: 700;
+  flex: 0 0 70px;
+}
+
 .user_box h4 {
   font-size: 16px;
   margin: 0;
@@ -90,6 +104,48 @@
 .section_box p {
   color: #666;
   font-size: 14px;
+}
+
+.section_box label {
+  display: block;
+  margin-top: 18px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #222;
+}
+
+.section_box input {
+  width: 100%;
+  max-width: 520px;
+  height: 46px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0 14px;
+  font-size: 14px;
+  outline: none;
+}
+
+.section_box input:focus {
+  border-color: #111;
+}
+
+.section_box button {
+  display: block;
+  margin-top: 22px;
+  height: 46px;
+  padding: 0 24px;
+  border: none;
+  border-radius: 6px;
+  background: #111;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.section_box button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
 /* Responsive */
