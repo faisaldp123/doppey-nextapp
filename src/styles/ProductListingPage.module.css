@@ -9,7 +9,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 35px;
+  /* margin-bottom: 35px; */
 }
 
 .pageHeader h1 {
@@ -182,7 +182,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 24px;
-  margin-top: 65px;
+  /* margin-top: 65px; */
 }
 
 /* ================= PRODUCT CARD ================= */

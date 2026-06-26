@@ -12,14 +12,24 @@ import {
 
 import {
   getImageUrl,
-  getOldPrice,
   getProductId,
   getProductImages,
   getProductSlug,
 } from "@/utils/productHelpers";
-import { addToCart as addProductToCart, toggleWishlist as toggleProductWishlist } from "@/utils/shopState";
+import {
+  addToCart as addProductToCart,
+  toggleWishlist as toggleProductWishlist,
+} from "@/utils/shopState";
 
 import styles from "../../styles/PruductCard.module.css";
+
+// ← Calculate discounted price correctly
+const getDiscountedPrice = (product) => {
+  const base = Number(product.price) || 0;
+  return product.discount
+    ? Math.round(base - (base * product.discount) / 100)
+    : base;
+};
 
 export default function ProductCard({
   product,
@@ -27,21 +37,21 @@ export default function ProductCard({
   setWishlist,
   onQuickView,
 }) {
-  const [hovered, setHovered] =
-    useState(false);
+  const [hovered, setHovered] = useState(false);
 
-  const productId = getProductId(product);
+  const productId   = getProductId(product);
   const productSlug = getProductSlug(product);
-  const images = getProductImages(product);
-  const image1 = getImageUrl(images[0]);
-  const image2 = getImageUrl(images[1] || images[0]);
-  const oldPrice = getOldPrice(product);
+  const images      = getProductImages(product);
+  const image1      = getImageUrl(images[0]);
+  const image2      = getImageUrl(images[1] || images[0]);
 
-  const isWishlisted =
-    wishlist?.some(
-      (item) =>
-        getProductId(item) === productId
-    );
+  const discountedPrice = getDiscountedPrice(product);
+  const originalPrice   = Number(product.price) || 0;
+  const hasDiscount     = product.discount > 0;
+
+  const isWishlisted = wishlist?.some(
+    (item) => getProductId(item) === productId
+  );
 
   const toggleWishlist = () => {
     const { wishlist: updated } = toggleProductWishlist(product);
@@ -55,25 +65,14 @@ export default function ProductCard({
   return (
     <div
       className={styles.card}
-      onMouseEnter={() =>
-        setHovered(true)
-      }
-      onMouseLeave={() =>
-        setHovered(false)
-      }
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
     >
       {/* IMAGE */}
-
       <div className={styles.imageWrapper}>
-        <Link
-          href={`/product/${productSlug}`}
-        >
+        <Link href={`/product/${productSlug}`}>
           <Image
-            src={
-              hovered
-                ? image2
-                : image1
-            }
+            src={hovered ? image2 : image1}
             alt={product.name}
             width={600}
             height={800}
@@ -81,29 +80,25 @@ export default function ProductCard({
           />
         </Link>
 
-        {/* WISHLIST */}
+        {/* DISCOUNT BADGE */}
+        {hasDiscount && (
+          <span className={styles.discountBadge}>
+            {product.discount}% OFF
+          </span>
+        )}
 
-        <button
-          className={styles.wishlistBtn}
-          onClick={toggleWishlist}
-        >
+        {/* WISHLIST */}
+        <button className={styles.wishlistBtn} onClick={toggleWishlist}>
           <Heart
             size={18}
-            fill={
-              isWishlisted
-                ? "#111"
-                : "none"
-            }
+            fill={isWishlisted ? "#111" : "none"}
           />
         </button>
 
         {/* QUICK VIEW */}
-
         <button
           className={styles.quickViewBtn}
-          onClick={() =>
-            onQuickView?.(product)
-          }
+          onClick={() => onQuickView?.(product)}
         >
           <Eye size={16} />
           Quick View
@@ -111,60 +106,36 @@ export default function ProductCard({
       </div>
 
       {/* INFO */}
-
       <div className={styles.info}>
-        <span className={styles.brand}>
-          {product.brand}
-        </span>
+        <span className={styles.brand}>{product.brand}</span>
 
-        <Link
-          href={`/product/${productSlug}`}
-          className={
-            styles.productLink
-          }
-        >
+        <Link href={`/product/${productSlug}`} className={styles.productLink}>
           <h3>{product.name}</h3>
         </Link>
 
-        <div
-          className={styles.priceRow}
-        >
-          <span
-            className={styles.price}
-          >
-            ₹{product.price}
+        <div className={styles.priceRow}>
+
+          {/* ← Shows discounted price */}
+          <span className={styles.price}>
+            ₹{discountedPrice.toLocaleString("en-IN")}
           </span>
 
-          {oldPrice && (
-            <>
-              <span
-                className={
-                  styles.oldPrice
-                }
-              >
-                ₹
-                {oldPrice}
-              </span>
-
-              {product.discount > 0 && (
-                <span
-                  className={
-                    styles.discount
-                  }
-                >
-                  {product.discount}% OFF
-                </span>
-              )}
-            </>
+          {/* ← Shows original price with strikethrough only if discount exists */}
+          {hasDiscount && (
+            <span className={styles.oldPrice}>
+              ₹{originalPrice.toLocaleString("en-IN")}
+            </span>
           )}
+
+          {hasDiscount && (
+            <span className={styles.discount}>
+              {product.discount}% OFF
+            </span>
+          )}
+
         </div>
 
-        <button
-          className={
-            styles.quickAddBtn
-          }
-          onClick={addToCart}
-        >
+        <button className={styles.quickAddBtn} onClick={addToCart}>
           <ShoppingBag size={16} />
           QUICK ADD
         </button>

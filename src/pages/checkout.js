@@ -6,7 +6,6 @@ import { requireLogin } from "@/utils/auth";
 import { clearCart, getCart, loadUserDataFromBackend } from "@/utils/shopState";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
-import Image from "next/image";
 import styles from "../styles/Checkout.module.css";
 
 const PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='400' viewBox='0 0 300 400'%3E%3Crect width='300' height='400' fill='%23f0f0f0'/%3E%3C/svg%3E";
@@ -22,19 +21,13 @@ const getImageUrl = (imagePath) => {
 export default function Checkout() {
   const router = useRouter();
 
-  const [cartItems, setCartItems] = useState([]);
-  const [user, setUser] = useState(null);
-  const [mounted, setMounted] = useState(false);
+  const [cartItems, setCartItems]   = useState([]);
+  const [user, setUser]             = useState(null);
+  const [mounted, setMounted]       = useState(false);
   const [loadingCart, setLoadingCart] = useState(true);
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    address: "",
-    landmark: "",
-    city: "",
-    state: "",
-    pincode: "",
+  const [formData, setFormData]     = useState({
+    fullName: "", email: "", phone: "",
+    address: "", landmark: "", city: "", state: "", pincode: "",
   });
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const [errors, setErrors] = useState({});
@@ -64,26 +57,26 @@ export default function Checkout() {
     };
   }, []);
 
-  const getPriceNumber = (price) => {
-    return Number(String(price).replace(/[^\d]/g, ""));
+  const getPriceNumber = (price) =>
+    Number(String(price).replace(/[^\d]/g, ""));
+
+  // ← SAME as Cart.jsx — applies discount correctly
+  const getDiscountedPrice = (item) => {
+    const base = getPriceNumber(item.price);
+    return item.discount
+      ? Math.round(base - (base * item.discount) / 100)
+      : base;
   };
 
+  // ← Uses discounted price now
   const subtotal = cartItems.reduce(
-    (acc, item) => acc + getPriceNumber(item.price) * (item.quantity || 1),
+    (acc, item) => acc + getDiscountedPrice(item) * (item.quantity || 1),
     0
   );
 
-  const shipping = cartItems.length > 0 ? 99 : 0;
-
-const codCharge =
-  paymentMethod === "cod"
-    ? 100
-    : 0;
-
-const total =
-  subtotal +
-  shipping +
-  codCharge;
+  const shipping  = cartItems.length > 0 ? 99 : 0;
+  const codCharge = paymentMethod === "cod" ? 100 : 0;
+  const total     = subtotal + shipping + codCharge;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -91,14 +84,14 @@ const total =
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.fullName.trim()) newErrors.fullName = "Full name is required";
-    if (!formData.email.trim()) newErrors.email = "Email is required";
-    if (!/^\S+@\S+\.\S+$/.test(formData.email)) newErrors.email = "Enter valid email";
-    if (!/^\d{10}$/.test(formData.phone)) newErrors.phone = "Enter valid mobile number";
-    if (!formData.address.trim()) newErrors.address = "Address is required";
-    if (!formData.city.trim()) newErrors.city = "City is required";
-    if (!formData.state.trim()) newErrors.state = "State is required";
-    if (!/^\d{6}$/.test(formData.pincode)) newErrors.pincode = "Enter valid pincode";
+    if (!formData.fullName.trim())                   newErrors.fullName = "Full name is required";
+    if (!formData.email.trim())                      newErrors.email    = "Email is required";
+    if (!/^\S+@\S+\.\S+$/.test(formData.email))     newErrors.email    = "Enter valid email";
+    if (!/^\d{10}$/.test(formData.phone))            newErrors.phone    = "Enter valid mobile number";
+    if (!formData.address.trim())                    newErrors.address  = "Address is required";
+    if (!formData.city.trim())                       newErrors.city     = "City is required";
+    if (!formData.state.trim())                      newErrors.state    = "State is required";
+    if (!/^\d{6}$/.test(formData.pincode))           newErrors.pincode  = "Enter valid pincode";
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -107,43 +100,27 @@ const total =
     if (!requireLogin()) return;
     if (!validate()) return;
 
+    // ← Send discounted price to backend
     const orderItems = cartItems.map((item) => ({
-      product: item._id,
-      price: getPriceNumber(item.price),
+      product:  item._id,
+      price:    getDiscountedPrice(item),
       quantity: item.quantity || 1,
     }));
 
     const address = {
       fullName: formData.fullName,
-      phone: formData.phone,
-      street: formData.address,
-      city: formData.city,
-      state: formData.state,
-      pincode: formData.pincode,
+      phone:    formData.phone,
+      street:   formData.address,
+      city:     formData.city,
+      state:    formData.state,
+      pincode:  formData.pincode,
     };
-
-    const orderData = {
-  items: orderItems,
-  address,
-  shipping,
-  codCharge,
-  total,
-  paymentMethod,
-};
 
     if (paymentMethod === "cod") {
       try {
-       const response = await API.post(
-  "/orders",
-  {
-    items: orderItems,
-    address,
-    shipping,
-    codCharge,
-    total,
-    paymentMethod,
-  }
-);
+        const response = await API.post("/orders", {
+          items: orderItems, address, shipping, codCharge, total, paymentMethod,
+        });
         localStorage.setItem("latestOrder", JSON.stringify(response.data.order));
         clearCart();
         router.push("/order-success");
@@ -154,48 +131,37 @@ const total =
       return;
     }
 
-    const razorpayAmount =
-  subtotal + shipping;
-
     try {
       await startRazorpayPayment({
-        amount: razorpayAmount,
+        amount: subtotal + shipping,
         customer: {
           fullName: formData.fullName,
-          email: formData.email,
-          phone: formData.phone,
+          email:    formData.email,
+          phone:    formData.phone,
         },
         onSuccess: async (paymentResponse) => {
           try {
             const verifyRes = await API.post("/payments/verify", {
-              razorpay_order_id: paymentResponse.razorpay_order_id,
+              razorpay_order_id:   paymentResponse.razorpay_order_id,
               razorpay_payment_id: paymentResponse.razorpay_payment_id,
-              razorpay_signature: paymentResponse.razorpay_signature,
+              razorpay_signature:  paymentResponse.razorpay_signature,
             });
 
-            if (!verifyRes.data || !verifyRes.data.success) {
-              alert("Payment verification failed. Please try again or contact support.");
+            if (!verifyRes.data?.success) {
+              alert("Payment verification failed. Please contact support.");
               return;
             }
 
-            const response = await API.post(
-              "/orders",
-              {
-                items: orderItems,
-                address,
-                shipping,
-                codCharge,
-                total,
-                paymentMethod,
-              }
-            );
+            const response = await API.post("/orders", {
+              items: orderItems, address, shipping, codCharge, total, paymentMethod,
+            });
 
             localStorage.setItem("latestOrder", JSON.stringify(response.data.order));
             clearCart();
             router.push("/order-success");
           } catch (err) {
-            console.error("Verification/Order placement failed:", err);
-            alert("Payment verification or order placement failed. If your account was debited, please contact customer support.");
+            console.error("Verification/Order failed:", err);
+            alert("Payment verification failed. If debited, contact customer support.");
           }
         },
       });
@@ -218,10 +184,7 @@ const total =
       <div className={styles.checkoutPage}>
         <h2 style={{ textAlign: "center", padding: "60px 0" }}>
           Your cart is empty.{" "}
-          <span
-            style={{ textDecoration: "underline", cursor: "pointer" }}
-            onClick={() => router.push("/")}
-          >
+          <span style={{ textDecoration: "underline", cursor: "pointer" }} onClick={() => router.push("/")}>
             Shop now
           </span>
         </h2>
@@ -300,6 +263,7 @@ const total =
             <label className={styles.paymentOption}>
               <input type="radio" checked={paymentMethod === "cod"} onChange={() => setPaymentMethod("cod")} />
               Cash On Delivery
+              <span style={{ fontSize: "12px", color: "#888", marginLeft: "8px" }}>(+₹100 COD charge)</span>
             </label>
             <label className={styles.paymentOption}>
               <input type="radio" checked={paymentMethod === "online"} onChange={() => setPaymentMethod("online")} />
@@ -323,23 +287,39 @@ const total =
               <div>✓ Cash On Delivery</div>
             </div>
 
-            {cartItems.map((item) => (
-              <div key={item._id} className={styles.productRow}>
-                <img
-                  src={getImageUrl(item.images?.[0])}
-                  alt={item.name}
-                  width={70}
-                  height={90}
-                  style={{ objectFit: "cover", borderRadius: "6px" }}
-                  onError={(e) => { e.target.src = PLACEHOLDER; }}
-                />
-                <div className={styles.productInfo}>
-                  <h4>{item.name}</h4>
-                  <p>Qty: {item.quantity || 1}</p>
-                  <span>₹{getPriceNumber(item.price).toLocaleString("en-IN")}</span>
+            {/* ← Now shows discounted price correctly */}
+            {cartItems.map((item) => {
+              const discountedPrice = getDiscountedPrice(item);
+              return (
+                <div key={item._id} className={styles.productRow}>
+                  <img
+                    src={getImageUrl(item.images?.[0])}
+                    alt={item.name}
+                    width={70}
+                    height={90}
+                    style={{ objectFit: "cover", borderRadius: "6px" }}
+                    onError={(e) => { e.target.src = PLACEHOLDER; }}
+                  />
+                  <div className={styles.productInfo}>
+                    <h4>{item.name}</h4>
+                    <p>Qty: {item.quantity || 1}</p>
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px", flexWrap: "wrap" }}>
+                      <span>₹{discountedPrice.toLocaleString("en-IN")}</span>
+                      {item.discount > 0 && (
+                        <>
+                          <del style={{ color: "#999", fontSize: "12px" }}>
+                            ₹{getPriceNumber(item.price).toLocaleString("en-IN")}
+                          </del>
+                          <span style={{ color: "green", fontSize: "11px", fontWeight: 600 }}>
+                            {item.discount}% off
+                          </span>
+                        </>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
 
             <div className={styles.couponBox}>
               <input type="text" placeholder="Coupon Code" />
@@ -347,7 +327,7 @@ const total =
             </div>
 
             <div className={styles.shippingProgress}>
-              <p>Add ₹{Math.max(0, 3000 - subtotal)} more for FREE Shipping</p>
+              <p>Add ₹{Math.max(0, 3000 - subtotal).toLocaleString("en-IN")} more for FREE Shipping</p>
               <div className={styles.progressBar}>
                 <div className={styles.progressFill} style={{ width: `${Math.min((subtotal / 3000) * 100, 100)}%` }} />
               </div>
@@ -364,13 +344,11 @@ const total =
             </div>
 
             {codCharge > 0 && (
-  <div className={styles.priceRow}>
-    <span>COD Charge</span>
-    <span>
-      ₹{codCharge.toLocaleString("en-IN")}
-    </span>
-  </div>
-)}
+              <div className={styles.priceRow}>
+                <span>COD Charge</span>
+                <span>₹{codCharge.toLocaleString("en-IN")}</span>
+              </div>
+            )}
 
             <div className={styles.totalRow}>
               <span>Total</span>

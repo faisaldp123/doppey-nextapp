@@ -94,6 +94,7 @@ cursor: pointer;
 .paymentOption input {
 width: auto;
 height: auto;
+margin-bottom: 0px;
 }
 
 .summarySection {

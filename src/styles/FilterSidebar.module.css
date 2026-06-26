@@ -142,7 +142,7 @@
 .sidebar {
   max-height: calc(100vh - 140px);
   overflow-y: auto;
-  margin-top: 42px;
+  /* margin-top: 42px; */
 }
 
 .sidebar::-webkit-scrollbar {
