@@ -25,6 +25,7 @@ export default function Checkout() {
   const [cartItems, setCartItems] = useState([]);
   const [user, setUser] = useState(null);
   const [mounted, setMounted] = useState(false);
+  const [loadingCart, setLoadingCart] = useState(true);
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -41,9 +42,14 @@ export default function Checkout() {
   useEffect(() => {
     setMounted(true);
     const loadCheckoutState = async () => {
-      await loadUserDataFromBackend();
-      setCartItems(getCart());
-      setUser(JSON.parse(localStorage.getItem("user") || "null"));
+      setLoadingCart(true);
+      try {
+        await loadUserDataFromBackend();
+        setCartItems(getCart());
+        setUser(JSON.parse(localStorage.getItem("user") || "null"));
+      } finally {
+        setLoadingCart(false);
+      }
     };
 
     const updateCart = () => setCartItems(getCart());
@@ -199,7 +205,13 @@ const total =
     }
   };
 
-  if (!mounted) return null;
+  if (!mounted || loadingCart) {
+    return (
+      <div className={styles.checkoutPage}>
+        <h2 style={{ textAlign: "center", padding: "60px 0" }}>Loading checkout...</h2>
+      </div>
+    );
+  }
 
   if (cartItems.length === 0) {
     return (

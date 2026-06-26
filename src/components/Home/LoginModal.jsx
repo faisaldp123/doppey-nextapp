@@ -15,7 +15,9 @@ export default function LoginModal({ open, onClose }) {
   const [step, setStep] = useState(1);
   const [timer, setTimer] = useState(30);
   const [loading, setLoading] = useState(false);
+  const [confirmationResult, setConfirmationResult] = useState(null);
   const inputRefs = useRef([]);
+  const recaptchaRef = useRef(null);
 
   useEffect(() => {
     if (step !== 2) return;
@@ -42,10 +44,36 @@ export default function LoginModal({ open, onClose }) {
     }
     setLoading(true);
     try {
-      await API.post("/request-otp", { phone: mobile });
+      const { initializeApp, getApps } = await import("firebase/app");
+      const { getAuth, RecaptchaVerifier, signInWithPhoneNumber } = await import("firebase/auth");
+
+      const firebaseConfig = {
+        apiKey:     process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+        authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+        projectId:  process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+        appId:      process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+      };
+
+      if (!firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId || !firebaseConfig.appId) {
+        alert("Firebase phone login is not configured. Please add Firebase env values.");
+        return;
+      }
+
+      const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+
+      if (!recaptchaRef.current) {
+        recaptchaRef.current = new RecaptchaVerifier(auth, "firebase-recaptcha", {
+          size: "invisible",
+        });
+      }
+
+      const result = await signInWithPhoneNumber(auth, `+91${mobile}`, recaptchaRef.current);
+      setConfirmationResult(result);
       setStep(2);
-    } catch {
-      alert("Failed to send OTP");
+    } catch (err) {
+      console.error("Firebase OTP send failed:", err);
+      alert(err.message || "Failed to send OTP");
     } finally {
       setLoading(false);
     }
@@ -79,7 +107,14 @@ export default function LoginModal({ open, onClose }) {
     if (code.length < 6) { alert("Enter the 6-digit OTP"); return; }
     setLoading(true);
     try {
-      const res = await API.post("/verify-otp", { phone: mobile, otp: code });
+      if (!confirmationResult) {
+        alert("Please request OTP again");
+        return;
+      }
+
+      const credential = await confirmationResult.confirm(code);
+      const idToken = await credential.user.getIdToken();
+      const res = await API.post("/verify-firebase-otp", { idToken });
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("user", JSON.stringify(res.data.user));
 
@@ -100,13 +135,15 @@ export default function LoginModal({ open, onClose }) {
   const handleResend = async () => {
     if (timer > 0) return;
     setOtp(["", "", "", "", "", ""]);
-    await API.post("/request-otp", { phone: mobile });
+    setConfirmationResult(null);
+    await handleSendOtp();
     setTimer(30);
   };
 
   const resetModal = () => {
     setMobile("");
     setOtp(["", "", "", "", "", ""]);
+    setConfirmationResult(null);
     setStep(1);
     setTimer(30);
   };
@@ -170,6 +207,7 @@ export default function LoginModal({ open, onClose }) {
   return (
     <div className={styles.overlay} onClick={handleClose}>
       <div className={styles.sheet} onClick={(e) => e.stopPropagation()}>
+        <div id="firebase-recaptcha" />
 
         <button className={styles.closeBtn} onClick={handleClose}>
           <X size={20} />

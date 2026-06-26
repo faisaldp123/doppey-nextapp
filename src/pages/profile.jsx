@@ -1,111 +1,103 @@
 "use client";
-import React, { useState } from "react";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import API from "@/utils/api";
 import styles from "@/styles/ProfilePage.module.css";
-import Image from "next/image";
-import Link from "next/link";
 
 export default function ProfilePage() {
-  const [activeSection, setActiveSection] = useState("orders");
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({ name: "", email: "", phone: "" });
 
-  const user = {
-    name: "Faisal Ansari",
-    email: "faisal@example.com",
-    avatar: "/images/profile-avatar.png",
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      window.dispatchEvent(new Event("open-login-modal"));
+      router.push("/");
+      return;
+    }
+
+    const loadProfile = async () => {
+      try {
+        const res = await API.get("/profile");
+        setForm({
+          name: res.data?.name || "",
+          email: res.data?.email || "",
+          phone: res.data?.phone || "",
+        });
+      } catch (err) {
+        console.error("Profile load failed:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProfile();
+  }, [router]);
+
+  const set = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+
+    try {
+      const res = await API.put("/profile", form);
+      const user = res.data?.user;
+      if (user) {
+        localStorage.setItem("user", JSON.stringify(user));
+        window.dispatchEvent(new Event("user-login"));
+      }
+      alert("Profile updated");
+    } catch (err) {
+      alert(err.response?.data?.message || "Failed to update profile");
+    } finally {
+      setSaving(false);
+    }
   };
+
+  if (loading) {
+    return <div className={styles.profile_container}>Loading profile...</div>;
+  }
 
   return (
     <div className={styles.profile_container}>
-      {/* Sidebar */}
       <aside className={styles.sidebar}>
         <div className={styles.user_box}>
-          <Image
-            src={user.avatar}
-            alt="User Avatar"
-            width={70}
-            height={70}
-            className={styles.avatar}
-          />
+          <div className={styles.avatarFallback}>
+            {(form.name || form.phone || "U").slice(0, 1).toUpperCase()}
+          </div>
           <div>
-            <h4>{user.name}</h4>
-            <p>{user.email}</p>
+            <h4>{form.name || "My Profile"}</h4>
+            <p>{form.phone ? `+91 ${form.phone}` : form.email || "Update your details"}</p>
           </div>
         </div>
-
-        <ul className={styles.menu_list}>
-          <li
-            className={activeSection === "orders" ? styles.active : ""}
-            onClick={() => setActiveSection("orders")}
-          >
-            My Orders
-          </li>
-          <li
-            className={activeSection === "wishlist" ? styles.active : ""}
-            onClick={() => setActiveSection("wishlist")}
-          >
-            Wishlist
-          </li>
-          <li
-            className={activeSection === "address" ? styles.active : ""}
-            onClick={() => setActiveSection("address")}
-          >
-            Addresses
-          </li>
-          <li
-            className={activeSection === "payments" ? styles.active : ""}
-            onClick={() => setActiveSection("payments")}
-          >
-            Payments
-          </li>
-          <li
-            className={activeSection === "settings" ? styles.active : ""}
-            onClick={() => setActiveSection("settings")}
-          >
-            Account Settings
-          </li>
-          <li>
-            <Link href="/" className={styles.logout_btn}>
-              Logout
-            </Link>
-          </li>
-        </ul>
       </aside>
 
-      {/* Content Section */}
       <section className={styles.content}>
-        {activeSection === "orders" && (
-          <div className={styles.section_box}>
-            <h3>My Orders</h3>
-            <p>You haven’t placed any orders yet.</p>
-          </div>
-        )}
+        <form className={styles.section_box} onSubmit={handleSave}>
+          <h3>Profile Details</h3>
+          <p>Keep your contact details updated for orders, returns and delivery calls.</p>
 
-        {activeSection === "wishlist" && (
-          <div className={styles.section_box}>
-            <h3>My Wishlist</h3>
-            <p>Your wishlist is empty. Start adding products you love!</p>
-          </div>
-        )}
+          <label>Name</label>
+          <input value={form.name} onChange={(e) => set("name", e.target.value)} placeholder="Full name" />
 
-        {activeSection === "address" && (
-          <div className={styles.section_box}>
-            <h3>Saved Addresses</h3>
-            <p>No saved addresses. Add one to make checkout faster.</p>
-          </div>
-        )}
+          <label>Email</label>
+          <input value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="Email address" />
 
-        {activeSection === "payments" && (
-          <div className={styles.section_box}>
-            <h3>Saved Payment Methods</h3>
-            <p>You don’t have any saved cards yet.</p>
-          </div>
-        )}
+          <label>Mobile Number</label>
+          <input
+            value={form.phone}
+            onChange={(e) => set("phone", e.target.value.replace(/\D/g, "").slice(0, 10))}
+            placeholder="10-digit mobile number"
+          />
 
-        {activeSection === "settings" && (
-          <div className={styles.section_box}>
-            <h3>Account Settings</h3>
-            <p>Edit your personal details and manage your account.</p>
-          </div>
-        )}
+          <button type="submit" disabled={saving}>
+            {saving ? "Saving..." : "Save Profile"}
+          </button>
+        </form>
       </section>
     </div>
   );

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import Link from "next/link";
-import { Package, Heart, MapPin, CreditCard, Headphones, Info, LogOut } from "lucide-react";
+import { Package, Heart, MapPin, CreditCard, Headphones, Info, LogOut, UserRound } from "lucide-react";
 import styles from "@/styles/AccountModal.module.css";
 import { clearUserData } from "@/utils/shopState";
 
@@ -45,6 +45,9 @@ export default function AccountModal({ open, onClose, user }) {
         </div>
 
         <nav className={styles.links}>
+          <Link href="/profile" className={styles.link} onClick={onClose}>
+            <UserRound size={17} /> My profile
+          </Link>
           <Link href="/my-orders" className={styles.link} onClick={onClose}>
             <Package size={17} /> My orders
           </Link>

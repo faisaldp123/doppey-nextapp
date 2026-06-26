@@ -47,11 +47,6 @@ export default function Header() {
     { name: "SUMMER COLLECTION", href: "/summer-collection" },
     { name: "BEST SELLERS",     href: "/best-sellers" },
     { name: "CLEARANCE SALE",   href: "/clearance-sale" },
-    { name: "DENIMS",           href: "/denims" },
-    { name: "TOPS",             href: "/tops" },
-    { name: "PANTS & TROUSERS", href: "/pants-trousers" },
-    { name: "SKIRTS",           href: "/skirts" },
-    { name: "CORD SETS",        href: "/cord-sets" },
     { name: "ACCESSORIES",      href: "/accessories" },
   ];
 
