@@ -16,6 +16,7 @@
   text-align: center;
   border: 1px solid #ececec;
   margin-top: 50px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.04);
 }
 
 .successIcon {
@@ -41,6 +42,7 @@
   font-size: 12px;
   letter-spacing: 1px;
   margin-bottom: 20px;
+  font-weight: 600;
 }
 
 .card h1 {
@@ -69,19 +71,26 @@
   background: #fafafa;
   border-radius: 18px;
   padding: 20px;
-  margin-bottom: 40px;
+  margin-bottom: 25px;
+  border: 1px solid #f0f0f0;
 }
 
 .requestBox span {
   display: block;
   color: #777;
   margin-bottom: 8px;
+  font-size: 14px;
 }
 
 .requestBox strong {
   font-size: 24px;
   color: #111;
+  font-weight: 700;
 }
+
+/* ========================= */
+/* TIMELINE */
+/* ========================= */
 
 .timeline {
   display: grid;
@@ -96,28 +105,54 @@
   border-radius: 18px;
   font-size: 14px;
   font-weight: 600;
+  transition: all 0.3s ease;
+  opacity: 0.45;
+  border: 1px solid #ececec;
 }
 
 .timeline span {
-  display: block;
-  width: 36px;
-  height: 36px;
-  margin: 0 auto 10px;
-  border-radius: 50%;
-  background: white;
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 38px;
+  height: 38px;
+  margin: 0 auto 12px;
+  border-radius: 50%;
+  background: white;
+  color: #666;
+  font-weight: 700;
+  border: 1px solid #ddd;
 }
 
-.active {
-  background: #111 !important;
+.timeline .active {
+  background: #111;
   color: white;
+  opacity: 1;
+  transform: translateY(-2px);
 }
 
-.active span {
+.timeline .active span {
+  background: white;
   color: #111;
+  border-color: white;
 }
+
+.rejected {
+  background: #ffebee !important;
+  color: #d32f2f !important;
+  opacity: 1 !important;
+  border-color: #ffcdd2 !important;
+}
+
+.rejected span {
+  background: #d32f2f !important;
+  color: white !important;
+  border: none !important;
+}
+
+/* ========================= */
+/* INFO GRID */
+/* ========================= */
 
 .infoGrid {
   display: grid;
@@ -130,17 +165,24 @@
   background: #fafafa;
   padding: 22px;
   border-radius: 18px;
+  border: 1px solid #f0f0f0;
 }
 
 .infoCard h3 {
   margin-bottom: 10px;
   color: #111;
+  font-size: 16px;
 }
 
 .infoCard p {
   color: #666;
   line-height: 1.6;
+  font-size: 14px;
 }
+
+/* ========================= */
+/* BUTTONS */
+/* ========================= */
 
 .actionButtons {
   display: flex;
@@ -158,6 +200,7 @@
   border-radius: 999px;
   font-weight: 600;
   transition: 0.3s;
+  min-width: 180px;
 }
 
 .primaryBtn {
@@ -182,9 +225,19 @@
   transform: translateY(-2px);
 }
 
-/* Tablet */
+/* ========================= */
+/* TABLET */
+/* ========================= */
 
 @media (max-width: 992px) {
+  .card {
+    padding: 40px 30px;
+  }
+
+  .card h1 {
+    font-size: 40px;
+  }
+
   .timeline {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -194,7 +247,9 @@
   }
 }
 
-/* Mobile */
+/* ========================= */
+/* MOBILE */
+/* ========================= */
 
 @media (max-width: 768px) {
   .page {
@@ -203,6 +258,7 @@
 
   .card {
     padding: 30px 20px;
+    border-radius: 20px;
   }
 
   .card h1 {
@@ -211,6 +267,11 @@
 
   .timeline {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .timeline div {
+    padding: 16px;
   }
 
   .actionButtons {
@@ -230,7 +291,9 @@
   }
 }
 
-/* Small Mobile */
+/* ========================= */
+/* SMALL MOBILE */
+/* ========================= */
 
 @media (max-width: 480px) {
   .card h1 {
@@ -243,5 +306,9 @@
 
   .requestBox strong {
     font-size: 20px;
+  }
+
+  .requestBox {
+    padding: 16px;
   }
 }

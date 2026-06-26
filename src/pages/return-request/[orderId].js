@@ -28,7 +28,10 @@ export default function ReturnRequest() {
   
   const router = useRouter();
 
-const { orderId } = router.query;
+const orderId =
+  router.query.orderId ||
+  router.asPath.split("/return-request/")[1]?.split("?")[0];
+
 const productId = router.query.productId;
 
   const [order, setOrder]     = useState(null);
