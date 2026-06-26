@@ -11,7 +11,6 @@ import { productsData } from "@/constant/productsData";
 import { loadUserDataFromBackend } from "@/utils/shopState";
 import {
   getImageUrl,
-  getOldPrice,
   getProductSlug,
   readName,
   slugify,
@@ -29,6 +28,13 @@ import {
 
 import styles from "../../styles/Header.module.css";
 
+const getDiscountedPrice = (product) => {
+  const base = Number(product.price) || 0;
+  return product.discount
+    ? Math.round(base - (base * product.discount) / 100)
+    : base;
+};
+
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
@@ -43,11 +49,11 @@ export default function Header() {
   const userBtnRef = useRef(null);
 
   const mainLinks = [
-    { name: "NEW ARRIVALS",     href: "/new-arrivals" },
+    { name: "NEW ARRIVALS",      href: "/new-arrivals" },
     { name: "SUMMER COLLECTION", href: "/summer-collection" },
-    { name: "BEST SELLERS",     href: "/best-sellers" },
-    { name: "CLEARANCE SALE",   href: "/clearance-sale" },
-    { name: "ACCESSORIES",      href: "/accessories" },
+    { name: "BEST SELLERS",      href: "/best-sellers" },
+    { name: "CLEARANCE SALE",    href: "/clearance-sale" },
+    { name: "ACCESSORIES",       href: "/accessories" },
   ];
 
   const fallbackMegaMenus = {
@@ -108,8 +114,6 @@ export default function Header() {
     const updateUser = async () => {
       const stored = localStorage.getItem("user");
       setUser(stored ? JSON.parse(stored) : null);
-
-      // ← Sync backend cart/wishlist on every page load if logged in
       if (stored) {
         await loadUserDataFromBackend();
       }
@@ -121,8 +125,7 @@ export default function Header() {
     const openLogin = () => setShowLogin(true);
     window.addEventListener("open-login-modal", openLogin);
 
-    // Show login prompt once per session for guests
-    const seen = localStorage.getItem("doppeyLoginPromptSeen");
+    const seen     = localStorage.getItem("doppeyLoginPromptSeen");
     const loggedIn = localStorage.getItem("user");
     if (!seen && !loggedIn) {
       localStorage.setItem("doppeyLoginPromptSeen", "1");
@@ -269,10 +272,19 @@ export default function Header() {
                               className={styles.productImage}
                             />
                             <h5>{product.name}</h5>
+
+                            {/* ← Fixed price display with discount */}
                             <div className={styles.productPrice}>
-                              <span>₹{product.price}</span>
-                              {getOldPrice(product) && <del>₹{getOldPrice(product)}</del>}
+                              <span>
+                                ₹{getDiscountedPrice(product).toLocaleString("en-IN")}
+                              </span>
+                              {product.discount > 0 && (
+                                <del>
+                                  ₹{Number(product.price).toLocaleString("en-IN")}
+                                </del>
+                              )}
                             </div>
+
                             <Link href={`/product/${getProductSlug(product)}`} className={styles.shopNowBtn}>
                               SHOP NOW
                             </Link>
