@@ -44,13 +44,57 @@ export default function App({ Component, pageProps }) {
     strategy="beforeInteractive"
   />
       <Head>
-        {/* Add the favicon here */}
-        <link rel="icon" type="image/x-icon" href="/favicon.ico?v=2" />
-        {/* Optionally, you can use a PNG or other file type */}
-        {/* <link rel="icon" href="/favicon.png" /> */}
-        <title>Doppey shopping app</title> {/* Optional title change */}
-        <meta name="description" content="Doppey shopping app"/>
-      </Head>
+  <link rel="icon" href="/favicon.png" />
+  <link rel="shortcut icon" href="/favicon.ico" />
+  <link rel="apple-touch-icon" href="/favicon.png" />
+
+  <title>Doppey | Premium Fashion Store</title>
+
+  <meta
+    name="description"
+    content="Shop premium fashion, oversized t-shirts, co-ord sets, cargo pants and more at Doppey."
+  />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1"
+  />
+
+  <meta
+    name="theme-color"
+    content="#000000"
+  />
+
+  <link
+    rel="canonical"
+    href="https://doppey.com"
+  />
+
+  <meta property="og:site_name" content="Doppey" />
+  <meta property="og:title" content="Doppey" />
+  <meta
+    property="og:description"
+    content="Premium fashion shopping at Doppey."
+  />
+  <meta
+    property="og:image"
+    content="https://doppey.com/favicon.png"
+  />
+</Head>
+
+<Script
+  id="doppey-schema"
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{
+    __html: JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      name: "Doppey",
+      url: "https://doppey.com",
+      logo: "https://doppey.com/favicon.png",
+    }),
+  }}
+/>
       {/* <Provider store={store}> */}
       <TopHeader/>
       <Preloader />
