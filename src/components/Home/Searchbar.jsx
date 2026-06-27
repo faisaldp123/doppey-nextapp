@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Search, X, Clock, TrendingUp, ArrowUpRight } from "lucide-react";
 import styles from "../../styles/Searchbar.module.css";
+import { useRouter } from "next/router";
+import API from "@/utils/api";
+import { getImageUrl } from "@/utils/productHelpers";
 
 const TRENDING = [
   "Oversized T-Shirts",
@@ -37,6 +40,46 @@ export default function SearchBar({ open, onClose }) {
   const [query, setQuery] = useState("");
   const [recent, setRecent] = useState([]);
   const inputRef = useRef(null);
+  const router = useRouter();
+
+const [products, setProducts] = useState([]);
+const [loading, setLoading] = useState(false);
+
+useEffect(() => {
+  const searchProducts = async () => {
+    if (!query.trim()) {
+      setProducts([]);
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const res = await API.get("/products/public");
+
+      const filtered = res.data.filter((product) =>
+        [
+          product.name,
+          product.brand,
+          product.category?.name,
+        ]
+          .join(" ")
+          .toLowerCase()
+          .includes(query.toLowerCase())
+      );
+
+      setProducts(filtered.slice(0, 8));
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const timer = setTimeout(searchProducts, 300);
+
+  return () => clearTimeout(timer);
+}, [query]);
 
   // Refresh recent on open
   useEffect(() => {
@@ -83,11 +126,7 @@ export default function SearchBar({ open, onClose }) {
 
   if (!open) return null;
 
-  const suggestions = query.trim()
-    ? [...TRENDING, ...recent].filter((t) =>
-        t.toLowerCase().includes(query.toLowerCase())
-      )
-    : null;
+  const suggestions = query.trim() ? products : null;
 
   return (
     <div className={styles.overlay} role="dialog" aria-modal="true" aria-label="Search">
@@ -133,29 +172,77 @@ export default function SearchBar({ open, onClose }) {
           {/* Live suggestions while typing */}
           {suggestions && (
             <ul className={styles.suggestionList}>
-              {suggestions.length === 0 ? (
-                <li className={styles.noResult}>No results for "{query}"</li>
-              ) : (
-                suggestions.map((term) => (
-                  <li
-                    key={term}
-                    className={styles.suggestionItem}
-                    onClick={() => handleSearch(term)}
-                  >
-                    <Search size={14} className={styles.suggIcon} />
-                    <span
-                      dangerouslySetInnerHTML={{
-                        __html: term.replace(
-                          new RegExp(`(${query})`, "gi"),
-                          "<mark>$1</mark>"
-                        ),
-                      }}
-                    />
-                    <ArrowUpRight size={14} className={styles.arrowIcon} />
-                  </li>
-                ))
+  {loading ? (
+    <li className={styles.noResult}>
+      Searching...
+    </li>
+  ) : products.length === 0 ? (
+    <li className={styles.noResult}>
+      No products found
+    </li>
+  ) : (
+    products.map((product) => {
+      const discounted =
+        product.discount > 0
+          ? Math.round(
+              product.price -
+                (product.price *
+                  product.discount) /
+                  100
+            )
+          : product.price;
+
+      return (
+        <li
+          key={product._id}
+          className={styles.productSuggestion}
+          onClick={() => {
+            saveRecent(product.name);
+
+            router.push(
+              `/product/${product.slug}`
+            );
+
+            onClose();
+          }}
+        >
+          <img
+            src={getImageUrl(
+              product.images?.[0]
+            )}
+            className={styles.productImg}
+          />
+
+          <div className={styles.productInfo}>
+            <h4>{product.name}</h4>
+
+            <p>{product.brand}</p>
+
+            <div
+              className={
+                styles.productPrice
+              }
+            >
+              ₹{discounted}
+
+              {product.discount > 0 && (
+                <>
+                  <span>
+                    ₹{product.price}
+                  </span>
+
+                  <small>
+                    {product.discount}% OFF
+                  </small>
+                </>
               )}
-            </ul>
+            </div>
+          </div>
+        </li>
+      );
+    })
+  )}
+</ul>
           )}
 
           {/* Idle state: Recent + Trending */}

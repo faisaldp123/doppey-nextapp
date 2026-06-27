@@ -5,7 +5,7 @@ import { startRazorpayPayment } from "@/utils/razorpay";
 import { requireLogin } from "@/utils/auth";
 import { clearCart, getCart, loadUserDataFromBackend } from "@/utils/shopState";
 import { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/router";  
 import styles from "../styles/Checkout.module.css";
 
 const PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='400' viewBox='0 0 300 400'%3E%3Crect width='300' height='400' fill='%23f0f0f0'/%3E%3C/svg%3E";
@@ -31,6 +31,10 @@ export default function Checkout() {
   });
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const [errors, setErrors] = useState({});
+  const [couponCode, setCouponCode] = useState("");
+const [couponDiscount, setCouponDiscount] = useState(0);
+const [couponMessage, setCouponMessage] = useState("");
+const [appliedCoupon, setAppliedCoupon] = useState(null);
 
   useEffect(() => {
     setMounted(true);
@@ -74,9 +78,25 @@ export default function Checkout() {
     0
   );
 
-  const shipping  = cartItems.length > 0 ? 99 : 0;
-  const codCharge = paymentMethod === "cod" ? 100 : 0;
-  const total     = subtotal + shipping + codCharge;
+  const COD_CHARGE = 99;
+const COD_FREE_LIMIT = 1999;
+
+const shipping = 0;
+
+const codCharge =
+  paymentMethod === "cod"
+    ? subtotal >= COD_FREE_LIMIT
+      ? 0
+      : COD_CHARGE
+    : 0;
+
+const discountedSubtotal = Math.max(
+  0,
+  subtotal - couponDiscount
+);
+
+const total =
+  discountedSubtotal + codCharge;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -95,6 +115,47 @@ export default function Checkout() {
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+
+  const applyCoupon = async () => {
+  if (!couponCode.trim()) {
+    setCouponMessage(
+      "Please enter coupon code"
+    );
+    return;
+  }
+
+  try {
+    const res = await API.post(
+      "/coupons/apply",
+      {
+        code: couponCode,
+        orderAmount: subtotal,
+      }
+    );
+
+    setCouponDiscount(
+      res.data.discount
+    );
+
+    setAppliedCoupon(
+      couponCode.toUpperCase()
+    );
+
+    setCouponMessage(
+      `Coupon applied successfully! You saved ₹${res.data.discount}`
+    );
+  } catch (err) {
+    setCouponDiscount(0);
+
+    setAppliedCoupon(null);
+
+    setCouponMessage(
+      err.response?.data
+        ?.message ||
+        "Invalid coupon"
+    );
+  }
+};
 
   const handlePlaceOrder = async () => {
     if (!requireLogin()) return;
@@ -119,8 +180,15 @@ export default function Checkout() {
     if (paymentMethod === "cod") {
       try {
         const response = await API.post("/orders", {
-          items: orderItems, address, shipping, codCharge, total, paymentMethod,
-        });
+  items: orderItems,
+  address,
+  shipping,
+  codCharge,
+  couponCode: appliedCoupon,
+  couponDiscount,
+  total,
+  paymentMethod,
+});
         localStorage.setItem("latestOrder", JSON.stringify(response.data.order));
         clearCart();
         router.push("/order-success");
@@ -133,7 +201,7 @@ export default function Checkout() {
 
     try {
       await startRazorpayPayment({
-        amount: subtotal + shipping,
+        amount: discountedSubtotal,
         customer: {
           fullName: formData.fullName,
           email:    formData.email,
@@ -263,7 +331,17 @@ export default function Checkout() {
             <label className={styles.paymentOption}>
               <input type="radio" checked={paymentMethod === "cod"} onChange={() => setPaymentMethod("cod")} />
               Cash On Delivery
-              <span style={{ fontSize: "12px", color: "#888", marginLeft: "8px" }}>(+₹100 COD charge)</span>
+              <span
+  style={{
+    fontSize: "12px",
+    color: "#888",
+    marginLeft: "8px",
+  }}
+>
+  {subtotal >= COD_FREE_LIMIT
+    ? "(FREE COD)"
+    : "(+₹99 COD charge)"}
+</span>
             </label>
             <label className={styles.paymentOption}>
               <input type="radio" checked={paymentMethod === "online"} onChange={() => setPaymentMethod("online")} />
@@ -322,33 +400,120 @@ export default function Checkout() {
             })}
 
             <div className={styles.couponBox}>
-              <input type="text" placeholder="Coupon Code" />
-              <button>Apply</button>
-            </div>
+  <input
+    type="text"
+    placeholder="Coupon Code"
+    value={couponCode}
+    onChange={(e) =>
+      setCouponCode(
+        e.target.value.toUpperCase()
+      )
+    }
+  />
+
+  <button
+    onClick={applyCoupon}
+  >
+    Apply
+  </button>
+</div>
+
+{couponMessage && (
+  <p
+    style={{
+      marginTop: "10px",
+      color:
+        couponDiscount > 0
+          ? "green"
+          : "red",
+      fontSize: "13px",
+    }}
+  >
+    {couponMessage}
+  </p>
+)}
+
+{couponDiscount > 0 && (
+  <div className={styles.priceRow}>
+    <span>
+      Coupon Discount
+    </span>
+
+    <span
+      style={{
+        color: "green",
+      }}
+    >
+      -₹
+      {couponDiscount.toLocaleString(
+        "en-IN"
+      )}
+    </span>
+  </div>
+)}
 
             <div className={styles.shippingProgress}>
-              <p>Add ₹{Math.max(0, 3000 - subtotal).toLocaleString("en-IN")} more for FREE Shipping</p>
-              <div className={styles.progressBar}>
-                <div className={styles.progressFill} style={{ width: `${Math.min((subtotal / 3000) * 100, 100)}%` }} />
-              </div>
-            </div>
+  <p>
+    {subtotal >= COD_FREE_LIMIT
+      ? "🎉 You unlocked FREE COD"
+      : `Add ₹${(
+          COD_FREE_LIMIT - subtotal
+        ).toLocaleString(
+          "en-IN"
+        )} more for FREE COD`}
+  </p>
+
+  <div className={styles.progressBar}>
+    <div
+      className={styles.progressFill}
+      style={{
+        width: `${Math.min(
+          (subtotal /
+            COD_FREE_LIMIT) *
+            100,
+          100
+        )}%`,
+      }}
+    />
+  </div>
+</div>
 
             <div className={styles.priceRow}>
               <span>Subtotal</span>
               <span>₹{subtotal.toLocaleString("en-IN")}</span>
             </div>
+            {couponDiscount > 0 && (
+  <div className={styles.priceRow}>
+    <span>
+      After Discount
+    </span>
+
+    <span>
+      ₹
+      {discountedSubtotal.toLocaleString(
+        "en-IN"
+      )}
+    </span>
+  </div>
+)}
 
             <div className={styles.priceRow}>
-              <span>Shipping</span>
-              <span>₹{shipping.toLocaleString("en-IN")}</span>
-            </div>
+  <span>Shipping</span>
+  <span>FREE</span>
+</div>
 
-            {codCharge > 0 && (
-              <div className={styles.priceRow}>
-                <span>COD Charge</span>
-                <span>₹{codCharge.toLocaleString("en-IN")}</span>
-              </div>
-            )}
+            {paymentMethod === "cod" && (
+  <div className={styles.priceRow}>
+    <span>COD Charge</span>
+    <span>
+      {codCharge === 0
+        ? "FREE"
+        : `₹${codCharge.toLocaleString(
+            "en-IN"
+          )}`}
+    </span>
+  </div>
+)}
 
             <div className={styles.totalRow}>
               <span>Total</span>

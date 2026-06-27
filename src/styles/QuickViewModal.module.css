@@ -18,30 +18,55 @@
   background: #fff;
   border-radius: 20px;
 
-  overflow: hidden;
-
   display: grid;
   grid-template-columns: 45% 55%;
 
   position: relative;
 
-  max-height: 90vh;
+  height: 90vh;              /* fixed height */
+  overflow: hidden;          /* prevent whole modal scrolling */
+
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15);
 }
 
 .left {
   background: #f7f7f7;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 25px;
+
+  height: 100%;
+  overflow: hidden;
 }
 
 .image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+
+  object-fit: contain;       /* SHOW FULL IMAGE */
   display: block;
 }
 
 .right {
   padding: 35px;
+
+  height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
+
+  scrollbar-width: thin;
+}
+
+.right::-webkit-scrollbar {
+  width: 6px;
+}
+
+.right::-webkit-scrollbar-thumb {
+  background: #d6d6d6;
+  border-radius: 20px;
 }
 
 .closeBtn {
@@ -63,7 +88,7 @@
   align-items: center;
   justify-content: center;
 
-  z-index: 10;
+  z-index: 100;
 
   box-shadow: 0 5px 15px rgba(0,0,0,.1);
 }
@@ -90,6 +115,7 @@
 .priceRow {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 12px;
   margin-bottom: 20px;
 }
@@ -154,7 +180,7 @@
 .wishlistBtn {
   flex: 1;
 
-  height: 52px;
+  min-height: 52px;
 
   border: none;
   border-radius: 10px;
@@ -174,9 +200,17 @@
   color: #fff;
 }
 
+.cartBtn:hover {
+  opacity: .9;
+}
+
 .wishlistBtn {
   background: #f5f5f5;
   color: #111;
+}
+
+.wishlistBtn:hover {
+  background: #ececec;
 }
 
 .viewDetails {
@@ -188,10 +222,16 @@
   text-decoration: none;
 }
 
+.viewDetails:hover {
+  text-decoration: underline;
+}
+
 .trustBadges {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+
+  padding-bottom: 20px;
 }
 
 .trustBadges div {
@@ -200,20 +240,26 @@
   border-radius: 8px;
   font-size: 13px;
 }
+
 @media (max-width: 768px) {
   .modal {
     grid-template-columns: 1fr;
-
-    max-height: 95vh;
+    height: 95vh;
     overflow-y: auto;
-    margin-top: 20px;
   }
 
   .left {
     height: 350px;
+    padding: 15px;
+  }
+
+  .image {
+    object-fit: contain;
   }
 
   .right {
+    height: auto;
+    overflow: visible;
     padding: 20px;
   }
 
@@ -228,5 +274,4 @@
   .actionButtons {
     flex-direction: column;
   }
-  
 }

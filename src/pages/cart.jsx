@@ -78,8 +78,8 @@ export default function Cart() {
     return acc + getDiscountedPrice(item) * item.quantity;
   }, 0);
 
-  const shipping = cartItems.length > 0 ? 99 : 0;
-  const total = subtotal + shipping;
+  const COD_FREE_LIMIT = 1999;
+const total = subtotal;
 
   return (
     <div className={styles.cartPage}>
@@ -163,10 +163,12 @@ export default function Cart() {
 
             <div className={styles.shippingProgress}>
               <p>
-                {subtotal >= 3000
-                  ? "🎉 You unlocked FREE Shipping!"
-                  : `Add ₹${(3000 - subtotal).toLocaleString()} more for FREE Shipping`}
-              </p>
+  {subtotal >= COD_FREE_LIMIT
+    ? "🎉 COD is FREE on this order!"
+    : `Add ₹${(
+        COD_FREE_LIMIT - subtotal
+      ).toLocaleString("en-IN")} more for FREE COD`}
+</p>
               <div className={styles.progressBar}>
                 <div
                   className={styles.progressFill}
@@ -181,9 +183,18 @@ export default function Cart() {
             </div>
 
             <div className={styles.summaryRow}>
-              <span>Shipping</span>
-              <span>₹{shipping.toLocaleString("en-IN")}</span>
-            </div>
+  <span>Shipping</span>
+  <span>FREE</span>
+</div>
+
+<div className={styles.summaryRow}>
+  <span>Cash On Delivery</span>
+  <span>
+    {subtotal >= COD_FREE_LIMIT
+      ? "FREE"
+      : "₹99"}
+  </span>
+</div>
 
             <div className={styles.totalRow}>
               <span>Total</span>
