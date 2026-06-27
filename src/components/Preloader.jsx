@@ -13,7 +13,7 @@ export default function Preloader() {
     <div className={styles.preloaderOverlay}>
       <div className={styles.spinner}>
   <img
-    src="/fevicon.jpg"
+    src="/favicon.png"
     alt="Loading"
     className={styles.logo}
   />

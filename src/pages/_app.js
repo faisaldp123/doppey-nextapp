@@ -44,9 +44,9 @@ export default function App({ Component, pageProps }) {
     strategy="beforeInteractive"
   />
       <Head>
-  <link rel="icon" href="/favicon.png" />
-  <link rel="shortcut icon" href="/favicon.ico" />
-  <link rel="apple-touch-icon" href="/favicon.png" />
+  <link rel="icon" href="/favicon.png?v=3" />
+  <link rel="shortcut icon" href="/favicon.ico?v=3" />
+  <link rel="apple-touch-icon" href="/favicon.png?v=3" />
 
   <title>Doppey | Premium Fashion Store</title>
 
