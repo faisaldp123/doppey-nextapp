@@ -3,7 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { X, Heart, ShoppingBag } from "lucide-react";
-import { addToCart as addProductToCart, toggleWishlist as toggleProductWishlist } from "@/utils/shopState";
+
+import {
+  addToCart as addProductToCart,
+  toggleWishlist as toggleProductWishlist,
+} from "@/utils/shopState";
+
 import { getProductId } from "@/utils/productHelpers";
 
 import styles from "../../styles/QuickViewModal.module.css";
@@ -23,9 +28,7 @@ export default function QuickViewModal({
   const getImageUrl = (url) => {
     if (!url) return "/placeholder.jpg";
 
-    if (url.startsWith("http")) {
-      return url;
-    }
+    if (url.startsWith("http")) return url;
 
     if (url.startsWith("/")) {
       return `${BASE_URL}${url}`;
@@ -33,6 +36,17 @@ export default function QuickViewModal({
 
     return `${BASE_URL}/${url}`;
   };
+
+  // SAME LOGIC AS PRODUCT DETAIL PAGE
+  const originalPrice = Number(product.price || 0);
+
+  const discountedPrice =
+    product.discount > 0
+      ? Math.round(
+          originalPrice -
+            (originalPrice * product.discount) / 100
+        )
+      : originalPrice;
 
   const productImage = getImageUrl(
     product.images?.[0] || product.image
@@ -42,8 +56,10 @@ export default function QuickViewModal({
     (item) => getProductId(item) === getProductId(product)
   );
 
-  const toggleWishlist = () => {
-    const { wishlist: updated } = toggleProductWishlist(product);
+  const handleWishlist = () => {
+    const { wishlist: updated } =
+      toggleProductWishlist(product);
+
     setWishlist(updated);
   };
 
@@ -52,15 +68,10 @@ export default function QuickViewModal({
   };
 
   return (
-    <div
-      className={styles.overlay}
-      onClick={onClose}
-    >
+    <div className={styles.overlay} onClick={onClose}>
       <div
         className={styles.modal}
-        onClick={(e) =>
-          e.stopPropagation()
-        }
+        onClick={(e) => e.stopPropagation()}
       >
         <button
           className={styles.closeBtn}
@@ -92,26 +103,16 @@ export default function QuickViewModal({
 
           <div className={styles.priceRow}>
             <span className={styles.price}>
-              ₹{product.price}
+              ₹{discountedPrice.toLocaleString("en-IN")}
             </span>
 
             {product.discount > 0 && (
               <>
-                <span
-                  className={styles.oldPrice}
-                >
-                  ₹
-                  {Math.round(
-                    product.price /
-                      (1 -
-                        product.discount /
-                          100)
-                  )}
+                <span className={styles.oldPrice}>
+                  ₹{originalPrice.toLocaleString("en-IN")}
                 </span>
 
-                <span
-                  className={styles.discount}
-                >
+                <span className={styles.discount}>
                   {product.discount}% OFF
                 </span>
               </>
@@ -123,45 +124,25 @@ export default function QuickViewModal({
           </p>
 
           {product.sizes?.length > 0 && (
-            <div
-              className={
-                styles.sizeSection
-              }
-            >
-              <h4>
-                Available Sizes
-              </h4>
+            <div className={styles.sizeSection}>
+              <h4>Available Sizes</h4>
 
-              <div
-                className={
-                  styles.sizeGrid
-                }
-              >
-                {product.sizes.map(
-                  (size) => (
-                    <span
-                      key={size}
-                      className={
-                        styles.size
-                      }
-                    >
-                      {size}
-                    </span>
-                  )
-                )}
+              <div className={styles.sizeGrid}>
+                {product.sizes.map((size) => (
+                  <span
+                    key={size}
+                    className={styles.size}
+                  >
+                    {size}
+                  </span>
+                ))}
               </div>
             </div>
           )}
 
-          <div
-            className={
-              styles.actionButtons
-            }
-          >
+          <div className={styles.actionButtons}>
             <button
-              className={
-                styles.cartBtn
-              }
+              className={styles.cartBtn}
               onClick={addToCart}
             >
               <ShoppingBag size={18} />
@@ -169,12 +150,8 @@ export default function QuickViewModal({
             </button>
 
             <button
-              className={
-                styles.wishlistBtn
-              }
-              onClick={
-                toggleWishlist
-              }
+              className={styles.wishlistBtn}
+              onClick={handleWishlist}
             >
               <Heart
                 size={18}
@@ -190,18 +167,12 @@ export default function QuickViewModal({
 
           <Link
             href={`/product/${product.slug}`}
-            className={
-              styles.viewDetails
-            }
+            className={styles.viewDetails}
           >
             View Full Product →
           </Link>
 
-          <div
-            className={
-              styles.trustBadges
-            }
-          >
+          <div className={styles.trustBadges}>
             <div>✓ Secure Checkout</div>
             <div>✓ Easy Returns</div>
             <div>✓ COD Available</div>

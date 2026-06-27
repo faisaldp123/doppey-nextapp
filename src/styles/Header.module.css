@@ -49,6 +49,7 @@
   align-items: center;
   justify-content: space-between;
   height: 72px;
+  margin-left: 46px;
 }
 
 /* =========================
@@ -513,6 +514,12 @@
     height: 32px;
     flex-basis: 32px;
   }
+  .logoWrap {
+   margin-right: 40px;
+  }
+  .headerTop {
+  margin-left: 0px;
+}
    /* .headerIcons a[href="/wishlist"]{
     display:none;
   } */
