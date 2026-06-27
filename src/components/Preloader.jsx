@@ -11,7 +11,13 @@ export default function Preloader() {
   if (!loading) return null;
   return (
     <div className={styles.preloaderOverlay}>
-      <div className={styles.spinner}></div>
+      <div className={styles.spinner}>
+  <img
+    src="/fevicon.jpg"
+    alt="Loading"
+    className={styles.logo}
+  />
+</div>
     </div>
   );
 }
