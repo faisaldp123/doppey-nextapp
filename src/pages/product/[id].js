@@ -11,8 +11,6 @@ import {
   getProductId,
   getProductImages,
   getProductSlug,
-  getStoredReviews,
-  saveStoredReviews,
 } from "@/utils/productHelpers";
 import {
   addToCart as addProductToCart,
@@ -65,7 +63,14 @@ const [zoomStyle, setZoomStyle] = useState({});
   const [pincode, setPincode]         = useState("");
   const [deliveryMsg, setDeliveryMsg] = useState("");
   const [reviews, setReviews]         = useState([]);
-  const [reviewForm, setReviewForm]   = useState({ name: "", rating: 5, comment: "" });
+  const [reviewForm, setReviewForm] =
+useState({
+  name: "",
+  comment: "",
+});
+
+const [reviewImages, setReviewImages] =
+useState([]);
 
   const showToast = (type, message) => {
     setToast({ show: true, type, message });
@@ -109,11 +114,10 @@ setCurrentImageIndex(0);
   }, []);
 
   useEffect(() => {
-    if (!product) return;
-    const storedReviews  = getStoredReviews()[getProductId(product)] || [];
-    const backendReviews = product.reviews || product.customerReviews || [];
-    setReviews([...backendReviews, ...storedReviews]);
-  }, [product]);
+  if (product) {
+    setReviews(product.reviews || []);
+  }
+}, [product]);
 
   if (!product) {
     return (
@@ -215,24 +219,79 @@ const handleMouseLeave = () => {
   });
 };
 
-  const submitReview = (e) => {
-    e.preventDefault();
-    if (!reviewForm.name || !reviewForm.comment) return;
+  const submitReview = async (e) => {
+  e.preventDefault();
 
-    const newReview = {
-      ...reviewForm,
-      rating: Number(reviewForm.rating) || 5,
-      createdAt: new Date().toISOString(),
-    };
+  if (
+    !reviewForm.name ||
+    !reviewForm.comment
+  )
+    return;
 
-    const reviewsByProduct = getStoredReviews();
-    const productId = getProductId(product);
-    reviewsByProduct[productId] = [...(reviewsByProduct[productId] || []), newReview];
-    saveStoredReviews(reviewsByProduct);
-    setReviews([...reviews, newReview]);
-    setReviewForm({ name: "", rating: 5, comment: "" });
-    showToast("cart", "Review submitted successfully");
-  };
+  try {
+    const formData = new FormData();
+
+    formData.append(
+      "name",
+      reviewForm.name
+    );
+
+    formData.append(
+      "comment",
+      reviewForm.comment
+    );
+
+    reviewImages.forEach((img) => {
+      formData.append(
+        "images",
+        img
+      );
+    });
+
+    await API.post(
+      `/products/${getProductId(product)}/review`,
+      formData,
+      {
+        headers: {
+          "Content-Type":
+            "multipart/form-data",
+        },
+      }
+    );
+
+    const updated =
+      await API.get(
+        `/products/product/${slug}`
+      );
+
+    setProduct(updated.data);
+    setReviews(
+      updated.data.reviews || []
+    );
+
+    setReviewForm({
+      name: "",
+      comment: "",
+    });
+
+    setReviewImages([]);
+    
+    const fileInput =
+  document.getElementById(
+    "review-images"
+  );
+
+if (fileInput)
+  fileInput.value = "";
+
+    showToast(
+      "cart",
+      "Review submitted successfully"
+    );
+  } catch (err) {
+    console.log(err);
+  }
+};
 
   return (
     <div className={styles.container}>
@@ -329,9 +388,8 @@ const handleMouseLeave = () => {
           </div>
 
           <div className={styles.rating}>
-            {"★".repeat(Math.round(product.rating || 5))}
-            <span>({reviews.length} Reviews)</span>
-          </div>
+  <span>{reviews.length} Customer Reviews</span>
+</div>
 
           {/* ← FIXED PRICE SECTION */}
           <div className={styles.priceRow}>
@@ -468,11 +526,32 @@ const handleMouseLeave = () => {
         </div>
         <div className={styles.reviewGrid}>
           {reviews.map((review, index) => (
-            <div key={index} className={styles.reviewCard}>
-              <div className={styles.reviewStars}>{"★".repeat(review.rating)}</div>
-              <h4>{review.name}</h4>
-              <p>{review.comment}</p>
-            </div>
+            <div
+  key={index}
+  className={styles.reviewCard}
+>
+  <h4>{review.name}</h4>
+
+  <p>{review.comment}</p>
+
+  <div
+    className={
+      styles.reviewImages
+    }
+  >
+    {review.images?.map(
+      (img, i) => (
+        <Image
+  key={i}
+  src={getImageUrl(img)}
+  alt="Review Image"
+  width={100}
+  height={100}
+/>
+      )
+    )}
+  </div>
+</div>
           ))}
         </div>
 
@@ -484,14 +563,16 @@ const handleMouseLeave = () => {
             value={reviewForm.name}
             onChange={(e) => setReviewForm({ ...reviewForm, name: e.target.value })}
           />
-          <select
-            value={reviewForm.rating}
-            onChange={(e) => setReviewForm({ ...reviewForm, rating: e.target.value })}
-          >
-            {[5, 4, 3, 2, 1].map((rating) => (
-              <option key={rating} value={rating}>{rating} Star{rating > 1 ? "s" : ""}</option>
-            ))}
-          </select>
+          <input
+  type="file"
+  multiple
+  accept="image/*"
+  onChange={(e) =>
+    setReviewImages(
+      Array.from(e.target.files)
+    )
+  }
+/>
           <textarea
             rows={5}
             placeholder="Write your review..."
