@@ -1,174 +1,89 @@
 .section {
-text-align: center;
-padding: 50px 0;
+  padding: 50px 0;
 }
 
 .headingRow {
-display: flex;
-align-items: flex-end;
-justify-content: space-between;
-gap: 20px;
-text-align: left;
-margin-bottom: 35px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  text-align: left;
+  margin-bottom: 35px;
 }
 
 .section h2 {
-font-size: 34px;
-font-weight: 700;
-letter-spacing: 1px;
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: 1px;
 }
 
 .section p {
-color: #777;
-margin-bottom: 0;
+  color: #777;
+  margin-bottom: 0;
 }
 
-.viewAll {
-color: #111;
-font-size: 13px;
-font-weight: 700;
-letter-spacing: .5px;
-text-decoration: none;
-text-transform: uppercase;
-border-bottom: 1px solid #111;
-padding-bottom: 4px;
-white-space: nowrap;
+/* ← Grid — no carousel, 5 per row on desktop */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+
+/* ← View All at bottom */
+.viewAllWrap {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.viewAllBtn {
+  display: inline-block;
+  padding: 14px 40px;
+  border: 2px solid #111;
+  color: #111;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: 0.3s ease;
+}
+
+.viewAllBtn:hover {
+  background: #111;
+  color: #fff;
 }
 
 .emptyText {
-padding: 32px 0;
-text-align: center;
+  padding: 32px 0;
+  text-align: center;
+  color: #888;
 }
 
-.pro {
-cursor: pointer;
+/* Tablet */
+@media (max-width: 1200px) {
+  .grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
-.imageWrapper {
-position: relative;
-overflow: hidden;
+@media (max-width: 992px) {
+  .grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
-.proImg {
-width: 100%;
-height: auto;
-display: block;
-transition: all 0.4s ease;
-}
-
-.pro:hover .proImg {
-transform: scale(1.05);
-}
-
-.badge {
-position: absolute;
-top: 12px;
-left: 12px;
-background: #000;
-color: #fff;
-font-size: 11px;
-font-weight: 600;
-padding: 6px 10px;
-z-index: 2;
-}
-
-.quickBtn {
-position: absolute;
-bottom: -50px;
-left: 0;
-width: 100%;
-border: none;
-background: rgba(255,255,255,0.95);
-padding: 12px;
-font-weight: 600;
-transition: all 0.3s ease;
-}
-
-.pro:hover .quickBtn {
-bottom: 0;
-}
-
-.des {
-text-align: left;
-padding-top: 14px;
-}
-
-.des h5 {
-font-size: 15px;
-font-weight: 600;
-margin-bottom: 8px;
-}
-
-.rating {
-font-size: 14px;
-color: #222;
-margin-bottom: 8px;
-}
-
-.rating span {
-color: #777;
-margin-left: 5px;
-}
-
-.priceRow {
-display: flex;
-align-items: center;
-gap: 8px;
-flex-wrap: wrap;
-}
-
-.salePrice {
-font-size: 18px;
-font-weight: 700;
-color: #111;
-}
-
-.originalPrice {
-font-size: 14px;
-color: #888;
-text-decoration: line-through;
-}
-
-.discount {
-color: #198754;
-font-size: 13px;
-font-weight: 700;
-}
-
-/* Swiper */
-
-.section :global(.swiper) {
-padding: 10px 5px 50px;
-}
-
-.section :global(.swiper-slide) {
-height: auto;
-}
-
-.section :global(.swiper-button-prev),
-.section :global(.swiper-button-next) {
-color: #000;
-width: 45px;
-height: 45px;
-}
-
-.section :global(.swiper-button-prev::after),
-.section :global(.swiper-button-next::after) {
-font-size: 18px;
-font-weight: 700;
-}
-
+/* Mobile — 2 per row */
 @media (max-width: 768px) {
-.section {
-padding: 30px 0;
-}
+  .section {
+    padding: 30px 0;
+  }
 
-.quickBtn {
-display: none;
-}
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
 
-.section :global(.swiper-button-prev),
-.section :global(.swiper-button-next) {
-display: none;
-}
+  .section h2 {
+    font-size: 24px;
+  }
 }

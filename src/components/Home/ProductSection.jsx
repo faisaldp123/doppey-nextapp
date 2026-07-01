@@ -2,21 +2,15 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Autoplay } from "swiper/modules";
-
-import "swiper/css";
-import "swiper/css/navigation";
-
 import ProductCard from "../collection/ProductCard";
 import API from "@/utils/api";
 import { productsData } from "@/constant/productsData";
 import {
   getProductId,
   productMatchesPage,
+  sortNewestFirst,
 } from "@/utils/productHelpers";
-
+import { getWishlist } from "@/utils/shopState";
 import styles from "../../styles/ProductSection.module.css";
 
 export default function ProductSection() {
@@ -34,17 +28,17 @@ export default function ProductSection() {
       }
     };
 
-    setWishlist(JSON.parse(localStorage.getItem("wishlist") || "[]"));
+    setWishlist(getWishlist());
     loadProducts();
   }, []);
 
   const summerProducts = useMemo(
     () =>
-      products
-        .filter((product) =>
+      sortNewestFirst(
+        products.filter((product) =>
           productMatchesPage(product, "summer-collection")
         )
-        .slice(0, 10),
+      ).slice(0, 10),
     [products]
   );
 
@@ -55,37 +49,27 @@ export default function ProductSection() {
           <h2>SUMMER COLLECTION</h2>
           <p>Lightweight styles for warm days</p>
         </div>
-
-        <Link href="/summer-collection" className={styles.viewAll}>
-          View All
-        </Link>
       </div>
 
       {summerProducts.length ? (
-        <Swiper
-          modules={[Navigation, Autoplay]}
-          navigation
-          autoplay={{
-            delay: 4000,
-            disableOnInteraction: false,
-          }}
-          spaceBetween={20}
-          breakpoints={{
-            0: { slidesPerView: 2 },
-            768: { slidesPerView: 3 },
-            1200: { slidesPerView: 4.2 },
-          }}
-        >
-          {summerProducts.map((product) => (
-            <SwiperSlide key={getProductId(product)}>
+        <>
+          <div className={styles.grid}>
+            {summerProducts.map((product) => (
               <ProductCard
+                key={getProductId(product)}
                 product={product}
                 wishlist={wishlist}
                 setWishlist={setWishlist}
               />
-            </SwiperSlide>
-          ))}
-        </Swiper>
+            ))}
+          </div>
+
+          <div className={styles.viewAllWrap}>
+            <Link href="/summer-collection" className={styles.viewAllBtn}>
+              View All Summer Collection
+            </Link>
+          </div>
+        </>
       ) : (
         <p className={styles.emptyText}>Summer products are coming soon.</p>
       )}

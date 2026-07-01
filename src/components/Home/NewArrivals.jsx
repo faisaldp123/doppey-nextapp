@@ -2,13 +2,6 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, Autoplay } from "swiper/modules";
-
-import "swiper/css";
-import "swiper/css/navigation";
-
 import ProductCard from "../collection/ProductCard";
 import API from "@/utils/api";
 import { productsData } from "@/constant/productsData";
@@ -17,7 +10,7 @@ import {
   productMatchesPage,
   sortNewestFirst,
 } from "@/utils/productHelpers";
-
+import { getWishlist } from "@/utils/shopState";
 import styles from "../../styles/NewArrivals.module.css";
 
 export default function NewArrivals() {
@@ -35,7 +28,7 @@ export default function NewArrivals() {
       }
     };
 
-    setWishlist(JSON.parse(localStorage.getItem("wishlist") || "[]"));
+    setWishlist(getWishlist());
     loadProducts();
   }, []);
 
@@ -56,37 +49,27 @@ export default function NewArrivals() {
           <h2>NEW ARRIVALS</h2>
           <p>Latest Fashion Collection</p>
         </div>
-
-        <Link href="/new-arrivals" className={styles.viewAll}>
-          View All
-        </Link>
       </div>
 
       {newArrivals.length ? (
-        <Swiper
-          modules={[Navigation, Autoplay]}
-          navigation
-          autoplay={{
-            delay: 3500,
-            disableOnInteraction: false,
-          }}
-          spaceBetween={20}
-          breakpoints={{
-            0: { slidesPerView: 2 },
-            768: { slidesPerView: 3 },
-            1200: { slidesPerView: 4 },
-          }}
-        >
-          {newArrivals.map((product) => (
-            <SwiperSlide key={getProductId(product)}>
+        <>
+          <div className={styles.grid}>
+            {newArrivals.map((product) => (
               <ProductCard
+                key={getProductId(product)}
                 product={product}
                 wishlist={wishlist}
                 setWishlist={setWishlist}
               />
-            </SwiperSlide>
-          ))}
-        </Swiper>
+            ))}
+          </div>
+
+          <div className={styles.viewAllWrap}>
+            <Link href="/new-arrivals" className={styles.viewAllBtn}>
+              View All New Arrivals
+            </Link>
+          </div>
+        </>
       ) : (
         <p className={styles.emptyText}>New products are coming soon.</p>
       )}

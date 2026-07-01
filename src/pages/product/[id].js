@@ -365,14 +365,43 @@ if (fileInput)
           </div>
 
           <div className={styles.mobileGallery}>
-            <Swiper modules={[Navigation, Pagination]} navigation pagination={{ clickable: true }} spaceBetween={20} slidesPerView={1}>
-              {getProductImages(product).map((img, index) => (
-                <SwiperSlide key={index}>
-                  <Image src={getImageUrl(img)} alt={product.name} width={700} height={700} className={styles.swiperImage} />
-                </SwiperSlide>
-              ))}
-            </Swiper>
-          </div>
+  <Swiper
+    modules={[Pagination]}
+    pagination={{ clickable: true }}
+    spaceBetween={0}
+    slidesPerView={1}
+    onSlideChange={(swiper) => {
+      const img =
+        getProductImages(product)[swiper.activeIndex];
+
+      setMainImg(img);
+      setCurrentImageIndex(swiper.activeIndex);
+    }}
+  >
+    {getProductImages(product).map((img, index) => (
+      <SwiperSlide key={index}>
+        <Image
+          src={getImageUrl(img)}
+          alt={product.name}
+          width={800}
+          height={1000}
+          className={styles.swiperImage}
+          priority={index === 0}
+        />
+      </SwiperSlide>
+    ))}
+
+    {product.video && (
+      <SwiperSlide>
+        <video
+          src={product.video}
+          controls
+          className={styles.mobileVideo}
+        />
+      </SwiperSlide>
+    )}
+  </Swiper>
+</div>
         </div>
 
         {/* RIGHT — DETAILS */}
@@ -526,30 +555,50 @@ if (fileInput)
         </div>
         <div className={styles.reviewGrid}>
           {reviews.map((review, index) => (
-            <div
+  <div
   key={index}
   className={styles.reviewCard}
 >
-  <h4>{review.name}</h4>
+  {review.images?.length > 0 && (
+    <div className={styles.reviewImageGallery}>
+  {review.images?.length === 1 ? (
+    <img
+      src={getImageUrl(review.images[0])}
+      className={styles.singleReviewImage}
+      alt=""
+    />
+  ) : (
+    review.images?.map((img, i) => (
+      <img
+        key={i}
+        src={getImageUrl(img)}
+        className={styles.reviewImage}
+        alt=""
+      />
+    ))
+  )}
+</div>
+  )}
 
-  <p>{review.comment}</p>
+  <div className={styles.reviewContent}>
+    <div className={styles.reviewHeader}>
+      <div>
+        <h4>{review.name}</h4>
+        <span className={styles.reviewVerified}>
+          ✓ Verified Buyer
+        </span>
+      </div>
 
-  <div
-    className={
-      styles.reviewImages
-    }
-  >
-    {review.images?.map(
-      (img, i) => (
-        <Image
-  key={i}
-  src={getImageUrl(img)}
-  alt="Review Image"
-  width={100}
-  height={100}
-/>
-      )
-    )}
+      <span className={styles.reviewDate}>
+        {new Date(
+          review.createdAt
+        ).toLocaleDateString("en-IN")}
+      </span>
+    </div>
+
+    <p className={styles.reviewComment}>
+      {review.comment}
+    </p>
   </div>
 </div>
           ))}
