@@ -61,6 +61,25 @@
   border-radius: 14px;
 }
 
+.mainSwiper {
+  width: 100%;
+  height: 100%;
+}
+
+.mainSwiper :global(.swiper-slide) {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.mainSwiper :global(.swiper-pagination) {
+  bottom: 10px;
+}
+
+.mainSwiper :global(.swiper-pagination-bullet) {
+  background: #111;
+}
+
 /* =========================================
    THUMBNAILS
 ========================================= */
@@ -858,14 +877,26 @@
 
   .gallerySection { position: static; width: 100%; }
 
-  .mainImageWrapper {
+   .mainImageWrapper {
     width: 100%;
     max-width: 100%;
-    height: 330px;
+    height: 420px;          /* increased height */
     border-radius: 10px;
+    background: #f7f7f7;
   }
 
-  .mainImage { width: 100%; height: 100%; object-fit: cover; }
+  .mainImage {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;    /* shows full image */
+    object-position: center;
+  }
+
+  .mainVideo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
 
   .thumbnailRow {
     display: flex;

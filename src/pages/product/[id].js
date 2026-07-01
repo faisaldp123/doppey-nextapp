@@ -327,18 +327,62 @@ if (fileInput)
   onMouseEnter={handleMouseEnter}
   onMouseLeave={handleMouseLeave}
 >
-            {product.video && mainImg === product.video ? (
-              <video src={product.video} controls className={styles.mainVideo} />
-            ) : (
-              <Image
-  src={getImageUrl(mainImg)}
-  alt={product.name}
-  fill
-  sizes="(max-width:768px) 100vw, 50vw"
-  className={styles.mainImage}
-  style={isZooming ? zoomStyle : {}}
-/>
-            )}
+            {typeof window !== "undefined" &&
+window.innerWidth <= 768 ? (
+  <Swiper
+    modules={[Pagination]}
+    pagination={{ clickable: true }}
+    slidesPerView={1}
+    spaceBetween={0}
+    onSlideChange={(swiper) => {
+      const imgs = getProductImages(product);
+
+      if (swiper.activeIndex < imgs.length) {
+        setMainImg(imgs[swiper.activeIndex]);
+        setCurrentImageIndex(swiper.activeIndex);
+      }
+    }}
+    className={styles.mainSwiper}
+  >
+    {getProductImages(product).map((img, index) => (
+      <SwiperSlide key={index}>
+        <Image
+          src={getImageUrl(img)}
+          alt={product.name}
+          fill
+          className={styles.mainImage}
+        />
+      </SwiperSlide>
+    ))}
+
+    {product.video && (
+      <SwiperSlide>
+        <video
+          src={product.video}
+          controls
+          className={styles.mainVideo}
+        />
+      </SwiperSlide>
+    )}
+  </Swiper>
+) : (
+  product.video && mainImg === product.video ? (
+    <video
+      src={product.video}
+      controls
+      className={styles.mainVideo}
+    />
+  ) : (
+    <Image
+      src={getImageUrl(mainImg)}
+      alt={product.name}
+      fill
+      sizes="(max-width:768px) 100vw, 50vw"
+      className={styles.mainImage}
+      style={isZooming ? zoomStyle : {}}
+    />
+  )
+)}
           </div>
 
           <div className={styles.thumbnailRow}>
