@@ -1,117 +1,123 @@
 .section {
-  padding: 20px 0;
+  padding: 70px 0;
+  max-width: 1400px;
+  margin: auto;
 }
 
 .heading {
   text-align: center;
-  margin-bottom: 50px;
+  margin-bottom: 40px;
 }
 
 .heading span {
-  font-size: 13px;
+  font-size: 12px;
   letter-spacing: 2px;
   color: #888;
+  font-weight: 600;
 }
 
 .ratingSummary {
   font-size: 20px;
-  margin-top: 10px;
-  font-weight: 600;
+  font-weight: 700;
+  margin-top: 8px;
 }
 
 .reviewCount {
   color: #666;
-  margin-top: 6px;
-  margin-bottom: 20px;
+  font-size: 14px;
 }
 
 .heading h2 {
-  margin-top: 10px;
-  font-size: 42px;
+  font-size: 32px;
   font-weight: 700;
+  margin-top: 10px;
 }
 
 .card {
   background: #fff;
-  border: 1px solid #eee;
+  border-radius: 18px;
   overflow: hidden;
+  box-shadow:
+    0 4px 20px rgba(0,0,0,.06);
+  transition: all .3s ease;
   height: 100%;
-  transition: all 0.3s ease;
 }
 
 .card:hover {
-  box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+  transform: translateY(-6px);
+  box-shadow:
+    0 15px 35px rgba(0,0,0,.12);
+}
+
+.productImage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1/1;
+  overflow: hidden;
 }
 
 .image {
-  width: 100%;
-  height: 300px;
   object-fit: cover;
+  transition: transform .4s ease;
+}
+
+.card:hover .image {
+  transform: scale(1.05);
 }
 
 .content {
-  padding: 20px;
-  min-height: 220px;
-}
-
-.quote {
-  color: #dcdcdc;
-  margin-bottom: 10px;
+  padding: 18px;
 }
 
 .stars {
   display: flex;
-  gap: 4px;
-  color: #f5a623;
-  margin-bottom: 10px;
-}
-
-.content h4 {
-  font-size: 18px;
-  margin-bottom: 6px;
-}
-
-.verified {
-  display: inline-block;
-  font-size: 12px;
-  color: #198754;
-  font-weight: 600;
+  gap: 3px;
+  color: #ffb400;
   margin-bottom: 12px;
 }
 
 .reviewText {
-  color: #666;
   font-size: 14px;
+  color: #444;
   line-height: 1.7;
 
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+
   overflow: hidden;
-  text-overflow: ellipsis;
-
-  transition: all 0.3s ease;
-  cursor: pointer;
+  min-height: 95px;
 }
 
-.card:hover .reviewText {
-  white-space: normal;
-  overflow: visible;
-  text-overflow: unset;
+.footer {
+  margin-top: 18px;
+  padding-top: 14px;
+  border-top: 1px solid #eee;
 }
 
-@media (max-width: 768px) {
+.footer h4 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.verified {
+  color: #198754;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+@media (max-width:768px) {
   .section {
-    padding: 30px 0;
+    padding: 50px 16px;
   }
 
   .heading h2 {
-    font-size: 28px;
+    font-size: 24px;
   }
 
-  .image {
-    height: 250px;
-  }
-
-  .content {
-    min-height: auto;
+  .reviewText {
+    min-height: 80px;
+    font-size: 13px;
   }
 }

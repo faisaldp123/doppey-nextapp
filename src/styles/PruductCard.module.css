@@ -19,7 +19,7 @@
 .image {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;    /* ← fills completely, no blank space */
   display: block;
   transition: .4s ease;
 }
