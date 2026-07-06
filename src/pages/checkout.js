@@ -32,9 +32,15 @@ export default function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const [errors, setErrors] = useState({});
   const [couponCode, setCouponCode] = useState("");
-const [couponDiscount, setCouponDiscount] = useState(0);
-const [couponMessage, setCouponMessage] = useState("");
-const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [couponDiscount, setCouponDiscount] = useState(0);
+  const [couponMessage, setCouponMessage] = useState("");
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+
+  // ── Coupon dropdown (backend-driven) ──────────────────────────
+  const [availableCoupons, setAvailableCoupons] = useState([]);
+  const [couponsLoading, setCouponsLoading] = useState(true);
+  const [couponsOpen, setCouponsOpen] = useState(false);
+  const [applyingCode, setApplyingCode] = useState(null);
 
   useEffect(() => {
     setMounted(true);
@@ -59,6 +65,23 @@ const [appliedCoupon, setAppliedCoupon] = useState(null);
       window.removeEventListener("cartUpdated", updateCart);
       window.removeEventListener("user-login", loadCheckoutState);
     };
+  }, []);
+
+  // Fetch live, active coupons from the backend for the dropdown
+  useEffect(() => {
+    const fetchCoupons = async () => {
+      setCouponsLoading(true);
+      try {
+        const res = await API.get("/coupons/public");
+        setAvailableCoupons(Array.isArray(res.data) ? res.data : []);
+      } catch (err) {
+        console.error("Failed to load coupons:", err);
+        setAvailableCoupons([]);
+      } finally {
+        setCouponsLoading(false);
+      }
+    };
+    fetchCoupons();
   }, []);
 
   const getPriceNumber = (price) =>
@@ -116,46 +139,60 @@ const total =
     return Object.keys(newErrors).length === 0;
   };
 
-  const applyCoupon = async () => {
-  if (!couponCode.trim()) {
-    setCouponMessage(
-      "Please enter coupon code"
-    );
-    return;
-  }
+  // ── Helpers for rendering each backend coupon's terms ─────────
+  const getCouponSavings = (coupon) => {
+    let discount =
+      coupon.discountType === "PERCENT"
+        ? (subtotal * coupon.discountValue) / 100
+        : coupon.discountValue;
+    if (coupon.maxDiscount) discount = Math.min(discount, coupon.maxDiscount);
+    return Math.round(discount);
+  };
 
-  try {
-    const res = await API.post(
-      "/coupons/apply",
-      {
-        code: couponCode,
-        orderAmount: subtotal,
-      }
-    );
+  const isCouponUsable = (coupon) => subtotal >= (coupon.minOrderValue || 0);
 
-    setCouponDiscount(
-      res.data.discount
-    );
+  const applyCoupon = async (codeOverride) => {
+    const codeToApply = (codeOverride || couponCode).trim();
 
-    setAppliedCoupon(
-      couponCode.toUpperCase()
-    );
+    if (!codeToApply) {
+      setCouponMessage("Please enter coupon code");
+      return;
+    }
 
-    setCouponMessage(
-      `Coupon applied successfully! You saved ₹${res.data.discount}`
-    );
-  } catch (err) {
+    setApplyingCode(codeToApply.toUpperCase());
+    try {
+      const res = await API.post(
+        "/coupons/apply",
+        {
+          code: codeToApply,
+          orderAmount: subtotal,
+        }
+      );
+
+      setCouponDiscount(res.data.discount);
+      setAppliedCoupon(codeToApply.toUpperCase());
+      setCouponCode(codeToApply.toUpperCase());
+      setCouponMessage(
+        `Coupon applied successfully! You saved ₹${res.data.discount}`
+      );
+      setCouponsOpen(false);
+    } catch (err) {
+      setCouponDiscount(0);
+      setAppliedCoupon(null);
+      setCouponMessage(
+        err.response?.data?.message || "Invalid coupon"
+      );
+    } finally {
+      setApplyingCode(null);
+    }
+  };
+
+  const removeCoupon = () => {
+    setCouponCode("");
     setCouponDiscount(0);
-
     setAppliedCoupon(null);
-
-    setCouponMessage(
-      err.response?.data
-        ?.message ||
-        "Invalid coupon"
-    );
-  }
-};
+    setCouponMessage("");
+  };
 
   const handlePlaceOrder = async () => {
     if (!requireLogin()) return;
@@ -399,58 +436,101 @@ const total =
               );
             })}
 
-            <div className={styles.couponBox}>
-  <input
-    type="text"
-    placeholder="Coupon Code"
-    value={couponCode}
-    onChange={(e) =>
-      setCouponCode(
-        e.target.value.toUpperCase()
-      )
-    }
-  />
+            {/* ── Coupons (backend-driven dropdown) ────────────── */}
+            <div className={styles.offersCard}>
+              <div className={styles.couponBox}>
+                <input
+                  type="text"
+                  placeholder="Enter Coupon Code"
+                  value={couponCode}
+                  disabled={!!appliedCoupon}
+                  onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                />
+                {appliedCoupon ? (
+                  <button type="button" className={styles.removeCouponBtn} onClick={removeCoupon}>
+                    Remove
+                  </button>
+                ) : (
+                  <button type="button" onClick={() => applyCoupon()}>
+                    Apply
+                  </button>
+                )}
+              </div>
 
-  <button
-    onClick={applyCoupon}
-  >
-    Apply
-  </button>
-</div>
+              {couponMessage && (
+                <p className={couponDiscount > 0 ? styles.couponMsgSuccess : styles.couponMsgError}>
+                  {couponMessage}
+                </p>
+              )}
 
-{couponMessage && (
-  <p
-    style={{
-      marginTop: "10px",
-      color:
-        couponDiscount > 0
-          ? "green"
-          : "red",
-      fontSize: "13px",
-    }}
-  >
-    {couponMessage}
-  </p>
-)}
+              <button
+                type="button"
+                className={styles.couponDropdownToggle}
+                onClick={() => setCouponsOpen((v) => !v)}
+              >
+                <span>🏷️ View Available Coupons {availableCoupons.length > 0 && `(${availableCoupons.length})`}</span>
+                <span className={`${styles.chevron} ${couponsOpen ? styles.chevronOpen : ""}`}>▾</span>
+              </button>
 
-{couponDiscount > 0 && (
-  <div className={styles.priceRow}>
-    <span>
-      Coupon Discount
-    </span>
+              {couponsOpen && (
+                <div className={styles.offersList}>
+                  {couponsLoading && (
+                    <p className={styles.noOffers}>Loading coupons...</p>
+                  )}
 
-    <span
-      style={{
-        color: "green",
-      }}
-    >
-      -₹
-      {couponDiscount.toLocaleString(
-        "en-IN"
-      )}
-    </span>
-  </div>
-)}
+                  {!couponsLoading && availableCoupons.length === 0 && (
+                    <p className={styles.noOffers}>No active coupons right now.</p>
+                  )}
+
+                  {!couponsLoading &&
+                    availableCoupons.map((coupon) => {
+                      const usable = isCouponUsable(coupon);
+                      const savings = getCouponSavings(coupon);
+                      return (
+                        <div
+                          key={coupon._id || coupon.code}
+                          className={`${styles.offerItem} ${!usable ? styles.offerItemDisabled : ""}`}
+                        >
+                          <div className={styles.offerRow}>
+                            <span className={usable ? styles.offerIcon : styles.offerIconDisabled}>%</span>
+                            <span className={styles.offerCode}>{coupon.code}</span>
+                            {appliedCoupon === coupon.code ? (
+                              <span className={styles.offerAppliedTag}>✓ Applied</span>
+                            ) : usable ? (
+                              <button
+                                type="button"
+                                className={styles.offerApplyLink}
+                                disabled={applyingCode === coupon.code}
+                                onClick={() => applyCoupon(coupon.code)}
+                              >
+                                {applyingCode === coupon.code ? "Applying..." : "Apply"}
+                              </button>
+                            ) : (
+                              <span className={styles.offerAddLink}>Not eligible</span>
+                            )}
+                          </div>
+
+                          {usable ? (
+                            <p className={styles.offerSavings}>You save ₹{savings.toLocaleString("en-IN")}</p>
+                          ) : (
+                            <p className={styles.offerUnavailableReason}>
+                              Add items worth ₹{(coupon.minOrderValue - subtotal).toLocaleString("en-IN")} more to avail
+                            </p>
+                          )}
+
+                          <p className={styles.offerDesc}>
+                            {coupon.description ||
+                              (coupon.discountType === "PERCENT"
+                                ? `${coupon.discountValue}% off${coupon.maxDiscount ? ` up to ₹${coupon.maxDiscount}` : ""}`
+                                : `Flat ₹${coupon.discountValue} off`)}
+                            {coupon.minOrderValue > 0 && ` on orders above ₹${coupon.minOrderValue.toLocaleString("en-IN")}`}
+                          </p>
+                        </div>
+                      );
+                    })}
+                </div>
+              )}
+            </div>
 
             <div className={styles.shippingProgress}>
   <p>
@@ -496,6 +576,14 @@ const total =
     </span>
   </div>
 )}
+            {couponDiscount > 0 && (
+              <div className={styles.priceRow}>
+                <span>Coupon Discount ({appliedCoupon})</span>
+                <span style={{ color: "green" }}>
+                  -₹{couponDiscount.toLocaleString("en-IN")}
+                </span>
+              </div>
+            )}
 
             <div className={styles.priceRow}>
   <span>Shipping</span>

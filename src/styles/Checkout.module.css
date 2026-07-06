@@ -138,7 +138,7 @@ font-size: 14px;
 .couponBox {
 display: flex;
 gap: 10px;
-margin: 25px 0;
+margin: 0;
 }
 
 .couponBox input {
@@ -149,6 +149,11 @@ border-radius: 10px;
 padding: 15px;
 }
 
+.couponBox input:disabled {
+background: #f6f6f6;
+color: #888;
+}
+
 .couponBox button {
 border: none;
 background: #111;
@@ -156,6 +161,18 @@ color: white;
 padding: 0 20px;
 border-radius: 10px;
 cursor: pointer;
+white-space: nowrap;
+transition: 0.3s;
+}
+
+.couponBox button:hover {
+opacity: 0.85;
+}
+
+.removeCouponBtn {
+background: #fff !important;
+color: #e53935 !important;
+border: 1px solid #e53935 !important;
 }
 
 .priceRow,
@@ -290,6 +307,182 @@ transform: translateY(-2px);
   background: #111;
 }
 
+/* ── Coupons (premium dropdown) ──────────────────────────────── */
+
+.offersCard {
+  border: 1px solid #ececec;
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 20px;
+  background: #fbfbfb;
+}
+
+.couponMsgSuccess {
+  margin-top: 10px;
+  color: #0f9d58;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.couponMsgError {
+  margin-top: 10px;
+  color: #e53935;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.couponDropdownToggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-top: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #111;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.couponDropdownToggle:hover {
+  border-color: #111;
+}
+
+.chevron {
+  display: inline-block;
+  font-size: 16px;
+  transition: transform 0.25s ease;
+}
+
+.chevronOpen {
+  transform: rotate(180deg);
+}
+
+.offersList {
+  margin-top: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 360px;
+  overflow-y: auto;
+  padding-right: 2px;
+}
+
+.offersList::-webkit-scrollbar {
+  width: 6px;
+}
+
+.offersList::-webkit-scrollbar-thumb {
+  background: #ddd;
+  border-radius: 10px;
+}
+
+.offerItem {
+  border: 1px dashed #dcdcdc;
+  border-radius: 12px;
+  padding: 14px;
+  background: #fff;
+}
+
+.offerItemDisabled {
+  background: #f8f8f8;
+}
+
+.offerRow {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
+.offerIcon,
+.offerIconDisabled {
+  width: 28px;
+  height: 28px;
+  min-width: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.offerIcon {
+  background: #e3f7ef;
+  color: #0f9d58;
+}
+
+.offerIconDisabled {
+  background: #ececec;
+  color: #999;
+}
+
+.offerCode {
+  font-weight: 700;
+  font-size: 14px;
+  color: #111;
+  letter-spacing: 0.02em;
+  flex: 1;
+}
+
+.offerApplyLink {
+  border: none;
+  background: none;
+  color: #111;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.offerApplyLink:disabled {
+  color: #999;
+  cursor: default;
+}
+
+.offerAppliedTag {
+  font-size: 13px;
+  font-weight: 700;
+  color: #0f9d58;
+}
+
+.offerAddLink {
+  font-size: 13px;
+  font-weight: 600;
+  color: #999;
+  white-space: nowrap;
+}
+
+.offerSavings {
+  color: #0f9d58;
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.offerDesc {
+  color: #666;
+  font-size: 13px;
+}
+
+.offerUnavailableReason {
+  color: #e53935;
+  font-size: 13px;
+  margin-bottom: 4px;
+}
+
+.noOffers {
+  color: #888;
+  font-size: 13px;
+  text-align: center;
+  padding: 10px 0;
+}
+
 
 @media (max-width: 1200px) {
 .checkoutGrid {
@@ -358,6 +551,29 @@ height: 48px;
     background: #ddd;
     margin: 0 5px;
   }
+
+  .offersCard {
+    padding: 14px;
+  }
+
+  .couponDropdownToggle {
+    font-size: 13px;
+    padding: 10px 12px;
+  }
+
+  .offerRow {
+    flex-wrap: wrap;
+  }
+
+  .offerAddLink,
+  .offerApplyLink,
+  .offerAppliedTag {
+    margin-left: auto;
+  }
+
+  .offersList {
+    max-height: 300px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -376,5 +592,17 @@ height: 54px;
 
 .totalRow {
 font-size: 18px;
+}
+
+.offerCode {
+  font-size: 13px;
+}
+
+.offerSavings {
+  font-size: 13px;
+}
+
+.couponDropdownToggle span:first-child {
+  font-size: 12.5px;
 }
 }
