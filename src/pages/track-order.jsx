@@ -42,14 +42,26 @@ export default function TrackOrder() {
     try {
       // 1) Try Delhivery track endpoint
       const res = await API.get(`/track/${id}`);
-      setTracking(res.data);
+
+console.log(
+  "TRACK API RESPONSE:",
+  res.data
+);
+
+setTracking(res.data);
     } catch (err) {
       console.error("/track error:", err?.response || err.message || err);
 
       // 2) Try GET /orders/:id
       try {
         const orderRes = await API.get(`/orders/${id}`);
-        setTracking(orderRes.data);
+
+console.log(
+  "ORDER API RESPONSE:",
+  orderRes.data
+);
+
+setTracking(orderRes.data);
       } catch (orderErr) {
         console.warn("/orders/:id not available or error:", orderErr?.response?.status || orderErr.message || orderErr);
 
@@ -100,15 +112,26 @@ export default function TrackOrder() {
   };
 
   const getStepClass = (stepNumber, currentStatus) => {
-    const statusMap = {
-      "Placed": 1,
-      "Confirmed": 2,
-      "Shipped": 3,
-      "Delivered": 4,
-    };
-    const currentNum = statusMap[currentStatus] || 1;
-    return stepNumber <= currentNum ? styles.activeStep : styles.pendingStep;
+  const statusMap = {
+    "Pending": 1,
+    "Created": 2,
+    "In Transit": 3,
+    "Delivered": 4,
+    "Cancelled": 0,
   };
+
+  const currentNum =
+    statusMap[currentStatus] || 1;
+
+  return stepNumber <= currentNum
+    ? styles.activeStep
+    : styles.pendingStep;
+};
+
+console.log(
+  "TRACKING STATE:",
+  tracking
+);
 
   return (
     <div className={styles.trackPage}>
@@ -181,9 +204,21 @@ export default function TrackOrder() {
               </div>
               <div>
                 <span>Status</span>
-                <strong style={{ color: tracking.status === "Cancelled" ? "#ef4444" : "#10b981" }}>
-                  {tracking.status || "Placed"}
-                </strong>
+                <strong
+  style={{
+    color:
+      (
+        tracking.trackingStatus ||
+        tracking.status
+      ) === "Cancelled"
+        ? "#ef4444"
+        : "#10b981",
+  }}
+>
+  {tracking.trackingStatus ||
+    tracking.status ||
+    "Pending"}
+</strong>
               </div>
             </div>
 
@@ -198,18 +233,45 @@ export default function TrackOrder() {
                 </div>
               ) : (
                 <div className={styles.timeline}>
-                  <div className={getStepClass(1, tracking.status)}>
-                    1. Placed
-                  </div>
-                  <div className={getStepClass(2, tracking.status)}>
-                    2. Confirmed
-                  </div>
-                  <div className={getStepClass(3, tracking.status)}>
-                    3. Shipped
-                  </div>
-                  <div className={getStepClass(4, tracking.status)}>
-                    4. Delivered
-                  </div>
+                  <div
+  className={getStepClass(
+    1,
+    tracking.trackingStatus ||
+      tracking.status
+  )}
+>
+  1. Order Placed
+</div>
+
+<div
+  className={getStepClass(
+    2,
+    tracking.trackingStatus ||
+      tracking.status
+  )}
+>
+  2. AWB Generated
+</div>
+
+<div
+  className={getStepClass(
+    3,
+    tracking.trackingStatus ||
+      tracking.status
+  )}
+>
+  3. In Transit
+</div>
+
+<div
+  className={getStepClass(
+    4,
+    tracking.trackingStatus ||
+      tracking.status
+  )}
+>
+  4. Delivered
+</div>
                 </div>
               )}
             </div>
@@ -265,19 +327,18 @@ export default function TrackOrder() {
 
                 {tracking.waybill && (
                   <div className={styles.deliveryBox} style={{ marginTop: "20px" }}>
-                    <h4>Delhivery Logistics</h4>
-                    <p>
-                      <strong>Waybill Number:</strong> {tracking.waybill}
-                      <br />
-                      <a
-                        href={`https://track.delhivery.com/?waybill=${encodeURIComponent(tracking.waybill)}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        style={{ color: "#ff3f6c", fontWeight: "600", textDecoration: "underline" }}
-                      >
-                        Track on Delhivery Portal
-                      </a>
-                    </p>
+                    <h4>Blue Dart Logistics</h4>
+
+<p>
+  <strong>AWB Number:</strong>{" "}
+  {tracking.waybill}
+</p>
+
+<p>
+  <strong>Tracking Status:</strong>{" "}
+  {tracking.trackingStatus ||
+    "Created"}
+</p>
                   </div>
                 )}
               </div>

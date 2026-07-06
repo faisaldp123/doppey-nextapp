@@ -14,6 +14,7 @@ import LifestyleSection from "@/components/Home/LifestyleSection";
 import BrandStorySection from "@/components/Home/BrandStorySection";
 import InstagramSection from "@/components/Home/InstagramSection";
 import ReviewSection from "@/components/Home/ReviewSection";
+import TrustFeatures from "@/components/Home/TrustFeatures";
 
 export default function Home() {
 useEffect(() => {
@@ -76,9 +77,7 @@ return (
 
        <HeroSection />
 
-<div className="container">
-  <ShopCategories />
-</div>
+
 
         {/* Features */}
         {/* <div className="container">
@@ -89,6 +88,15 @@ return (
         <div className="container">
           <NewArrivals />
         </div>
+
+        {/* Trust Features */}
+        <div className="container">
+          <TrustFeatures />
+        </div>
+
+        <div className="container">
+  <ShopCategories />
+</div>
 
         {/* Fashion Banner */}
         <BannerSection />
