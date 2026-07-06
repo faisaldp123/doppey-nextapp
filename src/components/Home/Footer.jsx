@@ -42,7 +42,7 @@ const Footer = () => {
         </div>
 
         {/* My Account */}
-        <div className={styles.footerColumn}>
+        {/* <div className={styles.footerColumn}>
           <h4>My Account</h4>
           <ul>
             <li><a href="/sign-in">Sign In</a></li>
@@ -51,7 +51,7 @@ const Footer = () => {
             <li><a href="/track-order">Track My Order</a></li>
             <li><a href="/help">Help</a></li>
           </ul>
-        </div>
+        </div> */}
 
         {/* Install App */}
         <div className={styles.footerColumn}>
@@ -72,7 +72,7 @@ const Footer = () => {
       </div>
 
       <div className={styles.footerBottom}>
-        © 2025 Doppey, All Rights Reserved
+        © 2026 Doppey, All Rights Reserved
       </div>
     </footer>
   );
