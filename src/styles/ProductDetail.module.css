@@ -44,8 +44,8 @@
 
 .mainImage {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto !important;
+  object-fit: cover !important;
   transition: 0.4s ease;
 }
 

@@ -481,7 +481,7 @@ window.innerWidth <= 768 ? (
             )}
           </div>
 
-          <p className={styles.description}>{product.description}</p>
+          {/* <p className={styles.description}>{product.description}</p> */}
 
           <div className={styles.sizeSection}>
             <h4>Select Size</h4>

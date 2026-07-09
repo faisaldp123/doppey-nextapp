@@ -84,15 +84,17 @@ return (
           <InfoSection />
         </div> */}
 
+        {/* Trust Features */}
+        <div className="container">
+          <TrustFeatures />
+        </div>
+
         {/* New Arrivals */}
         <div className="container">
           <NewArrivals />
         </div>
 
-        {/* Trust Features */}
-        <div className="container">
-          <TrustFeatures />
-        </div>
+        
 
         <div className="container">
   <ShopCategories />
