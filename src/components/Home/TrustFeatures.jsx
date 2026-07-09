@@ -14,22 +14,22 @@ export default function TrustFeatures() {
     {
       icon: <FaAward />,
       title: "PREMIUM QUALITY",
-      subtitle: "Finest materials",
+      // subtitle: "Finest materials",
     },
     {
       icon: <FaUndo />,
       title: "EASY RETURNS",
-      subtitle: "Hassle free returns",
+      // subtitle: "Hassle free returns",
     },
     {
       icon: <FaShieldAlt />,
       title: "SECURE PAYMENTS",
-      subtitle: "100% safe & secure",
+      // subtitle: "100% safe & secure",
     },
     {
       icon: <FaHeadset />,
       title: "CUSTOMER SUPPORT",
-      subtitle: "We're here to help",
+      // subtitle: "We're here to help",
     },
   ];
 

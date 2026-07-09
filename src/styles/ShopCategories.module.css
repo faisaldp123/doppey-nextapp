@@ -14,8 +14,23 @@ letter-spacing: 1px;
 }
 
 .heading p {
-color: #666;
-margin-top: 10px;
+  color: #777;
+  margin-bottom: 0;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 11px;
+}
+
+.heading p::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 2px;
+  background: #d9d9d9;
+  border-radius: 2px;
 }
 
 .grid {
