@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
@@ -52,8 +52,8 @@ export default function ProductDetail() {
   const [product, setProduct]         = useState(null);
   const [mainImg, setMainImg]         = useState("");
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-const [isZooming, setIsZooming] = useState(false);
-const [zoomStyle, setZoomStyle] = useState({});
+  const [isZooming, setIsZooming] = useState(false);
+  const [zoomStyle, setZoomStyle] = useState({});
   const [qty, setQty]                 = useState(1);
   const [selectedSize, setSelectedSize] = useState("");
   const [wishlist, setWishlist]       = useState([]);
@@ -71,6 +71,11 @@ useState({
 
 const [reviewImages, setReviewImages] =
 useState([]);
+
+  // ← NEW: ref to the mobile Swiper instance, so thumbnail taps can move it
+  const mainSwiperRef = useRef(null);
+  // ← NEW: tracks timestamp of last tap, to detect double-tap for zoom
+  const lastTapRef = useRef(0);
 
   const showToast = (type, message) => {
     setToast({ show: true, type, message });
@@ -188,6 +193,21 @@ const nextImage = () => {
   setMainImg(images[next]);
 };
 
+  // ← NEW: resets any active zoom (called whenever the visible image changes)
+  const resetZoom = () => {
+    setIsZooming(false);
+    setZoomStyle({});
+  };
+
+  // ← Thumbnail click: updates state AND tells the mobile Swiper to move there
+  const handleThumbnailClick = (img, index) => {
+    setMainImg(img);
+    setCurrentImageIndex(index);
+    resetZoom();
+    if (mainSwiperRef.current) {
+      mainSwiperRef.current.slideTo(index);
+    }
+  };
 
 const handleMouseMove = (e) => {
   const rect =
@@ -218,6 +238,34 @@ const handleMouseLeave = () => {
     transform: "scale(1)",
   });
 };
+
+  // ← NEW: double-tap-to-zoom for touchscreens (mobile). Single taps are
+  // left alone so Swiper's own swipe/tap handling isn't disturbed.
+  const handleImageTouchEnd = (e) => {
+    const now = Date.now();
+    const timeSinceLastTap = now - lastTapRef.current;
+
+    if (timeSinceLastTap < 300 && timeSinceLastTap > 0) {
+      // Double tap detected
+      if (isZooming) {
+        resetZoom();
+      } else {
+        const touch = e.changedTouches[0];
+        const rect = e.currentTarget.getBoundingClientRect();
+        const x = ((touch.clientX - rect.left) / rect.width) * 100;
+        const y = ((touch.clientY - rect.top) / rect.height) * 100;
+
+        setZoomStyle({
+          transformOrigin: `${x}% ${y}%`,
+          transform: "scale(2.2)",
+        });
+        setIsZooming(true);
+      }
+      lastTapRef.current = 0;
+    } else {
+      lastTapRef.current = now;
+    }
+  };
 
   const submitReview = async (e) => {
   e.preventDefault();
@@ -334,6 +382,9 @@ window.innerWidth <= 768 ? (
     pagination={{ clickable: true }}
     slidesPerView={1}
     spaceBetween={0}
+    onSwiper={(swiper) => {
+      mainSwiperRef.current = swiper;
+    }}
     onSlideChange={(swiper) => {
       const imgs = getProductImages(product);
 
@@ -341,17 +392,24 @@ window.innerWidth <= 768 ? (
         setMainImg(imgs[swiper.activeIndex]);
         setCurrentImageIndex(swiper.activeIndex);
       }
+      resetZoom();
     }}
     className={styles.mainSwiper}
   >
     {getProductImages(product).map((img, index) => (
       <SwiperSlide key={index}>
-        <Image
-          src={getImageUrl(img)}
-          alt={product.name}
-          fill
-          className={styles.mainImage}
-        />
+        <div
+          className={styles.zoomWrapper}
+          onTouchEnd={handleImageTouchEnd}
+        >
+          <Image
+            src={getImageUrl(img)}
+            alt={product.name}
+            fill
+            className={styles.mainImage}
+            style={isZooming ? zoomStyle : {}}
+          />
+        </div>
       </SwiperSlide>
     ))}
 
@@ -397,12 +455,19 @@ window.innerWidth <= 768 ? (
                   width={90}
                   height={90}
                   className={styles.thumbnail}
-                  onClick={() => setMainImg(img)}
+                  onClick={() => handleThumbnailClick(img, index)}
                 />
               </div>
             ))}
             {product.video && (
-              <button type="button" className={styles.videoThumb} onClick={() => setMainImg(product.video)}>
+              <button
+                type="button"
+                className={styles.videoThumb}
+                onClick={() => {
+                  setMainImg(product.video);
+                  resetZoom();
+                }}
+              >
                 Video
               </button>
             )}
