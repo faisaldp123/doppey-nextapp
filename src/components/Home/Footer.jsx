@@ -13,7 +13,7 @@ const Footer = () => {
         <div className={styles.footerColumn}>
           <h3>Doppey</h3>
           <p><strong>Address:</strong> North East Delhi, India 110090</p>
-          <p><strong>Phone:</strong> (+91) 9643323051</p>
+          <p><strong>Email:</strong> contactus@doppey.com</p>
           {/* <p><strong>Hours:</strong> 10:00 - 18:00, Mon - Sat</p> */}
 
           <div className={styles.social}>

@@ -351,7 +351,7 @@ console.log(
           <h3>Need Help with Your Order?</h3>
           <p>If you have any questions or concerns about your delivery, please contact our support team.</p>
           <div className={styles.helpDetails}>
-            <span>📧 support@doppey.com</span>
+            <span>📧 info@doppey.com</span>
             <span>📞 +91 98765 43210</span>
           </div>
           <div className={styles.orderActions}>
