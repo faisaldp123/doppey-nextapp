@@ -3,16 +3,12 @@
 }
 
 .headingRow {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 20px;
-  text-align: left;
-  margin-bottom: 35px;
+  text-align: center;
+  margin-bottom: 22px;
 }
 
 .section h2 {
-  font-size: 34px;
+  font-size: 32px;
   font-weight: 700;
   letter-spacing: 1px;
 }
@@ -20,6 +16,21 @@
 .section p {
   color: #777;
   margin-bottom: 0;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 11px;
+}
+
+.section p::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 2px;
+  background: #d9d9d9;
+  border-radius: 2px;
 }
 
 /* ← Grid — no carousel, 5 per row on desktop */

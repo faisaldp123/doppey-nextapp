@@ -8,11 +8,11 @@
   justify-content: space-between; */
   gap: 20px;
   text-align: center;
-  margin-bottom: 35px;
+  margin-bottom: 22px;
 }
 
 .section h2 {
-  font-size: 34px;
+  font-size: 32px;
   font-weight: 700;
   letter-spacing: 1px;
 }
