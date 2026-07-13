@@ -7,6 +7,17 @@
   align-items: flex-end;
   justify-content: center;
 }
+.bannerWrap {
+      margin: -37px -32px 7px;
+}
+
+.loginBanner {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+  border-radius: 20px 20px 0 0;
+}
 
 /* On desktop — center as a modal card */
 @media (min-width: 640px) {
@@ -36,17 +47,17 @@
 }
 
 .closeBtn {
-  position: absolute;
-  top: 16px;
-  right: 16px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: #888;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 4px;
+      cursor: pointer;
+    color: #888;
+    background: none;
+    border: none;
+    justify-content: center;
+    align-items: center;
+    padding: 4px;
+    display: flex;
+    position: absolute;
+    top: 3px;
+    right: 6px;
 }
 
 .brandRow {

@@ -8,6 +8,7 @@ import {
   syncLocalShopStateToBackend,
 } from "@/utils/shopState";
 import styles from "@/styles/LoginModal.module.css";
+import Image from "next/image";
 
 export default function LoginModal({ open, onClose }) {
   const [mobile, setMobile] = useState("");
@@ -215,10 +216,16 @@ export default function LoginModal({ open, onClose }) {
 
         {step === 1 && (
           <>
-            <div className={styles.brandRow}>
-              <div className={styles.brandDot}>D</div>
-              <span className={styles.brandName}>Doppey</span>
-            </div>
+            <div className={styles.bannerWrap}>
+  <Image
+    src="/banners/login-banner.jpeg"
+    alt="Login Banner"
+    width={360}
+    height={90}
+    className={styles.loginBanner}
+    priority
+  />
+</div>
 
             <h2 className={styles.title}>Login or create account</h2>
             <p className={styles.sub}>Enter your phone number to continue shopping</p>

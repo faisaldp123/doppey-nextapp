@@ -49,7 +49,7 @@ export default function AuthPage() {
     <div className={styles.authPage}>
       <div className={styles.authContainer}>
         <div className={styles.left}>
-          <img src="/products/product-one.jpg" alt="Promo Banner" />
+          <img src="/hero/banner1.webp" alt="Doppey Apparel collection" />
         </div>
         <div className={styles.right}>
           <h2>Login or Signup</h2>
