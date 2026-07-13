@@ -39,6 +39,7 @@ export default function QuickViewModal({
 
   // SAME LOGIC AS PRODUCT DETAIL PAGE
   const originalPrice = Number(product.price || 0);
+  const isOutOfStock = Number(product.stock) <= 0;
 
   const discountedPrice =
     product.discount > 0
@@ -64,6 +65,7 @@ export default function QuickViewModal({
   };
 
   const addToCart = () => {
+    if (isOutOfStock) return;
     addProductToCart(product, 1);
   };
 
@@ -144,9 +146,10 @@ export default function QuickViewModal({
             <button
               className={styles.cartBtn}
               onClick={addToCart}
+              disabled={isOutOfStock}
             >
               <ShoppingBag size={18} />
-              Add To Cart
+              {isOutOfStock ? "Out Of Stock" : "Add To Cart"}
             </button>
 
             <button

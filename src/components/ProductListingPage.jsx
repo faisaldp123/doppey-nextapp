@@ -59,6 +59,7 @@
     });
 
     const [sortBy, setSortBy] = useState("featured");
+    const [page, setPage] = useState(1);
     const [showMobileFilters, setShowMobileFilters] = useState(false);
     const [quickViewProduct, setQuickViewProduct] = useState(null);
 
@@ -167,6 +168,13 @@
     const productTypes = [...new Set(pageProducts.map((p) => readName(p.subCategory)).filter(Boolean))];
     const sizes        = [...new Set(pageProducts.flatMap((p) => p.sizes || []))];
     const maxPrice     = Math.max(10000, ...pageProducts.map((p) => Number(p.price) || 0));
+    const productsPerPage = 10;
+    const totalPages = Math.max(1, Math.ceil(filteredProducts.length / productsPerPage));
+    const paginatedProducts = filteredProducts.slice((page - 1) * productsPerPage, page * productsPerPage);
+
+    useEffect(() => {
+      setPage(1);
+    }, [filters, sortBy, pageType, mainCategory, subCategory]);
 
     if (loading) {
       return (
@@ -213,7 +221,7 @@
             </div>
 
             <div className={styles.grid}>
-              {filteredProducts.map((product) => (
+              {paginatedProducts.map((product) => (
                 <ProductCard
                   key={getProductId(product)}
                   product={product}
@@ -228,6 +236,14 @@
               <div className={styles.emptyProducts}>
                 <h2>Products coming soon</h2>
                 <p>We are adding products for this collection. Please check back soon.</p>
+              </div>
+            )}
+
+            {filteredProducts.length > productsPerPage && (
+              <div className={styles.pagination}>
+                <button disabled={page === 1} onClick={() => setPage(page - 1)}>Previous</button>
+                <span>Page {page} of {totalPages}</span>
+                <button disabled={page === totalPages} onClick={() => setPage(page + 1)}>Next</button>
               </div>
             )}
 

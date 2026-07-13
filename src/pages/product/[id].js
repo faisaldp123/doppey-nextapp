@@ -135,6 +135,7 @@ setCurrentImageIndex(0);
   const discountedPrice = getDiscountedPrice(product);
   const originalPrice   = Number(product.price) || 0;
   const hasDiscount     = product.discount > 0;
+  const isOutOfStock    = Number(product.stock) <= 0;
 
   const featuredProducts = allProducts
     .filter((item) => item.isBestSeller && getProductId(item) !== getProductId(product))
@@ -156,6 +157,7 @@ setCurrentImageIndex(0);
   const isWishlisted = wishlist.some((item) => getProductId(item) === getProductId(product));
 
   const handleAddToCart = () => {
+    if (isOutOfStock) return false;
     const result = addProductToCart(product, qty, { size: selectedSize });
     if (result.ok) setIsInCart(true);
     return result.ok;
@@ -566,9 +568,9 @@ window.innerWidth <= 768 ? (
           <div className={styles.qtyWrapper}>
             <h4>Quantity</h4>
             <div className={styles.qtyBox}>
-              <button onClick={() => qty > 1 && setQty(qty - 1)}>-</button>
+              <button onClick={() => qty > 1 && setQty(qty - 1)} disabled={isOutOfStock}>-</button>
               <span>{qty}</span>
-              <button onClick={() => setQty(qty + 1)}>+</button>
+              <button onClick={() => qty < Number(product.stock) && setQty(qty + 1)} disabled={isOutOfStock || qty >= Number(product.stock)}>+</button>
             </div>
           </div>
 
@@ -576,10 +578,11 @@ window.innerWidth <= 768 ? (
             <button
               onClick={isInCart ? handleRemoveFromCart : handleAddToCart}
               className={`${styles.addCartBtn} ${isInCart ? styles.addedCartBtn : ""}`}
+              disabled={isOutOfStock}
             >
-              {isInCart ? "✓ Added To Cart" : "Add To Cart"}
+              {isOutOfStock ? "Out Of Stock" : (isInCart ? "✓ Added To Cart" : "Add To Cart")}
             </button>
-            <button onClick={handleBuyNow} className={styles.buyNowBtn}>
+            <button onClick={handleBuyNow} className={styles.buyNowBtn} disabled={isOutOfStock}>
               Buy Now
             </button>
           </div>

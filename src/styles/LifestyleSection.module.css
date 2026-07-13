@@ -24,8 +24,8 @@
 }
 
 .image {
-  object-fit: contain;
-  background: #f5f5f5;
+  object-fit: cover;
+  object-position: center;
   transition: 0.5s ease;
 }
 

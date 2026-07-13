@@ -179,6 +179,24 @@
   background: #222;
 }
 
+.quickAddBtn:disabled {
+  background: #777;
+  cursor: not-allowed;
+}
+
+.outOfStockBadge {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  z-index: 2;
+  background: #b42318;
+  color: #fff;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
 /* TABLET */
 
 @media (max-width:1024px) {
