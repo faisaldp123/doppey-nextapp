@@ -48,6 +48,7 @@ export default function ProductCard({
   const discountedPrice = getDiscountedPrice(product);
   const originalPrice   = Number(product.price) || 0;
   const hasDiscount     = product.discount > 0;
+  const isOutOfStock    = Number(product.stock) <= 0;
 
   const isWishlisted = wishlist?.some(
     (item) => getProductId(item) === productId
@@ -59,6 +60,7 @@ export default function ProductCard({
   };
 
   const addToCart = () => {
+    if (isOutOfStock) return;
     addProductToCart(product, 1);
   };
 
@@ -86,6 +88,8 @@ export default function ProductCard({
             {product.discount}% OFF
           </span>
         )}
+
+        {isOutOfStock && <span className={styles.outOfStockBadge}>OUT OF STOCK</span>}
 
         {/* WISHLIST */}
         <button className={styles.wishlistBtn} onClick={toggleWishlist}>
@@ -135,9 +139,9 @@ export default function ProductCard({
 
         </div>
 
-        <button className={styles.quickAddBtn} onClick={addToCart}>
+        <button className={styles.quickAddBtn} onClick={addToCart} disabled={isOutOfStock}>
           <ShoppingBag size={16} />
-          QUICK ADD
+          {isOutOfStock ? "OUT OF STOCK" : "QUICK ADD"}
         </button>
       </div>
     </div>
