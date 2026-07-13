@@ -32,10 +32,15 @@
   top: 120px;
 }
 
+/* ← FIXED: was a hard-coded 500x500 square with object-fit:fill,
+   which stretched non-square photos. Now the box follows a standard
+   product-photo ratio (4:5) and the image uses object-fit:contain,
+   so the full photo always shows — no stretching, no cropping. */
 .mainImageWrapper {
   width: 100%;
   max-width: 500px;
-  height: 500px;
+  aspect-ratio: 3 / 4;
+  height: auto;
   position: relative;
   overflow: hidden;
   border-radius: 15px;
@@ -45,7 +50,7 @@
 .mainImage {
   width: 100% !important;
   height: 100% !important;
-  object-fit: fill;
+  object-fit: contain;
   transition: transform 0.4s ease;
 }
 
@@ -80,7 +85,7 @@
   background: #111;
 }
 
-/* ← NEW: wraps each mobile swiper slide so double-tap-to-zoom
+/* ← wraps each mobile swiper slide so double-tap-to-zoom
    has a correctly positioned/sized container to measure taps against */
 .zoomWrapper {
   position: relative;
@@ -95,18 +100,45 @@
 
 .thumbnailRow {
   display: flex;
-  gap: 12px;
-  margin-top: 20px;
+  margin-top: 14px;
+  padding-bottom: 4px;
+  width: 100%;
+  gap: 8px;
+}
+
+/* ← Normal case: thumbnails stretch to equal-width columns filling
+   the full row edge-to-edge, tight gap between them. aspect-ratio
+   (not a fixed height) keeps each thumb the same portrait shape as
+   the main image, so there's no left/right white space either. */
+.thumbFill {
+  display: grid;
+}
+
+.thumbFill .thumbWrapper,
+.thumbFill .videoThumb {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 4;
+}
+
+/* ← Too many thumbnails to stay a reasonable size — keep them at a
+   small fixed size and let the row scroll instead of shrinking. */
+.thumbScroll {
   flex-wrap: nowrap;
   overflow-x: auto;
-  padding-bottom: 4px;
+  scroll-snap-type: x proximity;
   scrollbar-width: thin;
 }
 
-.thumbWrapper {
-  width: 90px;
+.thumbScroll .thumbWrapper,
+.thumbScroll .videoThumb {
+  width: 68px;
   height: 90px;
-  flex: 0 0 90px;
+  flex: 0 0 68px;
+  scroll-snap-align: start;
+}
+
+.thumbWrapper {
   border: 2px solid transparent;
   border-radius: 12px;
   overflow: hidden;
@@ -131,8 +163,6 @@
 }
 
 .videoThumb {
-  width: 90px;
-  height: 90px;
   border: 1px solid #111;
   border-radius: 10px;
   background: #111;
@@ -888,10 +918,14 @@
 
   .gallerySection { position: static; width: 100%; }
 
+  /* ← FIXED: was a hard-coded 420px height with object-fit:fill.
+     Same treatment as desktop — ratio-based box + contain, so
+     mobile shows the full photo too, no stretch/crop. */
    .mainImageWrapper {
     width: 100%;
     max-width: 100%;
-    height: 420px;          /* increased height */
+    aspect-ratio: 3 / 4;
+    height: auto;
     border-radius: 10px;
     background: #f7f7f7;
   }
@@ -899,7 +933,7 @@
   .mainImage {
     width: 100%;
     height: 100%;
-    object-fit: fill;    /* shows full image, no cropping */
+    object-fit: contain;
     object-position: center;
   }
 
@@ -910,29 +944,21 @@
   }
 
   .thumbnailRow {
-    display: flex;
-    gap: 14px;
     margin-top: 8px;
     width: 100%;
+    gap: 6px;
   }
 
-  .thumbWrapper {
-    width: 62px;
+  .thumbScroll .thumbWrapper,
+  .thumbScroll .videoThumb {
+    width: 47px;
     height: 62px;
-    flex-basis: 62px;
-    border-radius: 8px;
+    flex: 0 0 47px;
   }
 
   .thumbnail {
     object-fit: contain;
     border-radius: 6px;
-  }
-
-  .videoThumb {
-    width: 62px;
-    height: 62px;
-    flex: 0 0 62px;
-    border-radius: 8px;
   }
 
   .detailsSection { width: 100%; display: flex; flex-direction: column; gap: 14px; }
@@ -998,7 +1024,5 @@
   .popup { left: 15px; right: 15px; bottom: 15px; text-align: center; }
   .sectionTitle h2 { font-size: 24px; }
 
-  .mainImageWrapper {
-    height: 310px;
-  }
+  /* height removed — aspect-ratio from base rule handles this now */
 }
