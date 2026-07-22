@@ -32,15 +32,17 @@ export default function NewArrivals() {
     loadProducts();
   }, []);
 
-  const newArrivals = useMemo(
-    () =>
-      sortNewestFirst(
-        products.filter((product) =>
-          productMatchesPage(product, "new-arrivals")
-        )
-      ).slice(0, 10),
-    [products]
-  );
+  const newArrivals = useMemo(() => {
+    const filtered = products.filter((product) =>
+      productMatchesPage(product, "new-arrivals")
+    );
+    const sorted = sortNewestFirst(filtered);
+
+    const stockRank = (p) => (p.stock === 0 ? 1 : 0);
+    sorted.sort((a, b) => stockRank(a) - stockRank(b));
+
+    return sorted.slice(0, 10);
+  }, [products]);
 
   return (
     <section className={styles.section}>
